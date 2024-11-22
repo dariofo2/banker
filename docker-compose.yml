@@ -1,0 +1,8 @@
+services:
+  backend:
+    image: dariofo/nestjs
+    container_name: backend
+    volumes:
+    - ./backend:/app
+    ports:
+    - "3000:3000"

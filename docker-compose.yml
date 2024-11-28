@@ -1,8 +1,9 @@
 services:
   backend:
-    image: dariofo/nestjs
+    image: node:alpine
     container_name: backend
     volumes:
     - ./backend:/app
     ports:
     - "3000:3000"
+    command: sh -c "cd /app && npm run start:dev /app"

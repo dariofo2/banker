@@ -3,6 +3,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { Users } from "./entity/users.entity";
 import { Accounts } from "./entity/accounts.entity";
 import { Movements } from "./entity/movements.entity";
+import { DatabaseRepository } from "./database.repository";
 
 @Module({
     imports: [
@@ -18,8 +19,10 @@ import { Movements } from "./entity/movements.entity";
         }),
         TypeOrmModule.forFeature([Users,Accounts,Movements])
     ],
+    providers:[DatabaseRepository],
     exports: [
-        TypeOrmModule
+        TypeOrmModule,
+        DatabaseRepository
     ]
 })
 

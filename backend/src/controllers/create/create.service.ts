@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { DatabaseRepository } from "src/database/database.repository";
 import { Accounts } from "src/database/entity/accounts.entity";
 import { Movements } from "src/database/entity/movements.entity";
 import { Users } from "src/database/entity/users.entity";
@@ -8,36 +9,18 @@ import { Repository } from "typeorm";
 @Injectable()
 export class CreateService {
     constructor (
-        @InjectRepository(Users)
-        private usersRepository: Repository<Users>,
-        @InjectRepository(Accounts)
-        private accountsRepository: Repository<Accounts>,
-        @InjectRepository(Movements)
-        private movementsRepository: Repository<Movements>
+        private databaseRepository : DatabaseRepository
     ) {}
     createUser() {
-        return this.usersRepository.insert({
-           name: 'dario',
-           password: 'abc123.',
-           email: 'dario@hola.com' 
-        })
+        this.databaseRepository.createUser();
     }
 
-    async createAccount() {
-        await this.accountsRepository.insert({
-            userid: 1,
-            name: "Cuenta Corriente",
-            type: "Normal",
-            balance: 500
-        });
+    createAccount() {
+        this.databaseRepository.createAccount();
     }
 
     createMovement() {
-        return this.movementsRepository.insert({
-            origin_account_id: 1,
-            destination_account_id: 1,
-            money: 200
-        })
+       this.databaseRepository.createMovement();
     }
 
 }

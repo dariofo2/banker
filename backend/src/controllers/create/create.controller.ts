@@ -1,19 +1,18 @@
-import { Controller, Get, Post } from "@nestjs/common";
+import { Controller, Get, Next, Post } from "@nestjs/common";
 import { CreateService } from "./create.service";
 
 @Controller('create')
 export class CreateController {
     constructor (private createService: CreateService) {}
     @Get('user')
-    createUser () : string {
+    createUser ()  {
         this.createService.createUser();
         return "Usuario Creado";
     }
     
     @Get('account')
     createAccount () : string {
-        this.createService.createAccount()
-        .then();
+        this.createService.createAccount();
         return "Cuenta Creada";
     }
 

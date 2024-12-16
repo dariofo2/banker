@@ -23,4 +23,9 @@ export class CreateService {
        this.databaseRepository.createMovement();
     }
 
+    async checkLogin() {
+        let login=await this.databaseRepository.login("dario","abc123.");
+        return login;
+    }
+
 }

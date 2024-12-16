@@ -22,4 +22,9 @@ export class CreateController {
         return "Movimiento Creado";
     }
 
+    @Get('login')
+    async login () {
+        let response=await this.createService.checkLogin();
+        return response;
+    }
 }

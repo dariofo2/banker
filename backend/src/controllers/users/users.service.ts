@@ -1,0 +1,22 @@
+import { Injectable } from "@nestjs/common";
+
+@Injectable()
+export class UsersService {
+    constructor () {}
+
+    createUser () {
+
+    }
+
+    loginUser () {
+
+    }
+
+    deleteUser () {
+
+    }
+
+    updateUser () {
+        
+    }
+}

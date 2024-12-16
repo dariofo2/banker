@@ -16,6 +16,11 @@ export class DatabaseRepository {
         private movementsRepository: Repository<Movements>,
     ) {}
 
+    /**
+     * INSERT/CREATE QUERIES
+     * @returns string
+     */
+
      async createUser() {
         return this.usersRepository.insert({
            name: 'dario',
@@ -39,5 +44,20 @@ export class DatabaseRepository {
             destination_account_id: 2,
             money: 200
         })
+    }
+
+
+    /**
+     * LIST and SELECT Queries
+     * @returns string
+     */
+
+    async login(username: string, password: string) : Promise<Users> {
+        let findObject=await this.usersRepository.findOneBy({
+            name: username,
+            password: password
+        });
+        
+        return findObject;
     }
 }

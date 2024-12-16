@@ -6,7 +6,7 @@ services:
     - ./backend:/app
     ports:
     - "3000:3000"
-    command: sh -c "cd /app && npm install && npm run start:dev /app"
+    command: sh -c "cd /app && npm run start:dev /app"
   
   db:
     image: mariadb:latest

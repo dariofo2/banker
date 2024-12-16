@@ -1,8 +1,8 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { User } from "./entity/user.entity";
-import { Account } from "./entity/account.entity";
-import { Movement } from "./entity/movement.entity";
+import { Users } from "./entity/users.entity";
+import { Accounts } from "./entity/accounts.entity";
+import { Movements } from "./entity/movements.entity";
 
 @Module({
     imports: [
@@ -13,10 +13,14 @@ import { Movement } from "./entity/movement.entity";
             username:'root',
             password:'abc123.',
             database: 'banker',
-            entities: [User,Account,Movement],
-            synchronize: true,
+            entities: [Users,Accounts,Movements],
+            synchronize: false,
         }),
+        TypeOrmModule.forFeature([Users,Accounts,Movements])
     ],
+    exports: [
+        TypeOrmModule
+    ]
 })
 
 export class DatabaseModule {}

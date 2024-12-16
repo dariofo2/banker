@@ -1,16 +1,16 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class User {
+export class Movements {
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column()
-    name: string;
+    origin_account_id: number;
 
     @Column()
-    password: string;
+    destination_account_id: number;
 
     @Column()
-    email: string;
+    money: number;
 }

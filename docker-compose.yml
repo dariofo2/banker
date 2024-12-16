@@ -1,9 +1,31 @@
 services:
-  backend:
+  transaction:
     image: node:alpine
-    container_name: backend
+    container_name: transaction
     volumes:
     - ./backend:/app
     ports:
     - "3000:3000"
-    command: sh -c "cd /app && npm run start:dev /app"
+    command: sh -c "cd /app && npm install && npm run start:dev /app"
+  
+  db:
+    image: mariadb:latest
+    container_name: db
+    volumes:
+    - ./db:/var/lib/mysql
+    ports:
+    - "3306:3306"
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: abc123.
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: phpmyadmin
+    ports:
+    - "8000:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: abc123.
+      PMA_PORT: 3306

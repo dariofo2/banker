@@ -21,11 +21,11 @@ export class DatabaseRepository {
      * @returns string
      */
 
-     async createUser() {
-        return this.usersRepository.insert({
-           name: 'dario',
-           password: 'abc123.',
-           email: 'dario@hola.com' 
+     async createUser(name:string,password:string,email:string) {
+        await this.usersRepository.insert({
+           name: name,
+           password: password,
+           email: email 
         })
     }
 
@@ -53,11 +53,32 @@ export class DatabaseRepository {
      */
 
     async login(username: string, password: string) : Promise<Users> {
-        let findObject=await this.usersRepository.findOneBy({
+        let response=await this.usersRepository.findOneBy({
             name: username,
             password: password
         });
         
-        return findObject;
+        return response;
+    }
+
+    async selectAccountsByUserId(id:number) : Promise<Accounts[]> {
+        let response=await this.accountsRepository.findBy({
+            userid:id
+        });
+        return response;
+    }
+
+    async selectMovementsFromAccountId(id:number) : Promise<Movements[]> {
+        let response=await this.movementsRepository.find({
+            where: [
+            {origin_account_id:id},
+            {destination_account_id:id}
+            ],
+            order: {
+                id:"DESC"
+            }
+        })
+
+        return response;
     }
 }

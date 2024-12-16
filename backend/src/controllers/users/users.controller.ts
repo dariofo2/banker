@@ -9,6 +9,16 @@ export class UsersController {
 
     @Get('create')
     createUser () {
-        
+        this.usersService.createUser();
+    }
+
+    @Get('delete')
+    deleteUser () {
+
+    }
+
+    @Get('update')
+    updateUser () {
+
     }
 }

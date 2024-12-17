@@ -1,6 +1,8 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, UseGuards } from "@nestjs/common";
 import { UsersService } from "./users.service";
+import { MainAuthGuard } from "src/auth/mainauth.guard";
 
+@UseGuards(MainAuthGuard)
 @Controller('user')
 export class UsersController {
     constructor (
@@ -20,5 +22,10 @@ export class UsersController {
     @Get('update')
     updateUser () {
 
+    }
+
+    @Get('login')
+    loginUser () {
+        
     }
 }

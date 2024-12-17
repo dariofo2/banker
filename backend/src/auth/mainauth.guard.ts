@@ -1,11 +1,13 @@
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
 import { Observable } from "rxjs";
 import { DatabaseRepository } from "src/database/database.repository";
 
 @Injectable()
 export class MainAuthGuard implements CanActivate {
     constructor (
-        private databaseRepository: DatabaseRepository
+        private databaseRepository: DatabaseRepository,
+        private jwtService: JwtService
     ) {}
 
     //(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {

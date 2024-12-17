@@ -25,8 +25,4 @@ export class UsersController {
 
     }
 
-    @Post('login')
-    loginUser (@Body() body:Users) {
-        return this.usersService.login(body.name,body.password);
-    }
 }

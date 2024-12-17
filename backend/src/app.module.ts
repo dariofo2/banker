@@ -5,10 +5,12 @@ import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './controllers/users/users.module';
 import { MovementsModule } from './controllers/movements/movements.module';
 import { AccountsModule } from './controllers/accounts/accounts.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     DatabaseModule,
+    JwtModule,
     UsersModule,
     MovementsModule,
     AccountsModule

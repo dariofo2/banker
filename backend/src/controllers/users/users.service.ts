@@ -20,6 +20,6 @@ export class UsersService {
     async login (username:string,password:string) {
         let user=await this.databaseRepository.login(username,password);
         if (user!=null) return user;
-        else return false;
+        else return user;
     }
 }

@@ -8,12 +8,12 @@ import { Accounts } from "src/database/entity/accounts.entity";
 @Controller('movements')
 export class MovementsController{
     constructor (private movementsService: MovementsService) {}
-    @Get('create')
+    @Post('create')
     createMovement () {
         return "Created Movement";
     }
 
-    @Get('delete')
+    @Post('delete')
     deleteMovement() {
         return "deleted Movement";
     }

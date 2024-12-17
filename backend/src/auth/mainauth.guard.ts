@@ -17,6 +17,6 @@ export class MainAuthGuard implements CanActivate {
 
         let user=await this.databaseRepository.login(userpass[0],userpass[1]);
         if (user!=null) return true;
-        else false;
+        else return false;
     }
 }

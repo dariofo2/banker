@@ -7,7 +7,11 @@ export class MovementsService {
         private database: DatabaseRepository
     ) {}
 
-    createMovement () {
-        
+    createMovement (originAccount: number, destinationAccount: number, money: number) {
+        this.database.createMovement(originAccount,destinationAccount,money);
+    }
+
+    listMovements (accountId: number) {
+        return this.database.selectMovementsFromAccountId(accountId);
     }
 }

@@ -17,7 +17,7 @@ export class DatabaseRepository {
     ) {}
 
     /**
-     * INSERT/CREATE QUERIES
+     *      INSERT/CREATE QUERIES
      * @returns string
      */
 
@@ -29,27 +29,27 @@ export class DatabaseRepository {
         })
     }
 
-    async createAccount() {
+    async createAccount(userid:number,name:string,type:string,balance:number) {
         await this.accountsRepository.insert({
             userid: 1,
-            name: "Cuenta Corriente",
-            type: "Normal",
-            balance: 500
+            name: name,
+            type: type,
+            balance: balance
         });
     }
 
-    async createMovement() {
+    async createMovement(originAcc: number,destinationAcc: number,money:number) {
         return this.movementsRepository.insert({
-            origin_account_id: 2,
-            destination_account_id: 2,
-            money: 200
+            origin_account_id: originAcc,
+            destination_account_id: destinationAcc,
+            money: money
         })
     }
 
 
     /**
-     * LIST and SELECT Queries
-     * @returns string
+     *      LOGIN Queries
+     * @returns Users
      */
 
     async login(username: string, password: string) : Promise<Users> {
@@ -61,6 +61,9 @@ export class DatabaseRepository {
         return response;
     }
 
+    /**
+     *      SELECT QUERIES
+     */
     async selectAccountsByUserId(id:number) : Promise<Accounts[]> {
         let response=await this.accountsRepository.findBy({
             userid:id
@@ -78,7 +81,23 @@ export class DatabaseRepository {
                 id:"DESC"
             }
         })
-
         return response;
+    }
+
+
+    /**
+     *      DELETE QUERIES
+     */
+
+    async deleteUserById (id:number) {
+        return await this.usersRepository.delete(id);
+    }
+
+    async deleteAccountById (id:number) {
+        return await this.accountsRepository.delete(id);
+    }
+
+    async deleteMovementById (id:number) {
+        return await this.accountsRepository.delete(id);
     }
 }

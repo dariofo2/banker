@@ -1,11 +1,19 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, Req, UseGuards } from "@nestjs/common";
 import { AccountsService } from "./accounts.service";
+import { MainAuthGuard } from "src/auth/mainauth.guard";
+import { Accounts } from "src/database/entity/accounts.entity";
 
+@UseGuards(MainAuthGuard)
 @Controller('accounts')
 export class AccountsController {
     constructor (private accountsService: AccountsService) {}
     @Get('create')
-    createAccount () {
+    createAccount (@Req() req: Request) {
+        
+    }
 
+    @Get('list')
+    listAccount (@Req() req: Request) : Promise<Accounts[]> {
+        return this.accountsService.listAccounts(1);
     }
 }

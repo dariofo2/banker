@@ -5,19 +5,21 @@ import { DatabaseRepository } from "src/database/database.repository";
 export class UsersService {
     constructor (private databaseRepository: DatabaseRepository) {}
 
-    createUser () {
-        this.databaseRepository.createUser('dari','abc123.','hola@hola');
+    createUser (name:string,password:string,email:string) {
+        this.databaseRepository.createUser(name,password,email);
     }
 
-    loginUser () {
-
-    }
-
-    deleteUser () {
-
+    deleteUser (id:number) {
+        this.databaseRepository.deleteUserById(id);
     }
 
     updateUser () {
          
+    }
+
+    async login (username:string,password:string) {
+        let user=await this.databaseRepository.login(username,password);
+        if (user!=null) return user;
+        else return false;
     }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { DatabaseRepository } from "src/database/database.repository";
 
@@ -8,12 +8,17 @@ export class UsersService {
         private databaseRepository: DatabaseRepository
     ) {}
 
-    createUser (name:string,password:string,email:string) {
-        this.databaseRepository.createUser(name,password,email);
+    async createUser (name:string,password:string,email:string) {
+        try {
+            await this.databaseRepository.createUser(name,password,email);
+            return true;
+        } catch {
+            return false;
+        }
     }
 
-    deleteUser (id:number) {
-        this.databaseRepository.deleteUserById(id);
+    async deleteUser (id:number) {
+        return await this.databaseRepository.deleteUserById(id);
     }
 
     updateUser () {

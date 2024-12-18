@@ -22,29 +22,49 @@ export class DatabaseRepository {
      */
 
     async createUser(name: string, password: string, email: string) {
-        return await this.usersRepository.insert({
-            name: name,
-            password: password,
-            email: email
-        })
+        try {
+            let result = await this.usersRepository.insert({
+                name: name,
+                password: password,
+                email: email
+            })
+            return true;
+        } catch {
+            return false;
+        }
 
     }
 
     async createAccount(userid: number, name: string, type: string, balance: number) {
-        return await this.accountsRepository.insert({
-            userid: userid,
-            name: name,
-            type: type,
-            balance: balance
-        });
+        try {
+            await this.accountsRepository.insert({
+                userid: userid,
+                name: name,
+                type: type,
+                balance: balance
+            });
+            return true;
+        } catch {
+            return false;
+        }
     }
 
-    async createMovement(originAcc: number, destinationAcc: number, money: number) {
-        return this.movementsRepository.insert({
-            origin_account_id: originAcc,
-            destination_account_id: destinationAcc,
-            money: money
-        })
+    async createMovement(userid:number,originAcc: number, destinationAcc: number, money: number) {
+        let res=await this.selectAccountById(userid,originAcc);
+
+        if (res!=undefined && res!=null) {
+            try {
+                await this.movementsRepository.insert({
+                    origin_account_id: originAcc,
+                    destination_account_id: destinationAcc,
+                    money: money
+                })
+                return true;
+            } catch {
+                return false;
+            }
+        }
+        
     }
 
 
@@ -72,17 +92,30 @@ export class DatabaseRepository {
         return response;
     }
 
-    async selectMovementsFromAccountId(id: number): Promise<Movements[]> {
-        let response = await this.movementsRepository.find({
-            where: [
-                { origin_account_id: id },
-                { destination_account_id: id }
-            ],
-            order: {
-                id: "DESC"
-            }
-        })
-        return response;
+    async selectAccountById(userid: number, id: number): Promise<Accounts> {
+        return await this.accountsRepository.findOneBy({
+            userid: userid,
+            id: id
+        });
+    }
+
+    async selectMovementsFromAccountId(userid: number, id: number): Promise<Movements[]> {
+        let searchUserandAcc = await this.selectAccountById(userid,id);
+
+        if (searchUserandAcc != undefined && searchUserandAcc != null) {
+            let response = await this.movementsRepository.find({
+                where: [
+                    { origin_account_id: id },
+                    { destination_account_id: id }
+                ],
+                order: {
+                    id: "DESC"
+                }
+            })
+            return response;
+        }
+
+
     }
 
 
@@ -94,11 +127,18 @@ export class DatabaseRepository {
         return await this.usersRepository.delete(id);
     }
 
-    async deleteAccountById(id: number) {
-        return await this.accountsRepository.delete(id);
+    async deleteAccountById(userid: number, id: number) {
+        return await this.accountsRepository.delete({
+            userid: userid,
+            id: id
+        });
     }
 
-    async deleteMovementById(id: number) {
-        return await this.accountsRepository.delete(id);
+    async deleteMovementById(userid: number, id: number) {
+        //BAD, CORREGIR
+        return await this.movementsRepository.delete({
+            origin_account_id:userid,
+            id:id
+        });
     }
 }

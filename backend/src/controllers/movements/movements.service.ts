@@ -7,11 +7,11 @@ export class MovementsService {
         private database: DatabaseRepository
     ) {}
 
-    createMovement (originAccount: number, destinationAccount: number, money: number) {
-        this.database.createMovement(originAccount,destinationAccount,money);
+    async createMovement (userid: number, originAccount: number, destinationAccount: number, money: number) {
+        return await this.database.createMovement(userid,originAccount,destinationAccount,money);
     }
 
-    listMovements (accountId: number) {
-        return this.database.selectMovementsFromAccountId(accountId);
+    async listMovements (userid:number,accountId: number) {
+        return await this.database.selectMovementsFromAccountId(userid,accountId);
     }
 }

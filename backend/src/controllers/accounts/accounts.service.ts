@@ -8,20 +8,26 @@ export class AccountsService {
         private databaseRepository: DatabaseRepository
     ) {}
 
-    createAccount (userid:number,name:string,type:string,balance:number) {
-        this.databaseRepository.createAccount(userid,name,type,balance);
+    async createAccount (userid:number,name:string,type:string,balance:number) {
+        return await this.databaseRepository.createAccount(userid,name,type,balance);
     }
 
-    deleteAccount (id:number) {
-        this.databaseRepository.deleteAccountById(id);
+    async deleteAccount (userid:number, id:number) {
+        return await this.databaseRepository.deleteAccountById(userid,id);
     }
 
     updateAccount () {
         
     }
 
-    listAccounts (id: number) : Promise<Accounts[]> {
-        return this.databaseRepository.selectAccountsByUserId(id);
+    async listAccount (userid:number,id:number) : Promise<Accounts> {
+        return await this.databaseRepository.selectAccountById(userid,id);
+    }
+
+    async listAccounts (id: number) : Promise<Accounts[]> {
+        return await this.databaseRepository.selectAccountsByUserId(id);
         
     }
+
+    
 }

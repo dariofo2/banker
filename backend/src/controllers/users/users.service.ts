@@ -9,12 +9,7 @@ export class UsersService {
     ) {}
 
     async createUser (name:string,password:string,email:string) {
-        try {
-            await this.databaseRepository.createUser(name,password,email);
-            return true;
-        } catch {
-            return false;
-        }
+        return await this.databaseRepository.createUser(name,password,email);
     }
 
     async deleteUser (id:number) {

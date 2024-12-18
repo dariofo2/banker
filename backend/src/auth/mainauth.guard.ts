@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { Observable } from "rxjs";
 import { DatabaseRepository } from "src/database/database.repository";
@@ -13,12 +13,27 @@ export class MainAuthGuard implements CanActivate {
     //(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
-        const token=request.headers.authorization;
-        console.log(token);
-        let userpass=token.split(":");
+        const authValue=request.headers.authorization;
+        const token=this.checkAuthJwt(authValue);
 
-        let user=await this.databaseRepository.login(userpass[0],userpass[1]);
-        if (user!=null) return true;
-        else return false;
+        try {
+        const payload = await this.jwtService.verifyAsync(token, {
+            secret:"topsecret"
+        });
+        request.user = payload;
+        
+        } catch {
+            throw new UnauthorizedException;
+        }
+        
+        return true;
+        
+    }
+
+    checkAuthJwt (authKey: string) : string {
+        const [type,token]= authKey.split(' ');
+        if (type=="Bearer") {
+            return token;
+        } else throw new UnauthorizedException;
     }
 }

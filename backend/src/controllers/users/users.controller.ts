@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { MainAuthGuard } from "src/auth/mainauth.guard";
 import { Users } from "src/database/entity/users.entity";
@@ -11,7 +11,7 @@ export class UsersController {
     ) {}
 
     @Post('create')
-    createUser (@Body() body:Users) {
+    createUser (@Body() body ,@Req() req) {
         this.usersService.createUser(body.name,body.password,body.email);
     }
 

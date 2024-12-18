@@ -9,7 +9,7 @@ import { JwtModule, JwtService } from "@nestjs/jwt";
     imports: [DatabaseModule,JwtModule.register({
         global: true,
         secret: "topsecret",
-        signOptions: {expiresIn: '200s'},
+        signOptions: {expiresIn: '50000s'},
     })],
     providers: [MainAuthGuard,AuthLoginService],
     controllers: [AuthLoginController],

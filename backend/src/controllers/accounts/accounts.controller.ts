@@ -8,8 +8,13 @@ import { Accounts } from "src/database/entity/accounts.entity";
 export class AccountsController {
     constructor (private accountsService: AccountsService) {}
     @Post('create')
-    createAccount (@Req() req: Request) {
-        
+    createAccount (@Req() req) {
+        console.log (req.user);
+    }
+
+    @Post('delete')
+    deleteAccount () {
+
     }
 
     @Post('list')

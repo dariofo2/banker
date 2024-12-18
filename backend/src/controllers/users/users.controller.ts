@@ -3,7 +3,7 @@ import { UsersService } from "./users.service";
 import { MainAuthGuard } from "src/auth/mainauth.guard";
 import { Users } from "src/database/entity/users.entity";
 
-@UseGuards(MainAuthGuard)
+
 @Controller('user')
 export class UsersController {
     constructor (
@@ -15,11 +15,13 @@ export class UsersController {
         this.usersService.createUser(body.name,body.password,body.email);
     }
 
+    @UseGuards(MainAuthGuard)
     @Post('delete')
-    deleteUser (@Body() body: Users) {
+    deleteUser (@Body() body: Users,@Req() req) {
         this.usersService.deleteUser(body.id);
     }
 
+    @UseGuards(MainAuthGuard)
     @Post('update')
     updateUser () {
 

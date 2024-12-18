@@ -22,7 +22,7 @@ export class DatabaseRepository {
      */
 
      async createUser(name:string,password:string,email:string) {
-        await this.usersRepository.insert({
+        return await this.usersRepository.insert({
            name: name,
            password: password,
            email: email 
@@ -30,7 +30,7 @@ export class DatabaseRepository {
     }
 
     async createAccount(userid:number,name:string,type:string,balance:number) {
-        await this.accountsRepository.insert({
+        return await this.accountsRepository.insert({
             userid: 1,
             name: name,
             type: type,

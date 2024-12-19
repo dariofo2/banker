@@ -17,7 +17,7 @@ export class UsersService {
     }
 
     updateUser () {
-        
+        this.databaseRepository.updateUser();
     }
 
 }

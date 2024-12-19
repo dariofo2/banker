@@ -30,7 +30,7 @@ export class UsersController {
     @UseGuards(MainAuthGuard)
     @Post('update')
     updateUser () {
-
+        this.usersService.updateUser();
     }
 
 }

@@ -1,13 +1,14 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Users } from "./entity/users.entity";
-import { Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { Accounts } from "./entity/accounts.entity";
 import { Movements } from "./entity/movements.entity";
 
 @Injectable()
 export class DatabaseRepository {
     constructor(
+        private datasource:DataSource,
         @InjectRepository(Users)
         private usersRepository: Repository<Users>,
         @InjectRepository(Accounts)
@@ -140,5 +141,33 @@ export class DatabaseRepository {
             origin_account_id:userid,
             id:id
         });
+    }
+
+
+    //              UPDATE QUERIES
+    async updateUser () {
+        //Que quede claro que DataSource es lo que genera el typeORMModule.forroot() y .feature():
+        //en databaseModule. Se puede crear datasources por separado pero es poco recomendable.
+
+        /* Transaction with repository(User).manager
+        let user=new Users;
+        user.name="hola";
+        user.password="Como";
+        user.email="sd";
+        
+        await this.usersRepository.manager.transaction(async (x)=>{
+           await  x.save(user);
+        })
+        */
+
+        /* Transaction with queryRunner.
+        let queryrunner=this.datasource.createQueryRunner();
+        
+        await queryrunner.connect();
+        await queryrunner.startTransaction();
+        await queryrunner.manager.save(user);
+        await queryrunner.rollbackTransaction();
+        await queryrunner.commitTransaction();
+        */
     }
 }

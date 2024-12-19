@@ -25,7 +25,7 @@ export class MovementsController{
 
     @Post('list')
     listMovement(@Req() req) {
-        return this.movementsService.listMovements(req.user.id,req.body.id); 
+        return this.movementsService.listMovements(req.user.id,req.body.origin_account_id); 
     }
 
 }

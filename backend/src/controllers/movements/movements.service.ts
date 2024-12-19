@@ -12,7 +12,9 @@ export class MovementsService {
     }
 
     async listMovements (userid:number,accountId: number) {
-        return await this.database.selectMovementsFromAccountId(userid,accountId);
+        if (userid!=null && accountId!=null) {
+            return await this.database.selectMovementsFromAccountId(userid,accountId);
+        }
     }
 
     async deleteMovement (req) {

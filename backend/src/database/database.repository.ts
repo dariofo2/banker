@@ -114,7 +114,7 @@ export class DatabaseRepository {
 
     async selectMovementsFromAccountId(userid: number, accountid: number): Promise<Movements[]> {
         let searchUserandAcc = await this.selectAccountById(userid, accountid);
-
+console.log (accountid);
         if (searchUserandAcc != undefined && searchUserandAcc != null) {
             let response = await this.movementsRepository.find({
                 where: [

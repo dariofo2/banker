@@ -29,3 +29,8 @@ services:
       PMA_USER: root
       PMA_PASSWORD: abc123.
       PMA_PORT: 3306
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    command: sh -c "redis-server --appendonly yes --requirepass redispass" 

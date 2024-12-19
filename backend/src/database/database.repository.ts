@@ -44,6 +44,9 @@ export class DatabaseRepository {
                 type: type,
                 balance: balance
             });
+
+            await this.datasource.queryResultCache.remove([`accounts${userid}`]);
+            
             return true;
         } catch {
             return false;
@@ -59,6 +62,10 @@ export class DatabaseRepository {
                     destination_account_id: destinationAcc,
                     money: money
                 })
+
+                await this.datasource.queryResultCache.remove([`movements${originAcc}`]);
+                await this.datasource.queryResultCache.remove([`movements${destinationAcc}`])
+
                 return true;
             } catch {
                 return false;
@@ -74,9 +81,8 @@ export class DatabaseRepository {
      */
 
     async login(username: string, password: string): Promise<Users> {
-        let response = await this.usersRepository.findOneBy({
-            name: username,
-            password: password
+        let response = await this.usersRepository.findOne({
+            where: {name: username, password: password}
         });
 
         return response;
@@ -85,31 +91,42 @@ export class DatabaseRepository {
     /**
      *      SELECT QUERIES
      */
-    async selectAccountsByUserId(id: number): Promise<Accounts[]> {
-        let response = await this.accountsRepository.findBy({
-            userid: id
+    async selectAccountsByUserId(userid: number): Promise<Accounts[]> {
+        let response = await this.accountsRepository.find({
+            where: {userid: userid},
+            cache: {
+                id: `accounts${userid}`,
+                milliseconds: 100000
+            }
         });
         return response;
     }
 
     async selectAccountById(userid: number, id: number): Promise<Accounts> {
-        return await this.accountsRepository.findOneBy({
-            userid: userid,
-            id: id
+        return await this.accountsRepository.findOne({
+            where: {userid: userid, id: id},
+            cache: {
+                id:`account${userid}${id}`,
+                milliseconds: 100000,
+            }
         });
     }
 
-    async selectMovementsFromAccountId(userid: number, id: number): Promise<Movements[]> {
-        let searchUserandAcc = await this.selectAccountById(userid,id);
+    async selectMovementsFromAccountId(userid: number, accountid: number): Promise<Movements[]> {
+        let searchUserandAcc = await this.selectAccountById(userid,accountid);
 
         if (searchUserandAcc != undefined && searchUserandAcc != null) {
             let response = await this.movementsRepository.find({
                 where: [
-                    { origin_account_id: id },
-                    { destination_account_id: id }
+                    { origin_account_id: accountid },
+                    { destination_account_id: accountid }
                 ],
                 order: {
                     id: "DESC"
+                },
+                cache: {
+                    id: `movements${accountid}`,
+                    milliseconds:100000
                 }
             })
             return response;
@@ -128,18 +145,24 @@ export class DatabaseRepository {
     }
 
     async deleteAccountById(userid: number, id: number) {
-        return await this.accountsRepository.delete({
+        let delResult=await this.accountsRepository.delete({
             userid: userid,
             id: id
         });
+
+        await this.datasource.queryResultCache.remove([`account${userid}${id}`]);
+        return delResult;
     }
 
-    async deleteMovementById(userid: number, id: number) {
+    async deleteMovementById(userid: number, originacc: number,destinationAcc:number) {
         //BAD, CORREGIR
         return await this.movementsRepository.delete({
             origin_account_id:userid,
-            id:id
+            id:originacc
         });
+
+        await this.datasource.queryResultCache.remove([`movements${originacc}`]);
+                await this.datasource.queryResultCache.remove([`movements${destinationAcc}`])
     }
 
 
@@ -147,6 +170,8 @@ export class DatabaseRepository {
     async updateUser () {
         //Que quede claro que DataSource es lo que genera el typeORMModule.forroot() y .feature():
         //en databaseModule. Se puede crear datasources por separado pero es poco recomendable.
+        //Si creas dos bases de datos con .forRoot, tienes que establecer un name y en .feature(entidad,"nombre")
+        //Luego puedes acceder a @DataSource("name").
 
         /* Transaction with repository(User).manager
         let user=new Users;

@@ -16,6 +16,16 @@ import { DatabaseRepository } from "./database.repository";
             database: 'banker',
             entities: [Users,Accounts,Movements],
             synchronize: false,
+            cache: {
+                type:"redis",
+                options: {
+                    password:"redispass",
+                    socket: {
+                        host:"redis",
+                        port:6379,
+                    }
+                }
+            },
         }),
         TypeOrmModule.forFeature([Users,Accounts,Movements])
     ],

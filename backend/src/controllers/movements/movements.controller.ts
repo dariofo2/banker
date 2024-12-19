@@ -18,8 +18,9 @@ export class MovementsController{
     }
 
     @Post('delete')
-    deleteMovement() {
-        //this.movementsService.
+    async deleteMovement(@Req() req) {
+        let delResult= await this.movementsService.deleteMovement(req)
+        if (!delResult) throw new BadRequestException;
     }
 
     @Post('list')

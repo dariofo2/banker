@@ -24,7 +24,7 @@ export class UsersController {
     @Post('delete')
     async deleteUser (@Body() body: Users,@Req() req) {
         let delresult=await this.usersService.deleteUser(req.user.id);
-        if (delresult.affected==0) throw new BadRequestException;
+        if (!delresult) throw new BadRequestException;
     }
 
     @UseGuards(MainAuthGuard)

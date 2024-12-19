@@ -52,7 +52,6 @@ export class DatabaseRepository {
 
     async createMovement(userid:number,originAcc: number, destinationAcc: number, money: number) {
         let res=await this.selectAccountById(userid,originAcc);
-
         if (res!=undefined && res!=null) {
             try {
                 await this.movementsRepository.insert({
@@ -64,7 +63,7 @@ export class DatabaseRepository {
             } catch {
                 return false;
             }
-        }
+        } else return false;
         
     }
 

@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Users } from "./entity/users.entity";
-import { DataSource, Repository } from "typeorm";
+import { DataSource, Equal, Repository } from "typeorm";
 import { Accounts } from "./entity/accounts.entity";
 import { Movements } from "./entity/movements.entity";
 
@@ -82,7 +82,7 @@ export class DatabaseRepository {
 
     async login(username: string, password: string): Promise<Users> {
         let response = await this.usersRepository.findOne({
-            where: { name: username, password: password }
+            where: { name: Equal(username), password: Equal(password) }
         });
 
         return response;
@@ -93,7 +93,7 @@ export class DatabaseRepository {
      */
     async selectAccountsByUserId(userid: number): Promise<Accounts[]> {
         let response = await this.accountsRepository.find({
-            where: { userid: userid },
+            where: { userid: Equal(userid) },
             cache: {
                 id: `accounts${userid}`,
                 milliseconds: 100000
@@ -104,7 +104,7 @@ export class DatabaseRepository {
 
     async selectAccountById(userid: number, id: number): Promise<Accounts> {
         return await this.accountsRepository.findOne({
-            where: { userid: userid, id: id },
+            where: { userid: Equal(userid), id: Equal(id) },
             cache: {
                 id: `account${id}`,
                 milliseconds: 100000,
@@ -118,8 +118,8 @@ export class DatabaseRepository {
         if (searchUserandAcc != undefined && searchUserandAcc != null) {
             let response = await this.movementsRepository.find({
                 where: [
-                    { origin_account_id: accountid },
-                    { destination_account_id: accountid }
+                    { origin_account_id: Equal(accountid) },
+                    { destination_account_id: Equal(accountid) }
                 ],
                 order: {
                     id: "DESC"
@@ -179,7 +179,14 @@ export class DatabaseRepository {
 
 
     //              UPDATE QUERIES
-    async updateUser() {
+    async updateUser (id:number,name:string,password:string,email:string) {
+        let user=new Users;
+        user={id:id,name:name,password:password,email:email};
+        return await this.usersRepository.save(user);
+    }
+
+
+    async updateTransactionExample() {
         //Que quede claro que DataSource es lo que genera el typeORMModule.forroot() y .feature():
         //en databaseModule. Se puede crear datasources por separado pero es poco recomendable.
         //Si creas dos bases de datos con .forRoot, tienes que establecer un name y en .feature(entidad,"nombre")
@@ -206,4 +213,6 @@ export class DatabaseRepository {
         await queryrunner.commitTransaction();
         */
     }
+
+    
 }

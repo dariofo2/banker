@@ -29,8 +29,9 @@ export class UsersController {
 
     @UseGuards(MainAuthGuard)
     @Post('update')
-    updateUser () {
-        this.usersService.updateUser();
+    updateUser (@Req() req) {
+        let updatedUser=this.usersService.updateUser(req);
+        if (updatedUser==null || updatedUser==undefined) throw new BadRequestException; 
     }
 
 }

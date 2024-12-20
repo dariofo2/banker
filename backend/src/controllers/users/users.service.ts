@@ -16,8 +16,8 @@ export class UsersService {
         return await this.databaseRepository.deleteUserById(id);
     }
 
-    updateUser () {
-        this.databaseRepository.updateUser();
+    updateUser (req) {
+        return this.databaseRepository.updateUser(req.user.id,req.body.name,req.body.password,req.body.email);
     }
 
 }

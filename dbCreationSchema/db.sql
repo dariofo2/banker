@@ -50,7 +50,7 @@ BEGIN
     end if;
 END; $$
 
-// Constraint para variables con valor ""
+/* Constraint para variables con valor ""
 mysql> delimiter $
 
 mysql> create trigger foo before insert on yar
@@ -65,5 +65,5 @@ Query OK, 0 rows affected (0.01 sec)
 mysql> delimiter ;
 
 
-
+*/
 DELIMITER;

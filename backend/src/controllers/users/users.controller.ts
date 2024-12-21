@@ -43,7 +43,7 @@ export class UsersController {
         //return await this.rabbitmqService.receiveMessageFromQueue("holaa");
         console.log("send");
 
-       await this.rabbitmqService.sendMessageToExchange("yyyy","holaa");
+       await this.rabbitmqService.sendMessageToExchange("oo","holaa");
        //return await this.rabbitmqService.receiveMessageFromQueueExchange("holaaaa","comoo");
     }
 
@@ -51,8 +51,7 @@ export class UsersController {
     async rabbitConsumeMessage() {
         console.log("receive");
         //return await this.rabbitmqService.receiveMessageFromQueue("buenass");
-        let strings= await this.rabbitmqService.receiveMessageFromQueueExchange("hhhh","yyyy");
-        console.log(strings);
+        return await this.rabbitmqService.receiveMessageFromQueueExchange("mmm","oo");
         
     }
 

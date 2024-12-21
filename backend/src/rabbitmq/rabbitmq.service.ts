@@ -1,17 +1,23 @@
 import { Injectable } from "@nestjs/common";
+import amqp, { AmqpConnectionManager } from "amqp-connection-manager";
+import ChannelWrapper from "amqp-connection-manager/dist/types/ChannelWrapper";
 import * as amqplib from "amqplib";
 
 @Injectable()
 export class RabbitMQ {
+    connection: amqplib.Connection
     channel: amqplib.Channel
     //          CONFIGURACION Y CONEXION
     // Conectar a Rabbit y crear canal
     async connectRabbitMQ() {
-        return await amqplib.connect("amqp://rabbitmq", (error) => {
-            if (error) {
-                throw error;
-            }
-        })
+        if (this.connection == null || this.connection == undefined) {
+            this.connection = await amqplib.connect("amqp://rabbitmq")
+            this.channel = await this.connection.createChannel();
+        }
+        else {
+
+        }
+        return this.channel;
     }
 
 
@@ -20,68 +26,90 @@ export class RabbitMQ {
     //          ENVIAR MENSAJES ** Estos son los metodos que se usan
     //Enviar Mensaje a Cola
     async sendMessageToQueue(queue: string, msg: string) {
-        let connection=await this.connectRabbitMQ();
-        let channel=await connection.createChannel();
-        await channel.assertQueue(queue,{durable:false});
+        let connection = await this.connectRabbitMQ();
+        await this.channel.assertQueue(queue, { durable: false });
 
-        await channel.sendToQueue(queue, Buffer.from(msg));
+        await this.channel.sendToQueue(queue, Buffer.from(msg));
 
-        await channel.close();
-        await connection.close()
-        
+
+
     }
 
     //Enviar Mensaje a Exchange
-    async sendMessageToExchange(exchange: string,msg: string) {
-        let connection=await this.connectRabbitMQ();
-        let channel=await connection.createChannel();
+    async sendMessageToExchange(exchange: string, msg: string) {
+        let connection = await this.connectRabbitMQ();
 
-        await channel.assertExchange(exchange,'direct',{durable:false});
-        await channel.assertQueue("hhhh");
-        await channel.bindQueue("hhhh",exchange,"");
-        await channel.publish(exchange,'',Buffer.from(msg));
+
+        await this.channel.assertExchange(exchange,'fanout');
+        //await this.channel.assertQueue("zzzz");
+        //await this.channel.bindQueue("zzzz", exchange, "");
+        await this.channel.publish(exchange, '', Buffer.from(msg));
+
+
+
 
         //await connection.close();
     }
 
 
 
+    async bindQueueToExchange (queue:string,exchange:string) {
+        
+    }
 
 
 
     //           RECIBIR MENSAJES
     //Recibir Mensaje de cola Solo
-    async receiveMessageFromQueue(queue: string) :Promise<string> {
+    async receiveMessageFromQueue(queue: string) {
         let messageReceived: string;
-
-        let connection=await this.connectRabbitMQ();
-        let channel=await connection.createChannel();
-        channel.assertQueue(queue,{durable:false});
-
-        await channel.consume(queue, (msg) => {
-            messageReceived=msg.content.toString()
-        })
-
-        await channel.close();
-        await connection.close();
-        return messageReceived;
+        /*
+                let connection = await this.connectRabbitMQ();
+                let channel = await connection.createChannel({
+                    json: true,
+                    setup: async (channel: Channel) => {
+                        channel.assertQueue(queue, { durable: false });
+        
+                        await channel.consume(queue, (msg) => {
+                            messageReceived = msg.content.toString()
+                        })
+                    }
+                })
+        
+                await connection.close();
+                return messageReceived;
+                */
     }
 
     //Recibir Mensaje de Cola bindeada a Exchange
-    async receiveMessageFromQueueExchange(queue:string,exchange:string) {
+    async receiveMessageFromQueueExchange(queue: string, exchange: string) {
         let messageReceived: string;
-        let connection=await this.connectRabbitMQ();
-        let channel=await connection.createChannel();
+        //let data:any;
+        let connection = await this.connectRabbitMQ();
+        let channel=await this.connection.createChannel();
+        await channel.assertQueue(queue);
+        await channel.bindQueue(queue, exchange, "");
+        //data=await channel.get(queue,{noAck:true});
+        //console.log(data.content.toString());
         
-        //await channel.assertExchange(exchange,'direct',{durable:false});
-        //let q=await channel.assertQueue("",{exclusive:true});
-        //await channel.bindQueue(q.queue,exchange,"");
-
-        await channel.consume(queue,(msg)=>{
+        // Otro metodo para recibir un solo mensaje con consume y Ack Manual
+        //Si le pones noAck:true se pone en Automatico y prefetch no funciona.
+        await channel.prefetch(1);
+        await channel.consume(queue, (msg) => {
             messageReceived=msg.content.toString();
-        },{noAck:true})
+            channel.ack(msg);
+        },{noAck:false});
+        
 
-        await connection.close();
+        /*
+        
+        await channel.consume(queue, (msg) => {
+            console.log (msg.content.toString());
+            
+        },{noAck:true});
+        */
+        await channel.close();
+
         return messageReceived;
     }
 

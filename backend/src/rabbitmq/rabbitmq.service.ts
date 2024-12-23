@@ -38,12 +38,13 @@ export class RabbitMQ {
     //Enviar Mensaje a Exchange
     async sendMessageToExchange(exchange: string, msg: string) {
         let connection = await this.connectRabbitMQ();
+        let channel=await this.connection.createChannel();
 
-
-        await this.channel.assertExchange(exchange,'fanout');
+        await channel.assertExchange(exchange,'fanout');
         //await this.channel.assertQueue("zzzz");
         //await this.channel.bindQueue("zzzz", exchange, "");
-        await this.channel.publish(exchange, '', Buffer.from(msg));
+        await channel.publish(exchange, '', Buffer.from(msg));
+        await channel.close();
 
 
 

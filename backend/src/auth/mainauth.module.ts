@@ -13,7 +13,7 @@ import { JwtModule, JwtService } from "@nestjs/jwt";
     })],
     providers: [MainAuthGuard,AuthLoginService],
     controllers: [AuthLoginController],
-    exports: [MainAuthGuard],
+    exports: [MainAuthGuard,JwtModule],
 })
 
 export class MainAuthModule {}

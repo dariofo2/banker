@@ -6,6 +6,7 @@ import { UsersModule } from './controllers/users/users.module';
 import { MovementsModule } from './controllers/movements/movements.module';
 import { AccountsModule } from './controllers/accounts/accounts.module';
 import { JwtModule } from '@nestjs/jwt';
+import { WebSocketModule } from './websockets/websockets.module';
 
 @Module({
   imports: [
@@ -13,8 +14,8 @@ import { JwtModule } from '@nestjs/jwt';
     JwtModule,
     UsersModule,
     MovementsModule,
-    AccountsModule
-
+    AccountsModule,
+    WebSocketModule
   ],
   controllers: [AppController],
   providers: [AppService],

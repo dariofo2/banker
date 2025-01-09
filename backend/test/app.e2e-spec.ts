@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 
-describe('Banker e2e (End to End, EndPoints) SUPERTEST (Need DB and everything set up with Docker)\n Test is Done with username "test" and password: "abc123."', () => {
+describe('Banker e2e (End to End, EndPoints) SUPERTEST (Need DB and everything set up with Docker)\n Test is Done with username "test" and password: "abc123."\n DO IT WITH EMPTY NEW CREATED DATABASE!!**', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
@@ -69,7 +69,7 @@ describe('Banker e2e (End to End, EndPoints) SUPERTEST (Need DB and everything s
 
   // NOW START THE AUTH TESTS WITH BEARER TOKEN ACTIVE in .set
 
-  it('/account/create (POST)', () => {
+  it('/accounts/create (POST)', () => {
     return request(app.getHttpServer())
       .post('/accounts/create')
       .set("Authorization", authValue)
@@ -103,14 +103,12 @@ describe('Banker e2e (End to End, EndPoints) SUPERTEST (Need DB and everything s
 
   //  LIST ACCOUNTS AND MOVEMENTS
 
-  it('/account/list (POST)', () => {
+  it('/accounts/list (POST)', () => {
     return request(app.getHttpServer())
       .post('/movements/list')
       .set("Authorization", authValue)
       .send({
-        origin_account_id: 1,
-        destination_account_id: 1,
-        money:200
+        id:1
       })
       .expect(201)
       .expect(({ body }) => {
@@ -123,9 +121,7 @@ describe('Banker e2e (End to End, EndPoints) SUPERTEST (Need DB and everything s
       .post('/movements/list')
       .set("Authorization", authValue)
       .send({
-        origin_account_id: 1,
-        destination_account_id: 1,
-        money:200
+        origin_account_id:1
       })
       .expect(201)
       .expect(({ body }) => {
@@ -139,7 +135,7 @@ describe('Banker e2e (End to End, EndPoints) SUPERTEST (Need DB and everything s
     return request(app.getHttpServer())
       .post('/movements/delete')
       .set("Authorization", authValue)
-      .send({ id: 1 })
+      .send({ origin_account_id:1, destination_account_id:1 })
       .expect(201)
       .expect(({ body }) => {
 

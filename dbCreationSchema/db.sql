@@ -44,9 +44,9 @@ CREATE TRIGGER update_money_on_delete_movement
 AFTER DELETE ON movements
 FOR EACH ROW
 BEGIN
-    UPDATE accounts set balance=balance-deleted.money where deleted.destination_account_id=accounts.id;
-    if deleted.origin_account_id!=deleted.destination_account_id then
-    UPDATE accounts set balance=balance+deleted.money where deleted.origin_account_id=accounts.id;
+    UPDATE accounts set balance=balance-old.money where old.destination_account_id=accounts.id;
+    if old.origin_account_id!=old.destination_account_id then
+    UPDATE accounts set balance=balance+old.money where old.origin_account_id=accounts.id;
     end if;
 END; $$
 

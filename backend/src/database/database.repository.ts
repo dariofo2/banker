@@ -165,7 +165,8 @@ export class DatabaseRepository {
         if (checkAccountUser != undefined && checkAccountUser != null) {
             let delStatus=await this.movementsRepository.delete({
                 id: id,
-                origin_account_id: originAcc
+                origin_account_id: originAcc,
+                destination_account_id:destinationAcc
             })
 
             await this.datasource.queryResultCache.remove([`movements${originAcc}`]);

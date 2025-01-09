@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 
-describe('Banker e2e (End to End, EndPoints) SUPERTEST (Need DB and everything set up with Docker)\n Test is Done with username "test" and password: "abc123."\n DO IT WITH EMPTY NEW CREATED DATABASE!!**', () => {
+describe('Banker e2e (End to End, EndPoints) SUPERTEST (Need DB and everything set up with Docker)\n Test is Done with username "test" and password: "abc123."\n DO IT WITH EMPTY NEW CREATED DATABASE!!**\n **Use in the Docker Exec Instance of Transaction Docker!!', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
@@ -135,7 +135,7 @@ describe('Banker e2e (End to End, EndPoints) SUPERTEST (Need DB and everything s
     return request(app.getHttpServer())
       .post('/movements/delete')
       .set("Authorization", authValue)
-      .send({ origin_account_id:1, destination_account_id:1 })
+      .send({ origin_account_id:1, id:1, destination_account_id:1 })
       .expect(201)
       .expect(({ body }) => {
 

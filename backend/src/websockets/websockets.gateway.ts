@@ -34,7 +34,6 @@ export class WebsocketsGateway implements OnGatewayInit, OnGatewayConnection, On
       let userexchange=`exchange${user.id}`;
 
       //Connect RabbitMQ
-      await this.rabbitmq.connectRabbitMQ();
       let channel = await this.rabbitmq.connection.createChannel();
       //Add Connection to Array of Connections
       this.connections.push(new Connection(user.id,client.id,channel))

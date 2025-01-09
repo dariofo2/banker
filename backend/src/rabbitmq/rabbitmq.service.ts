@@ -1,34 +1,34 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, OnApplicationBootstrap, OnApplicationShutdown } from "@nestjs/common";
 import amqp, { AmqpConnectionManager } from "amqp-connection-manager";
 import ChannelWrapper from "amqp-connection-manager/dist/types/ChannelWrapper";
 import * as amqplib from "amqplib";
 
 @Injectable()
-export class RabbitMQ {
-    connection: amqplib.Connection
-    channel: amqplib.Channel
+export class RabbitMQ implements OnApplicationBootstrap,OnApplicationShutdown{
+    connection: amqplib.Connection;
+    channel: amqplib.Channel;
     //          CONFIGURACION Y CONEXION
     // Conectar a Rabbit y crear canal
+    async onApplicationBootstrap() {
+        await this.connectRabbitMQ();
+    }
+
+    async onApplicationShutdown(signal?: string) {
+        await this.channel.close();
+        await this.connection.close();
+    }
+
     async connectRabbitMQ() {
         if (this.connection == null || this.connection == undefined) {
             this.connection = await amqplib.connect("amqp://rabbitmq")
             this.channel = await this.connection.createChannel();
         }
-        else {
-
-        }
-        return this.channel;
     }
-
-
-
 
     //          ENVIAR MENSAJES ** Estos son los metodos que se usan
     //Enviar Mensaje a Cola
     async sendMessageToQueue(queue: string, msg: string) {
-        let connection = await this.connectRabbitMQ();
         await this.channel.assertQueue(queue, { durable: false });
-
         await this.channel.sendToQueue(queue, Buffer.from(msg));
 
 
@@ -37,27 +37,9 @@ export class RabbitMQ {
 
     //Enviar Mensaje a Exchange
     async sendMessageToExchange(exchange: string, msg: string) {
-        let connection = await this.connectRabbitMQ();
-        let channel=await this.connection.createChannel();
-
-        await channel.assertExchange(exchange,'fanout');
-        //await this.channel.assertQueue("zzzz");
-        //await this.channel.bindQueue("zzzz", exchange, "");
-        await channel.publish(exchange, '', Buffer.from(msg));
-        await channel.close();
-
-
-
-
-        //await connection.close();
+        await this.channel.assertExchange(exchange,'fanout');
+        await this.channel.publish(exchange, '', Buffer.from(msg));
     }
-
-
-
-    async bindQueueToExchange (queue:string,exchange:string) {
-        
-    }
-
 
 
     //           RECIBIR MENSAJES

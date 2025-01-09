@@ -19,7 +19,7 @@ export class MovementsController{
 
     @Post('delete')
     async deleteMovement(@Req() req) {
-        let delResult= await this.movementsService.deleteMovement(req)
+        let delResult= await this.movementsService.deleteMovement(req.user.id,req.body.origin_account_id,req.body.id,req.body.destination_account_id)
         if (!delResult) throw new BadRequestException;
     }
 

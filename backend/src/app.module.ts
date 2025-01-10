@@ -11,7 +11,6 @@ import { WebSocketModule } from './websockets/websockets.module';
 @Module({
   imports: [
     DatabaseModule,
-    JwtModule,
     UsersModule,
     MovementsModule,
     AccountsModule,

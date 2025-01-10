@@ -53,7 +53,7 @@ export class DatabaseRepository {
         }
     }
 
-    async createMovement(userid: number, originAcc: number, destinationAcc: number, money: number) {
+    async createMovement(userid: number, originAcc: number, destinationAcc: number, money: number,userDestinationId:number) {
         try {
             await this.movementsRepository.insert({
                 origin_account_id: originAcc,
@@ -62,8 +62,12 @@ export class DatabaseRepository {
             })
 
             await this.datasource.queryResultCache.remove([`movements${originAcc}`]);
-            await this.datasource.queryResultCache.remove([`movements${destinationAcc}`])
-
+            await this.datasource.queryResultCache.remove([`movements${destinationAcc}`]);
+            await this.datasource.queryResultCache.remove([`account${destinationAcc}`]);
+            await this.datasource.queryResultCache.remove([`account${originAcc}`]);
+            await this.datasource.queryResultCache.remove([`accounts${userid}`]);
+            await this.datasource.queryResultCache.remove([`accounts${userDestinationId}`]);
+            
             return true;
         } catch {
             return false;
@@ -161,7 +165,7 @@ export class DatabaseRepository {
         else return true;
     }
 
-    async deleteMovementById(userid: number, originAcc: number, id: number, destinationAcc: number): Promise<boolean> {
+    async deleteMovementById(userid: number, originAcc: number, id: number, destinationAcc: number, userDestinationId: number): Promise<boolean> {
         let delStatus = await this.movementsRepository.delete({
             id: id,
             origin_account_id: originAcc,
@@ -169,8 +173,11 @@ export class DatabaseRepository {
         })
 
         await this.datasource.queryResultCache.remove([`movements${originAcc}`]);
-        await this.datasource.queryResultCache.remove([`movements${destinationAcc}`])
-
+        await this.datasource.queryResultCache.remove([`movements${destinationAcc}`]);
+        await this.datasource.queryResultCache.remove([`account${destinationAcc}`]);
+        await this.datasource.queryResultCache.remove([`account${originAcc}`]);
+        await this.datasource.queryResultCache.remove([`accounts${userid}`]);
+            await this.datasource.queryResultCache.remove([`accounts${userDestinationId}`]);
         if (delStatus.affected == 0) return false;
         else return true;
     }

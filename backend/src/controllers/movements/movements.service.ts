@@ -12,9 +12,10 @@ export class MovementsService {
     async createMovement(userid: number, originAccount: number, destinationAccount: number, money: number) {
         let searchUserandAcc = await this.database.selectAccountById(userid, originAccount);
         if (searchUserandAcc != null && searchUserandAcc != undefined) {
-            let isDone = await this.database.createMovement(userid, originAccount, destinationAccount, money);
+            let userDestinationId = await this.database.selectUseridFromAccountId(destinationAccount);
+            let isDone = await this.database.createMovement(userid, originAccount, destinationAccount, money, userDestinationId);
             if (isDone) {
-                let userDestinationId = await this.database.selectUseridFromAccountId(destinationAccount);
+                
                 await this.rabbitMq.channel.assertExchange(`exchange${userDestinationId}`, "fanout");
                 await this.rabbitMq.channel.publish(`exchange${userDestinationId}`, "", Buffer.from(
                     `{'origin_account_id':'${originAccount}','destination_account_id':'${destinationAccount}','money':'${money}'}`
@@ -36,7 +37,8 @@ export class MovementsService {
     async deleteMovement(userid: number, originAccount: number, id: number, destinationAccount: number) {
         let searchUserandAcc = await this.database.selectAccountById(userid,originAccount);
         if (searchUserandAcc != null && searchUserandAcc != undefined) {
-            return await this.database.deleteMovementById(userid, originAccount, id, destinationAccount);
+            let userDestinationId = await this.database.selectUseridFromAccountId(destinationAccount);
+            return await this.database.deleteMovementById(userid, originAccount, id, destinationAccount,userDestinationId);
         }
     }
 }

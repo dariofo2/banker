@@ -1,17 +1,23 @@
-import axios from "axios";
+import axios, { AxiosHeaders, AxiosResponseHeaders } from "axios";
+import Cookies from "js-cookie";
 
 export class RequestObject {
-    headers = {
-        "Content-Type":"application/json",
-        "authorization":"",
-    }
+    headers:AxiosHeaders=new AxiosHeaders;
 
     constructor (jwtToken:string="") {
         this.headers.authorization=jwtToken;
+        this.headers["Content-Type"]="application/json";
     }
     
 }
 
+export class Account {
+    id:number=0;
+    userid:number=0;
+    name:string="";
+    type:string="";
+    balance: number=0;
+}
 export class UserLoginFetch {
     id:number;
     name:string;
@@ -28,14 +34,25 @@ export class UserLoginFetch {
     }
 }
 export class axiosFetchs {
-    async fetchLogin (username:string|undefined,password:string|undefined) : Promise<UserLoginFetch>{
+    async fetchLogin (username:string,password:string) : Promise<UserLoginFetch>{
         let reqObject=new RequestObject();
         let response= await axios.post(
             "http://localhost:3000/login/login",
             {name:username,password:password},
             reqObject
         );
-        let userLoginFetch:UserLoginFetch = await response.data
+        let userLoginFetch:UserLoginFetch = await response.data;
         return userLoginFetch;
+    }
+    async fetchAccounts () : Promise<Account[]> {
+        let reqObject=new RequestObject(Cookies.get("access_token"));
+        let response= await axios.post(
+            "http://localhost:3000/accounts/lists",
+            {},
+            reqObject
+        );
+        let accountsFetch:Account[]=response.data;
+        console.log(accountsFetch);
+        return accountsFetch;
     }
 }

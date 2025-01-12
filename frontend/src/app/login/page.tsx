@@ -1,5 +1,5 @@
 "use client"
-import { axiosFetchs,UserLoginFetch } from "@/components/axios";
+import { axiosFetchs,User } from "@/components/axios";
 import { useState } from "react";
 import Cookies from "js-cookie"
 
@@ -12,28 +12,20 @@ export default function LoginPage () {
     const [success,setsuccess]=useState("");
 
     async function sendLogin (name:string,password:string) {
-        try {
-        let userloginfetch:UserLoginFetch=await axios.fetchLogin(name,password);
+        let userloginfetch:Boolean=await axios.fetchLogin(name,password);
 
-        setUserCookies(userloginfetch);
+        //setUserCookies(userloginfetch);
 
         console.log(Cookies.get("access_token"));
-        setsuccess("Login Correcto!");
-        
-        return userloginfetch; 
-        } catch {
-            console.log("Error en Login");
+        if (userloginfetch) {
+            seterror("");
+            setsuccess("Login Correcto!");
+        } else {
             seterror("Error en Login. Usuario o Contraseña Incorrectos");
-        } 
+        }
+        
+       
     }
-
-    function setUserCookies (userloginfetch:UserLoginFetch) {
-        Cookies.set("id",userloginfetch.id.toString());
-        Cookies.set("name",userloginfetch.name);
-        Cookies.set("email",userloginfetch.email);
-        Cookies.set("access_token","Bearer " + userloginfetch.access_token);
-    }
-
 
     return (
         <div className="loginMenu text-center">

@@ -15,7 +15,7 @@ import { DatabaseRepository } from "./database.repository";
             password:'abc123.',
             database: 'banker',
             entities: [Users,Accounts,Movements],
-            synchronize: false,
+            synchronize: true,
             cache: {
                 type:"redis",
                 options: {

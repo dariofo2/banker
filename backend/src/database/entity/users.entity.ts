@@ -1,8 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Accounts } from "./accounts.entity";
 
 @Entity()
 export class Users {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn('increment')
     id: number;
 
     @Column()
@@ -13,4 +14,7 @@ export class Users {
 
     @Column()
     email: string;
+
+    @OneToMany(type => Accounts, acc => acc.id)
+    accounts: Accounts[];
 }

@@ -1,5 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+/**
+ * @author Alejandro Darío Fuentefría Oróns
+ */
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

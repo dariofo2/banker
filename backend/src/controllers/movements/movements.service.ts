@@ -11,6 +11,9 @@ export class MovementsService {
 
     async createMovement(userid: number, originAccount: number, destinationAccount: number, money: number) {
         //Check if origin account is from the user
+        let isDone = await this.database.createMovement(userid, originAccount, destinationAccount, money,destinationAccount);
+
+        /*
         let searchUserandAcc = await this.database.selectAccountById(userid, originAccount);
         
         if (searchUserandAcc != null && searchUserandAcc != undefined) {
@@ -28,26 +31,32 @@ export class MovementsService {
             } else return false;
 
         } else return false;
-
+        */
     }
 
     async listMovements(userid: number, originAccount: number) {
         //Check if origin account is from the User
+        /*
         let searchUserandAcc = await this.database.selectAccountById(userid, originAccount);
         if (searchUserandAcc != null && searchUserandAcc != undefined) {
             //Get List of Movements of this Account
-            return await this.database.selectMovementsFromAccountId(userid, originAccount);
+            
         } else return false;
+         */
+        return await this.database.selectMovementsFromAccountId(userid, originAccount);
 
     }
 
     async deleteMovement(userid: number, originAccount: number, id: number, destinationAccount: number) {
         //Check if origin Account is from the user
+        /*
         let searchUserandAcc = await this.database.selectAccountById(userid,originAccount);
         if (searchUserandAcc != null && searchUserandAcc != undefined) {
             //Try to Delete the Movement
             let userDestinationId = await this.database.selectUseridFromAccountId(destinationAccount);
             return await this.database.deleteMovementById(userid, originAccount, id, destinationAccount,userDestinationId);
         } else return false;
+        */
+        return await this.database.deleteMovementById(userid, originAccount, id, destinationAccount,1);
     }
 }

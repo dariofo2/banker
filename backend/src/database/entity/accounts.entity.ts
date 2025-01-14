@@ -1,12 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Users } from "./users.entity";
+import { Movements } from "./movements.entity";
 
 @Entity()
 export class Accounts {
     @PrimaryGeneratedColumn()
     id: number;
-
-    @Column()
-    userid: number;
 
     @Column()
     name: string;
@@ -16,4 +15,13 @@ export class Accounts {
 
     @Column()
     balance: number;
+
+    @ManyToOne(() => Users,(user)=>user.id)
+    user: Users;
+
+    @OneToMany(type=>Movements,mov=>mov.originAccount)
+    originAccounts: Movements[];
+
+    @OneToMany(type=>Movements,mov=>mov.destinationAccount)
+    destinationAccounts: Movements[]
 }

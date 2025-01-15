@@ -14,7 +14,7 @@ export class MovementsController{
     @Post('create')
     async createMovement (@Req() req) {
         let res=await this.movementsService.createMovement(req.user.id,req.body.origin_account_id,req.body.destination_account_id,req.body.money);
-        //if (!res) throw new BadRequestException;
+        if (!res) throw new BadRequestException;
     }
 
     @Post('delete')

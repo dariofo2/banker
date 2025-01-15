@@ -8,8 +8,8 @@ export class AccountsService {
         private databaseRepository: DatabaseRepository
     ) {}
 
-    async createAccount (userid:number,name:string,type:string,balance:number) {
-        return await this.databaseRepository.createAccount(userid,name,type,balance);
+    async createAccount (userid:number,name:string,type:string) {
+        return await this.databaseRepository.createAccount(userid,name,type);
     }
 
     async deleteAccount (userid:number, id:number) {

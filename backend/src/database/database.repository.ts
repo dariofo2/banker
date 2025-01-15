@@ -24,7 +24,7 @@ export class DatabaseRepository {
      * @returns string
      */
 
-    async createUser(name: string, password: string, email: string) {
+    async createUser(name: string, password: string, email: string): Promise<boolean> {
         try {
             let result = await this.usersRepository.insert({
                 name: name,
@@ -38,14 +38,7 @@ export class DatabaseRepository {
 
     }
 
-    async createAccount(userid: number, name: string, type: string, balance: number) {
-        let account = new Accounts();
-        account.user = new Users();
-        account.user.id = userid;
-        account.name = name;
-        account.type = type;
-        account.balance = balance;
-
+    async createAccount(userid: number, name: string, type: string): Promise<boolean> {
         try {
             await this.accountsRepository.insert({
                 user: {
@@ -53,7 +46,7 @@ export class DatabaseRepository {
                 },
                 name: name,
                 type: type,
-                balance: balance
+                balance: 0
             }
 
             );
@@ -66,15 +59,11 @@ export class DatabaseRepository {
         }
     }
 
-    async createMovement(userid: number, originAcc: number, destinationAcc: number, money: number, userDestinationId: number) {
-        
+    async createMovement(userid: number, originAcc: number, destinationAcc: number, money: number, userDestinationId: number): Promise<Movements> {
         try {
-            await this.movementsRepository.insert({
+            let test = await this.movementsRepository.insert({
                 originAccount: {
                     id: originAcc,
-                    user: {
-                        id: userid
-                    }
                 },
                 destinationAccount: {
                     id: destinationAcc,
@@ -90,9 +79,9 @@ export class DatabaseRepository {
             await this.datasource.queryResultCache.remove([`accounts${userid}`]);
             await this.datasource.queryResultCache.remove([`accounts${userDestinationId}`]);
 
-            return true;
+            return <Movements>test.generatedMaps[0];
         } catch {
-            return false;
+            return undefined;
         }
     }
 
@@ -119,7 +108,9 @@ export class DatabaseRepository {
     async selectAccountsByUserId(userid: number): Promise<Accounts[]> {
         let response = await this.accountsRepository.find({
             where: {
-                user: Equal(userid)
+                user: {
+                    id: Equal(userid)
+                }
             },
             cache: {
                 id: `accounts${userid}`,
@@ -146,29 +137,37 @@ export class DatabaseRepository {
         });
     }
 
-    async selectUseridFromAccountId(accountid: number): Promise<number> {
+    async selectUserFromAccountId(accountid: number): Promise<Users> {
         let response = await this.accountsRepository.findOne({
-            where: { id: Equal(accountid) }
+            select: {
+                user: {
+                    id: true,
+                    name: true
+                }
+            },
+            where: { id: Equal(accountid) },
+            relations: {
+                user: true
+            }
         })
-        console.log(response.user.id);
-        return response.user.id;
+        return response.user;
     }
 
     async selectMovementsFromAccountId(userid: number, accountid: number): Promise<Movements[]> {
         let response = await this.movementsRepository.find({
             select: {
-                originAccount:{
-                    id:true,
-                    name:true,
-                    user:{
-                        name:true
+                originAccount: {
+                    id: true,
+                    name: true,
+                    user: {
+                        name: true
                     }
                 },
-                destinationAccount:{
-                    id:true,
-                    name:true,
-                    user:{
-                        name:true
+                destinationAccount: {
+                    id: true,
+                    name: true,
+                    user: {
+                        name: true
                     }
                 }
             },
@@ -177,20 +176,20 @@ export class DatabaseRepository {
                     originAccount: {
                         id: Equal(accountid),
                         user: {
-                            id:Equal(userid)
+                            id: Equal(userid)
                         }
                     }
                 },
                 {
                     destinationAccount: {
                         id: Equal(accountid),
-                        user:{
-                            id:Equal(userid)
+                        user: {
+                            id: Equal(userid)
                         }
                     }
                 }
             ],
-            relations: {originAccount:{user:true},destinationAccount:{user:true}},
+            relations: { originAccount: { user: true }, destinationAccount: { user: true } },
             order: {
                 id: "DESC"
             },
@@ -203,6 +202,38 @@ export class DatabaseRepository {
 
 
 
+    }
+
+
+    async get1Movement(id: number): Promise<Movements> {
+        let movement = await this.movementsRepository.findOne({
+            select: {
+                originAccount: {
+                    id: true,
+                    user: {
+                        name: true
+                    }
+                },
+                destinationAccount: {
+                    id: true,
+                    user: {
+                        name: true
+                    }
+                }
+            },
+            where: {
+                id: Equal(id)
+            },
+            relations: {
+                originAccount: {
+                    user: true
+                },
+                destinationAccount: {
+                    user: true
+                }
+            }
+        })
+        return movement;
     }
 
 
@@ -237,18 +268,20 @@ export class DatabaseRepository {
     async deleteMovementById(userid: number, originAcc: number, id: number, destinationAcc: number, userDestinationId: number): Promise<boolean> {
         let selectedMovement = await this.movementsRepository.findOne({
             where: {
-                id:id,
-                originAccount:{
-                    id:originAcc,
+                id: Equal(id),
+                originAccount: {
+                    id: Equal(originAcc),
                     user: {
-                        id: userid
+                        id: Equal(userid)
                     }
                 },
                 destinationAccount: {
-                    id:destinationAcc
+                    id: Equal(destinationAcc)
                 }
             }
         });
+
+        if (selectedMovement == undefined || selectedMovement == null) return false;
 
         let delStatus = await this.movementsRepository.delete(selectedMovement.id);
 

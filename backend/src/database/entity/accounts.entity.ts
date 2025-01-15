@@ -20,8 +20,8 @@ export class Accounts {
     user: Users;
 
     @OneToMany(type=>Movements,mov=>mov.originAccount)
-    originAccounts: Movements[];
+    originMovements: Movements[];
 
     @OneToMany(type=>Movements,mov=>mov.destinationAccount)
-    destinationAccounts: Movements[]
+    destinationMovements: Movements[]
 }

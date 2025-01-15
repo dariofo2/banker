@@ -12,7 +12,7 @@ export class AccountsController {
     //solo puede el user que se ha loggeado con ese token.
     @Post('create')
     async createAccount(@Req() req) {
-        let response=await this.accountsService.createAccount(req.user.id, req.body.name, req.body.type, req.body.balance);
+        let response=await this.accountsService.createAccount(req.user.id, req.body.name, req.body.type);
         if (!response) throw new BadRequestException;
     }
 

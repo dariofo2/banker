@@ -21,14 +21,16 @@ export class UsersController {
     @Post('create')
     async createUser (@Body() body ,@Req() req) {
         let insertresult=await this.usersService.createUser(body.name,body.password,body.email)
-        if (!insertresult) throw new BadRequestException;
+        if (insertresult) return "{'message':'Usuario Creado Correctamente'";
+        else throw new BadRequestException;
     }
 
     @UseGuards(MainAuthGuard)
     @Post('delete')
     async deleteUser (@Body() body: Users,@Req() req) {
         let delresult=await this.usersService.deleteUser(req.user.id);
-        if (!delresult) throw new BadRequestException;
+        if (!delresult) return "{'message':'Usuario Eliminado Correctamente'}";
+        else throw new BadRequestException;
     }
 
     @UseGuards(MainAuthGuard)
@@ -36,6 +38,7 @@ export class UsersController {
     updateUser (@Req() req) {
         let updatedUser=this.usersService.updateUser(req);
         if (updatedUser==null || updatedUser==undefined) throw new BadRequestException; 
+        else return "{'message':'Usuario Actualizado Correctamente'}";
     }
 
     @Post('rabbitmqsend')

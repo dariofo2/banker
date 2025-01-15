@@ -298,13 +298,12 @@ export class DatabaseRepository {
 
     //              UPDATE QUERIES
     async updateUser(id: number, name: string, password: string, email: string) {
-        let user = new Users();
-        user.id = id;
-        user.name = name;
-        user.password = password;
-        user.email = email;
-
-        return await this.usersRepository.save(user);
+        return await this.usersRepository.save({
+            id:id,
+            name:name,
+            password:password,
+            email:email
+        });
     }
 
 

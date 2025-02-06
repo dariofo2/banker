@@ -1,11 +1,12 @@
 "use client"
 import { axiosFetchs,User } from "@/components/axios";
 import { useState } from "react";
-import Cookies from "js-cookie"
+import Cookies from "js-cookie";
+
 
 let axios=new axiosFetchs();
 
-export default function LoginPage () {
+export default function LoginComponent () {
     const [username,setusername] = useState("");
     const [password,setpassword] = useState("");
     const [error,seterror]= useState("");

@@ -172,7 +172,7 @@ export class axiosFetchs {
         }
     }
 
-    async fetchMovements () {
-        
+    async fetchMovements (): Promise<Movement[]> {
+        return [];
     }
 }

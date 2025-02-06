@@ -15,8 +15,7 @@ export class MovementsController{
     async createMovement (@Req() req) {
         let res=await this.movementsService.createMovement(req.user.id,req.body.origin_account_id,req.body.destination_account_id,req.body.money);
 
-        if (res) return "Movimiento Creado Correctamente";
-        else throw new BadRequestException;
+        if (!res) throw new BadRequestException;
     }
 
     @Post('delete')
@@ -24,15 +23,13 @@ export class MovementsController{
         let delResult= await this.movementsService.deleteMovement(req.user.id,req.body.origin_account_id,req.body.id,req.body.destination_account_id)
 
         if (!delResult) throw new BadRequestException;
-        else return "Movimiento Eliminado Correctamente";
     }
 
     @Post('list')
     async listMovement(@Req() req) : Promise<false|Movements[]> {
         let selectResult=await this.movementsService.listMovements(req.user.id,req.body.origin_account_id); 
 
-        if (selectResult==false) return selectResult;
-        else throw new BadRequestException; 
+        return selectResult;
     }
 
 }

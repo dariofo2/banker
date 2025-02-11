@@ -4,7 +4,7 @@ import { useState } from "react";
 import Cookies from "js-cookie";
 
 
-let axios=new axiosFetchs();
+const axios=new axiosFetchs();
 
 export default function LoginComponent () {
     const [username,setusername] = useState("");

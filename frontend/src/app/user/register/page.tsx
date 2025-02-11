@@ -1,6 +1,6 @@
 "use client"
 
-import RegisterComponent from "@/components/userRegister/registerComponent";
+import RegisterComponent from "@/components/register/registerComponent";
 
 export default function register () {
     return (

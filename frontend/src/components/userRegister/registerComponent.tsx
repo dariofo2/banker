@@ -1,6 +1,8 @@
 "user client"
 
 import { useState } from "react";
+import { axiosFetchs } from "../axios";
+const axios=new axiosFetchs();
 
 export default function RegisterComponent() {
     const [nombre, setNombre] = useState("");
@@ -9,11 +11,15 @@ export default function RegisterComponent() {
     const [password, setPassword] = useState("");
     function sendRegister(e: Event) {
         e.preventDefault();
-
+        axios.createUser(nombre,password,email);
     }
     return (
         <div>
-            <form className="text-center" onSubmit={(e) => { }}>
+            <form className="text-center" onSubmit={(event) => {
+                let e:Event;
+                e=event;
+                sendRegister(e);
+            }}>
                 <h1>Register</h1>
                 <label htmlFor="Nombre">Nombre</label>
                 <br></br>

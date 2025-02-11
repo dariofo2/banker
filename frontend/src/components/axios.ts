@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosHeaders, AxiosResponse, AxiosResponseHeaders } from "axios";
+import axios, { Axios, AxiosError, AxiosHeaders, AxiosResponse, AxiosResponseHeaders } from "axios";
 import Cookies from "js-cookie";
 
 export class RequestObject {
@@ -18,12 +18,12 @@ export class Account {
     type: string = "";
     balance: number = 0;
 
-    constructor () {
-        this.id=-1;
-        this.userid=-1
-        this.name="";
-        this.type="";
-        this.balance=0;
+    constructor() {
+        this.id = -1;
+        this.userid = -1
+        this.name = "";
+        this.type = "";
+        this.balance = 0;
     }
 }
 
@@ -69,13 +69,15 @@ export class axiosFetchs {
         try {
             let reqObject = new RequestObject();
             let userLoginFetch: User;
+
             let response = await axios.post(
                 "http://localhost:3000/login/login",
                 { name: username, password: password },
                 reqObject
             );
+
             userLoginFetch = <User>await response.data;
-            this.SetcookiesAtLogin(userLoginFetch);
+            await this.SetcookiesAtLogin(userLoginFetch);
             return true;
         } catch {
             this.logoutRemoveCookies();
@@ -99,9 +101,9 @@ export class axiosFetchs {
         Cookies.remove("access_token");
     }
 
-    async reloadJWTTokenAfter401Error (error:AxiosError):Promise<any> {
+    async reloadJWTTokenAfter401Error(error: AxiosError): Promise<any> {
         if (error.status == 401) {
-            let login=await this.fetchLogin(<string>Cookies.get("name"),<string>Cookies.get("password"));
+            let login = await this.fetchLogin(<string>Cookies.get("name"), <string>Cookies.get("password"));
             if (login) {
                 window.location.reload();
             } else {
@@ -112,32 +114,125 @@ export class axiosFetchs {
 
 
 
-    async createUser(): Promise<boolean>{
+    async createUser(name: string, password:string, email:string): Promise<boolean> {
+        let reqObject = new RequestObject(Cookies.get("access_token"));
+        axios.post(
+            "http://localhost:3000/user/create",
+            {
+                name: name,
+                password: password,
+                email: email,
+            },
+            reqObject
+        )
         return true;
     }
 
-    async removeUser(): Promise<boolean>{
+    async removeUser(id: number): Promise<boolean> {
+        let reqObject = new RequestObject(Cookies.get("access_token"));
+        try {
+            await axios.post(
+                "http://localhost:3000/user/delete",
+                { id: id },
+                reqObject
+            )
+            return true;
+        } catch (error) {
+            this.reloadJWTTokenAfter401Error(<AxiosError>error);
+            return false;
+        }
+        
+    }
+
+    async updateUser(name:string,email:string,password:string) {
+        let reqObject = new RequestObject(Cookies.get("access_token"));
+        try {
+            await axios.post(
+                "http://localhost:3000/user/update",
+                {
+                    name:name,
+                    email:email,
+                    password:password
+                },
+                reqObject
+            )
+            return true;
+        } catch (error) {
+            this.reloadJWTTokenAfter401Error(<AxiosError>error);
+            return false;
+        }
+        
+    }
+
+    async createAccount(name:string,type:string): Promise<boolean> {
+        let reqObject = new RequestObject(Cookies.get("access_token"));
+        try {
+            await axios.post(
+                "http://localhost:3000/account/create",
+                {
+                    name:name,
+                    type:type,
+                },
+                reqObject
+            )
+            return true;
+        } catch (error) {
+            this.reloadJWTTokenAfter401Error(<AxiosError>error);
+            return false;
+        }
+    }
+
+    async removeAccount(id:number): Promise<boolean> {
+        let reqObject = new RequestObject(Cookies.get("access_token"));
+        try {
+            await axios.post(
+                "http://localhost:3000/account/delete",
+                {
+                    id:id
+                },
+                reqObject
+            )
+            return true;
+        } catch (error) {
+            this.reloadJWTTokenAfter401Error(<AxiosError>error);
+            return false;
+        }
+    }
+
+    async createMovement(origin_account_id:number,destination_account_id:number,money:number): Promise<boolean> {
+        let reqObject = new RequestObject(Cookies.get("access_token"));
+        try {
+            await axios.post(
+                "http://localhost:3000/movement/create",
+                {
+                    origin_account_id:origin_account_id,
+                    destination_account_id:destination_account_id,
+                    money:money
+                },
+                reqObject
+            )
+            return true;
+        } catch (error) {
+            this.reloadJWTTokenAfter401Error(<AxiosError>error);
+            return false;
+        }
         return true;
     }
 
-    async updateUser() {
+    async removeMovement(id: number): Promise<boolean> {
+        let reqObject = new RequestObject(Cookies.get("access_token"));
+        try {
+            let response = await axios.post(
+                "http://localhost:3000/movement/delete",
+                { id: id },
+                reqObject
+            )
+            return true;
+        } catch (error) {
+            this.reloadJWTTokenAfter401Error(<AxiosError>error);
+            return false;
+        }
 
-    }
-
-    async createAccount(): Promise<boolean>{
-        return true;
-    }
-
-    async removeAccount(): Promise<boolean>{
-        return true;
-    }
-
-    async createMovement(): Promise<boolean>{
-        return true;
-    }
-
-    async removeMovement(): Promise<boolean>{
-        return true;
     }
     async fetchAccounts(): Promise<Account[]> {
         try {
@@ -157,12 +252,12 @@ export class axiosFetchs {
         }
     }
 
-    async fetchAccount(id:number): Promise<Account> {
+    async fetchAccount(id: number): Promise<Account> {
         try {
             let reqObject = new RequestObject(Cookies.get("access_token"));
             let response = await axios.post(
                 "http://localhost:3000/accounts/list",
-                {id:id},
+                { id: id },
                 reqObject
             );
             return <Account>response.data;
@@ -172,7 +267,7 @@ export class axiosFetchs {
         }
     }
 
-    async fetchMovements (): Promise<Movement[]> {
+    async fetchMovements(): Promise<Movement[]> {
         return [];
     }
 }

@@ -1,4 +1,4 @@
-export default function AccountComponent () {
+export default function Account () {
     return (
         <div>
             

@@ -11,7 +11,6 @@ import { cookies } from "next/headers";
 
 export default function MainPage() {
     let cookieStore: ReadonlyRequestCookies;
-
     //GETS THE COOKIE FROM SERVER (IT's Always sent by Client on HTTP Request,
     //On the page which were Set, in this case this Next.js Server by default)
 

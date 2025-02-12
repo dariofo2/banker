@@ -12,32 +12,36 @@ export class RequestObject {
 }
 
 export class Account {
-    id: number = 0;
-    userid: number = 0;
-    name: string = "";
-    type: string = "";
-    balance: number = 0;
+    id: number;
+    user: User;
+    name: string;
+    type: string;
+    originMovements: Movement[];
+    destinationMovements: Movement[];
+    balance: number;
 
-    constructor() {
-        this.id = -1;
-        this.userid = -1
-        this.name = "";
-        this.type = "";
-        this.balance = 0;
+    constructor(id:number,user:User,name:string,type:string,originMovements:Movement[],destinationMovements:Movement[],balance:number) {
+        this.id = id;
+        this.user = user
+        this.name = name;
+        this.type = type;
+        this.originMovements=originMovements;
+        this.destinationMovements=destinationMovements;
+        this.balance = balance;
     }
 }
 
 export class Movement {
     id: number;
-    origin_account_id: number;
-    destination_account_id: number;
+    originAccount: Account;
+    destinationAccount: Account;
     money: number;
 
-    constructor() {
-        this.id = -1;
-        this.origin_account_id = -1;
-        this.destination_account_id = -1;
-        this.money = 0;
+    constructor(id:number,originAccount:Account,destinationAccount:Account,money:number) {
+        this.id = id;
+        this.originAccount = originAccount;
+        this.destinationAccount = destinationAccount;
+        this.money = money;
     }
 }
 export class User {
@@ -45,15 +49,14 @@ export class User {
     name: string;
     email: string;
     password: string;
-    access_token: string;
+    access_token?:string;
 
-    constructor() {
-        this.id = -1;
-        this.name = "";
-        this.email = "";
-        this.password = "";
-        this.access_token = "";
-
+    constructor(id:number,name:string,email:string,password:string,access_token:string) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.access_token= access_token;
     }
 }
 
@@ -252,22 +255,37 @@ export class axiosFetchs {
         }
     }
 
-    async fetchAccount(id: number): Promise<Account> {
+    async setAccountIdCookie (accountId:number) {
+        Cookies.set("accountId",accountId.toString());
+    }
+    
+    async fetchAccount(accountId: number): Promise<Account> {
         try {
             let reqObject = new RequestObject(Cookies.get("access_token"));
             let response = await axios.post(
                 "http://localhost:3000/accounts/list",
-                { id: id },
+                { id: accountId },
                 reqObject
             );
             return <Account>response.data;
         } catch (error) {
             this.reloadJWTTokenAfter401Error(<AxiosError>error);
-            return new Account();
+            return {} as Account;
         }
     }
 
-    async fetchMovements(): Promise<Movement[]> {
-        return [];
+    async fetchMovements(accountId:number): Promise<Movement[]> {
+        try {
+            let reqObject = new RequestObject(Cookies.get("access_token"));
+            let response = await axios.post(
+                "http://localhost:3000/movements/list",
+                { origin_account_id: accountId },
+                reqObject
+            );
+            return <Movement[]>response.data;
+        } catch (error) {
+            this.reloadJWTTokenAfter401Error(<AxiosError>error);
+            return [];
+        }
     }
 }

@@ -1,6 +1,8 @@
 "use client"
 import Cookies from "js-cookie";
+import { axiosFetchs } from "../axios";
 
+const axios=new axiosFetchs();
 export default function HeaderComponent (props:any) {
         /*
     //When second parameter is [] it runs only on Mount Creation of Component 1 time
@@ -10,12 +12,15 @@ export default function HeaderComponent (props:any) {
     useEffect(()=>{
     },[])
     */ 
-   
+    async function logout () {
+        await axios.logoutRemoveCookies();
+        location.href="http://localhost:5000/main";
+    }
     if (props.isLogged) {
         return (
             <div>
                 {props.username}
-
+                <button onClick={()=>{logout()}}>Logout</button>
             </div>
         );
     } else {

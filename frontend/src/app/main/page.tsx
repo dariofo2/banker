@@ -1,5 +1,7 @@
 
-import HeaderComponent from "@/components/header/headerComponent";
+import UserAccounts from "@/components/account/userAccounts";
+import Footer from "@/components/footer/footer";
+import HeaderComponent from "@/components/header/header";
 
 //Not needed Cookies from client, We want Server Cookies sent by Request from the User To sever
 //import Cookies from "js-cookie";
@@ -22,10 +24,15 @@ export default function MainPage() {
 
     async function conditionalRenderIfLogged() {
         let name = await getCookieName();
-        let isLogged:boolean;
-        
+        let isLogged: boolean;
+
         if (name) {
-            return <HeaderComponent isLogged={true} username={name.value}></HeaderComponent>
+            return (
+                <div>
+                <HeaderComponent isLogged={true} username={name.value}></HeaderComponent>
+                <UserAccounts></UserAccounts>
+                </div>
+            )
         } else {
             return <HeaderComponent isLogged={false}></HeaderComponent>
         }
@@ -34,6 +41,7 @@ export default function MainPage() {
     return (
         <div>
             {conditionalRenderIfLogged()}
+            <Footer></Footer>
         </div>
     );
 }

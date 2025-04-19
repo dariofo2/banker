@@ -1,5 +1,5 @@
 export enum accountType {
-    "corriente",
-    "credito",
-    "blockchain"
+    corriente="corriente",
+    credito="credito",
+    blockchain="blockchain"
 }

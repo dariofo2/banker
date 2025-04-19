@@ -11,13 +11,14 @@ export class AccountsController {
     //Asi evitamos que nadie pueda listar, crear o borrar cuentas que no sean suyas.
     //solo puede el user que se ha loggeado con ese token.
     @Post('create')
-    @UsePipes(new ValidationPipe())
+    //@UsePipes(new ValidationPipe())
     async createAccount(@Req() req: any, @Body() account: Accounts) {
         try {
             //account.balance=0;
             account.user = req.user;
             await this.accountsService.createAccount(account);
-        } catch {
+        } catch (error) {
+            console.error(error);
             throw new BadRequestException;
         }
     }

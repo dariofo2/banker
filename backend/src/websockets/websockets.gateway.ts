@@ -25,10 +25,19 @@ export class WebsocketsGateway implements OnGatewayInit, OnGatewayConnection, On
 
     try {
       //Auth JWT
-      token = client.handshake.headers.authorization.split(' ')[1];
+      const jwtCookie = client.handshake.headers.cookie
+      .split('; ')
+      .find((cookie: string) => cookie.startsWith('JWTToken'))
+      .split('=')[1];
+      
+      token=decodeURIComponent(jwtCookie);
+      token=token.split(" ")[1];
+      
+      //console.log(cookiesParse['JWTToken'])
+      //token = client.handshake.headers.authorization.split(' ')[1];
       let payload: Users = await this.jwtService.verifyAsync(token, { secret: "topsecret" });
       let user = payload;
-
+      
       //Set Variables
       let userqueue=`queue${user.id}${client.id}`;
       let userexchange=`exchange${user.id}`;

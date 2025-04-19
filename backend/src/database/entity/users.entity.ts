@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Accounts } from "./accounts.entity";
-import { IsAlpha, IsEmail } from "class-validator";
+import { IsAlpha, IsEmail, MinLength } from "class-validator";
 
 @Entity()
 export class Users {
@@ -13,6 +13,7 @@ export class Users {
     name: string;
 
     @Column()
+    @MinLength(1)
     password: string;
 
     @Column()

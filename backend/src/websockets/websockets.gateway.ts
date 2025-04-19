@@ -35,7 +35,7 @@ export class WebsocketsGateway implements OnGatewayInit, OnGatewayConnection, On
       
       //console.log(cookiesParse['JWTToken'])
       //token = client.handshake.headers.authorization.split(' ')[1];
-      let payload: Users = await this.jwtService.verifyAsync(token, { secret: "topsecret" });
+      let payload: Users = await this.jwtService.verifyAsync(token, { secret: process.env.JWT_SECRET_KEY });
       let user = payload;
       
       //Set Variables

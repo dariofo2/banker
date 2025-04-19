@@ -32,7 +32,8 @@ export class AuthController {
     async signInUser(@Body() user: Users) {
         try {
             await this.authService.signInUser(user);
-        } catch {
+        } catch (error) {
+            console.error(error);
             throw new BadRequestException;
         }
     }

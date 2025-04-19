@@ -7,12 +7,12 @@ import { UserLoginResp } from "src/database/dto/userLoginResp.dto";
 import { Users } from "src/database/entity/users.entity";
 
 @Injectable()
-export class AuthLoginService {
+export class AuthService {
     constructor(
         private databaseRepository: DatabaseRepository,
         private jwtService: JwtService
     ) { }
-    async login(user: Users): Promise<UserLoginResp> {
+    async loginUser(user: Users): Promise<UserLoginResp> {
         //const hashedPassword=hash("sha256",user.password,"hex");
 
         let loginResp = await this.databaseRepository.login(user);
@@ -26,8 +26,17 @@ export class AuthLoginService {
         loginResp.password = undefined;
         const userLoginResp: UserLoginResp = <UserLoginResp>loginResp;
         userLoginResp.jwtToken = "Bearer " + jwtToken;
-        console.log(userLoginResp);
+        
         return userLoginResp;
 
+    }
+
+    async signInUser (user:Users) {
+        //const hashedPassword=hash("sha256",user.password,"hex");
+        const hashedPassword=await hash(user.password,10);
+        
+        user.password=hashedPassword;
+        
+        return await this.databaseRepository.createUser(user);
     }
 } 

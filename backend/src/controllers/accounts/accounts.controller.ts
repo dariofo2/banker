@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Post, Req, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
 import { AccountsService } from "./accounts.service";
 import { MainAuthGuard } from "src/auth/mainauth.guard";
 import { Accounts } from "src/database/entity/accounts.entity";
@@ -11,6 +11,7 @@ export class AccountsController {
     //Asi evitamos que nadie pueda listar, crear o borrar cuentas que no sean suyas.
     //solo puede el user que se ha loggeado con ese token.
     @Post('create')
+    @UsePipes(new ValidationPipe())
     async createAccount(@Req() req: any, @Body() account: Accounts) {
         try {
             //account.balance=0;

@@ -7,9 +7,13 @@ import { MovementsModule } from './controllers/movements/movements.module';
 import { AccountsModule } from './controllers/accounts/accounts.module';
 import { JwtModule } from '@nestjs/jwt';
 import { WebSocketModule } from './websockets/websockets.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal:true
+    }),
     DatabaseModule,
     UsersModule,
     MovementsModule,

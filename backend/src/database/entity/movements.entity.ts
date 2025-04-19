@@ -1,6 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Users } from "./users.entity";
 import { Accounts } from "./accounts.entity";
+import { IsNumber } from "class-validator";
 
 @Entity()
 export class Movements {
@@ -8,6 +9,7 @@ export class Movements {
     id: number;
 
     @Column()
+    @IsNumber()
     money: number;
 
     @ManyToOne(()=>Accounts,account=>account.id)

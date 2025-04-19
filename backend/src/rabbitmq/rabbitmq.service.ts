@@ -5,6 +5,7 @@ import * as amqplib from "amqplib";
 
 @Injectable()
 export class RabbitMQ implements OnApplicationBootstrap,OnApplicationShutdown{
+    urlRabbitMQ:string=process.env.RABBITMQ_HOST
     connection: amqplib.Connection;
     channel: amqplib.Channel;
     //          CONFIGURACION Y CONEXION
@@ -20,7 +21,7 @@ export class RabbitMQ implements OnApplicationBootstrap,OnApplicationShutdown{
 
     async connectRabbitMQ() {
         if (this.connection == null || this.connection == undefined) {
-            this.connection = await amqplib.connect("amqp://rabbitmq")
+            this.connection = await amqplib.connect(this.urlRabbitMQ)
             this.channel = await this.connection.createChannel();
         }
     }

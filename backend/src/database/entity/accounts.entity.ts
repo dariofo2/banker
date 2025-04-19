@@ -1,6 +1,8 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Users } from "./users.entity";
 import { Movements } from "./movements.entity";
+import { IsAlpha, IsEnum } from "class-validator";
+import { accountType } from "../dto/enumAccountType";
 
 @Entity()
 export class Accounts {
@@ -8,10 +10,12 @@ export class Accounts {
     id: number;
 
     @Column()
+    @IsAlpha()
     name: string;
 
     @Column()
-    type: string;
+    @IsEnum(accountType)
+    type: accountType;
 
     @Column()
     balance: number;

@@ -7,33 +7,35 @@ import { DatabaseRepository } from "./database.repository";
 
 @Module({
     imports: [
-        TypeOrmModule.forRoot({
-            type:'mariadb',
-            host:'db',
-            port:3306,
-            username:'root',
-            password:'abc123.',
-            database: 'banker',
-            entities: [Users,Accounts,Movements],
-            synchronize: true,
-            cache: {
-                type:"redis",
-                options: {
-                    password:"redispass",
-                    socket: {
-                        host:"redis",
-                        port:6379,
+        TypeOrmModule.forRootAsync({
+            useFactory: () => ({
+                type: process.env.DATABASE_TYPE as "mysql" | "mariadb" | "postgres",
+                host: process.env.DATABASE_HOST,
+                port: parseInt(process.env.DATABASE_PORT),
+                username: process.env.DATABASE_USERNAME,
+                password: process.env.DATABASE_PASSWORD,
+                database: process.env.DATABASE_DATABASE,
+                entities: [Users, Accounts, Movements],
+                synchonize: false,
+                cache: {
+                    type: "redis",
+                    options: {
+                        password: process.env.REDIS_PASSWORD,
+                        socket: {
+                            host: process.env.REDIS_HOST,
+                            port: process.env.REDIS_PORT
+                        }
                     }
                 }
-            },
+            })
         }),
-        TypeOrmModule.forFeature([Users,Accounts,Movements])
+        TypeOrmModule.forFeature([Users, Accounts, Movements])
     ],
-    providers:[DatabaseRepository],
+    providers: [DatabaseRepository],
     exports: [
         TypeOrmModule,
         DatabaseRepository
     ]
 })
 
-export class DatabaseModule {}
+export class DatabaseModule { }

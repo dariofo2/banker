@@ -1,8 +1,8 @@
 import { Module } from "@nestjs/common";
 import { DatabaseModule } from "src/database/database.module";
 import { MainAuthGuard } from "./mainauth.guard";
-import { AuthLoginController } from "./authlogin.controller";
-import { AuthLoginService } from "./authlogin.service";
+import { AuthController } from "./auth.controller";
+import { AuthService } from "./auth.service";
 import { JwtModule, JwtService } from "@nestjs/jwt";
 
 @Module({
@@ -11,8 +11,8 @@ import { JwtModule, JwtService } from "@nestjs/jwt";
         secret: "topsecret",
         signOptions: {expiresIn: '50000s'},
     })],
-    providers: [MainAuthGuard,AuthLoginService],
-    controllers: [AuthLoginController],
+    providers: [MainAuthGuard,AuthService],
+    controllers: [AuthController],
     exports: [MainAuthGuard,JwtModule],
 })
 

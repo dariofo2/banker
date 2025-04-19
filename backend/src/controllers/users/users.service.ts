@@ -10,15 +10,6 @@ export class UsersService {
         private databaseRepository: DatabaseRepository
     ) {}
 
-    async createUser (user:Users) {
-        //const hashedPassword=hash("sha256",user.password,"hex");
-        const hashedPassword=await hash(user.password,10);
-        console.log(hashedPassword);
-        user.password=hashedPassword;
-        
-        return await this.databaseRepository.createUser(user);
-    }
-
     async deleteUser (user:Users) {
         return await this.databaseRepository.deleteUserById(user);
     }

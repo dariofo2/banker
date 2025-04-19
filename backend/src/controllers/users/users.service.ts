@@ -1,8 +1,9 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
+import { hash } from "bcrypt";
 import { DatabaseRepository } from "src/database/database.repository";
 import { Users } from "src/database/entity/users.entity";
-import { hash } from "crypto";
+//import { hash } from "crypto";
 @Injectable()
 export class UsersService {
     constructor (
@@ -10,7 +11,8 @@ export class UsersService {
     ) {}
 
     async createUser (user:Users) {
-        const hashedPassword=hash("sha256",user.password,"hex");
+        //const hashedPassword=hash("sha256",user.password,"hex");
+        const hashedPassword=await hash(user.password,10);
         console.log(hashedPassword);
         user.password=hashedPassword;
         

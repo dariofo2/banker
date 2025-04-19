@@ -54,10 +54,9 @@ export class DatabaseRepository {
      */
 
     async login(user: Users): Promise<Users> {
-        let response = await this.usersRepository.findOne({
+        let response = await this.usersRepository.findOneOrFail({
             where: {
                 email: Equal(user.email),
-                password: Equal(user.password)
             }
         });
 

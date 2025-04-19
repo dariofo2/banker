@@ -24,65 +24,27 @@ export class DatabaseRepository {
      * @returns string
      */
 
-    async createUser(name: string, password: string, email: string): Promise<boolean> {
-        try {
-            let result = await this.usersRepository.insert({
-                name: name,
-                password: password,
-                email: email
-            })
-            return true;
-        } catch {
-            return false;
-        }
-
+    async createUser(user: Users) {
+        let result = await this.usersRepository.insert(user);
     }
 
-    async createAccount(userid: number, name: string, type: string): Promise<boolean> {
-        try {
-            await this.accountsRepository.insert({
-                user: {
-                    id: userid
-                },
-                name: name,
-                type: type,
-                balance: 0
-            }
+    async createAccount(account: Accounts) {
+        await this.accountsRepository.insert(account);
 
-            );
-
-            await this.datasource.queryResultCache.remove([`accounts${userid}`]);
-
-            return true;
-        } catch {
-            return false;
-        }
+        await this.datasource.queryResultCache.remove([`accounts${account.user.id}`]);
     }
 
-    async createMovement(userid: number, originAcc: number, destinationAcc: number, money: number, userDestinationId: number): Promise<Movements> {
-        try {
-            let test = await this.movementsRepository.insert({
-                originAccount: {
-                    id: originAcc,
-                },
-                destinationAccount: {
-                    id: destinationAcc,
-                },
-                money: money
+    async createMovement(movement: Movements): Promise<Movements> {
+        let test = await this.movementsRepository.insert(movement);
 
-            });
-
-            await this.datasource.queryResultCache.remove([`movements${originAcc}`]);
-            await this.datasource.queryResultCache.remove([`movements${destinationAcc}`]);
-            await this.datasource.queryResultCache.remove([`account${destinationAcc}`]);
-            await this.datasource.queryResultCache.remove([`account${originAcc}`]);
-            await this.datasource.queryResultCache.remove([`accounts${userid}`]);
-            await this.datasource.queryResultCache.remove([`accounts${userDestinationId}`]);
-
-            return <Movements>test.generatedMaps[0];
-        } catch {
-            return undefined;
-        }
+        await this.datasource.queryResultCache.remove([`movements${movement.originAccount.id}`]);
+        await this.datasource.queryResultCache.remove([`movements${movement.destinationAccount.id}`]);
+        await this.datasource.queryResultCache.remove([`account${movement.destinationAccount.id}`]);
+        await this.datasource.queryResultCache.remove([`account${movement.originAccount.id}`]);
+        await this.datasource.queryResultCache.remove([`accounts${movement.originAccount.user.id}`]);
+        await this.datasource.queryResultCache.remove([`accounts${movement.destinationAccount.user.id}`]);
+        
+        return <Movements>test.generatedMaps[0];
     }
 
 
@@ -91,11 +53,11 @@ export class DatabaseRepository {
      * @returns Users
      */
 
-    async login(username: string, password: string): Promise<Users> {
+    async login(user: Users): Promise<Users> {
         let response = await this.usersRepository.findOne({
             where: {
-                name: Equal(username),
-                password: Equal(password)
+                email: Equal(user.email),
+                password: Equal(user.password)
             }
         });
 
@@ -105,39 +67,39 @@ export class DatabaseRepository {
     /**
      *      SELECT QUERIES
      */
-    async selectAccountsByUserId(userid: number): Promise<Accounts[]> {
+    async selectAccountsByUserId(account:Accounts): Promise<Accounts[]> {
         let response = await this.accountsRepository.find({
             where: {
                 user: {
-                    id: Equal(userid)
+                    id: Equal(account.user.id)
                 }
             },
             cache: {
-                id: `accounts${userid}`,
+                id: `accounts${account.user.id}`,
                 milliseconds: 10
             }
         });
-        console.log(response);
+        //console.log(response);
         return response;
     }
 
-    async selectAccountById(userid: number, id: number): Promise<Accounts> {
+    async selectAccountById(account:Accounts): Promise<Accounts> {
         return await this.accountsRepository.findOne({
             select: {},
             where: {
                 user: {
-                    id: Equal(userid)
+                    id: Equal(account.user.id)
                 },
-                id: Equal(id)
+                id: Equal(account.id)
             },
             cache: {
-                id: `account${id}`,
+                id: `account${account.id}`,
                 milliseconds: 10,
             }
         });
     }
 
-    async selectUserFromAccountId(accountid: number): Promise<Users> {
+    async selectUserFromAccountId(account:Accounts): Promise<Users> {
         let response = await this.accountsRepository.findOne({
             select: {
                 user: {
@@ -145,7 +107,7 @@ export class DatabaseRepository {
                     name: true
                 }
             },
-            where: { id: Equal(accountid) },
+            where: { id: Equal(account.id) },
             relations: {
                 user: true
             }
@@ -153,7 +115,29 @@ export class DatabaseRepository {
         return response.user;
     }
 
-    async selectMovementsFromAccountId(userid: number, accountid: number): Promise<Movements[]> {
+    async selectMovementsFullAccountsUsersFromMovementId (movement:Movements) : Promise<Movements> {
+        let response = await this.movementsRepository.findOne({
+            where:{
+                id:Equal(movement.id),
+                originAccount:{
+                    user: {
+                        id:Equal(movement.originAccount.user.id)
+                    }
+                }
+            },
+            relations: {
+                originAccount:{
+                    user:true
+                },
+                destinationAccount:{
+                    user:true
+                }
+            }
+        }) 
+        
+        return response;
+    }
+    async selectMovementsFromAccountId(account:Accounts): Promise<Movements[]> {
         let response = await this.movementsRepository.find({
             select: {
                 originAccount: {
@@ -174,17 +158,17 @@ export class DatabaseRepository {
             where: [
                 {
                     originAccount: {
-                        id: Equal(accountid),
+                        id: Equal(account.id),
                         user: {
-                            id: Equal(userid)
+                            id: Equal(account.user.id)
                         }
                     }
                 },
                 {
                     destinationAccount: {
-                        id: Equal(accountid),
+                        id: Equal(account.id),
                         user: {
-                            id: Equal(userid)
+                            id: Equal(account.user.id)
                         }
                     }
                 }
@@ -194,7 +178,7 @@ export class DatabaseRepository {
                 id: "DESC"
             },
             cache: {
-                id: `movements${accountid}`,
+                id: `movements${account.id}`,
                 milliseconds: 10
             }
         })
@@ -205,8 +189,8 @@ export class DatabaseRepository {
     }
 
 
-    async get1Movement(id: number): Promise<Movements> {
-        let movement = await this.movementsRepository.findOne({
+    async get1Movement(movement:Movements): Promise<Movements> {
+        let movementResp = await this.movementsRepository.findOne({
             select: {
                 originAccount: {
                     id: true,
@@ -222,7 +206,7 @@ export class DatabaseRepository {
                 }
             },
             where: {
-                id: Equal(id)
+                id: Equal(movement.id)
             },
             relations: {
                 originAccount: {
@@ -233,7 +217,7 @@ export class DatabaseRepository {
                 }
             }
         })
-        return movement;
+        return movementResp;
     }
 
 
@@ -241,69 +225,46 @@ export class DatabaseRepository {
      *      DELETE QUERIES
      */
 
-    async deleteUserById(id: number): Promise<boolean> {
+    async deleteUserById(user:Users) {
         let delResult = await this.usersRepository.delete({
-            id: Equal(id)
+            id: Equal(user.id)
         });
 
-        if (delResult.affected == 0) return false;
-        else return true;
+        if (delResult.affected == 0) throw ("Delete Error. 0 Rows Deleted");
     }
 
-    async deleteAccountById(userid: number, id: number): Promise<boolean> {
+    async deleteAccountById(account:Accounts) {
         let delResult = await this.accountsRepository.delete({
-            id: Equal(id),
+            id: Equal(account.id),
             user: {
-                id: Equal(userid)
+                id: Equal(account.user.id)
             }
         });
 
-        await this.datasource.queryResultCache.remove([`account${id}`]);
-        await this.datasource.queryResultCache.remove([`accounts${userid}`]);
+        await this.datasource.queryResultCache.remove([`account${account.id}`]);
+        await this.datasource.queryResultCache.remove([`accounts${account.user.id}`]);
 
-        if (delResult.affected == 0) return false;
-        else return true;
+        if (delResult.affected == 0) throw ("Delete Error. 0 Rows Deleted");
     }
 
-    async deleteMovementById(userid: number, originAcc: number, id: number, destinationAcc: number, userDestinationId: number): Promise<boolean> {
-        let selectedMovement = await this.movementsRepository.findOne({
-            where: {
-                id: Equal(id),
-                originAccount: {
-                    id: Equal(originAcc),
-                    user: {
-                        id: Equal(userid)
-                    }
-                },
-                destinationAccount: {
-                    id: Equal(destinationAcc)
-                }
-            }
-        });
+    async deleteMovementById(movement:Movements) {
+        
+        let delStatus = await this.movementsRepository.delete(movement.id);
 
-        if (selectedMovement == undefined || selectedMovement == null) return false;
-
-        let delStatus = await this.movementsRepository.delete(selectedMovement.id);
-
-        await this.datasource.queryResultCache.remove([`movements${originAcc}`]);
-        await this.datasource.queryResultCache.remove([`movements${destinationAcc}`]);
-        await this.datasource.queryResultCache.remove([`account${destinationAcc}`]);
-        await this.datasource.queryResultCache.remove([`account${originAcc}`]);
-        await this.datasource.queryResultCache.remove([`accounts${userid}`]);
-        await this.datasource.queryResultCache.remove([`accounts${userDestinationId}`]);
-        if (delStatus.affected == 0) return false;
-        else return true;
+        await this.datasource.queryResultCache.remove([`movements${movement.originAccount.id}`]);
+        await this.datasource.queryResultCache.remove([`movements${movement.destinationAccount.id}`]);
+        await this.datasource.queryResultCache.remove([`account${movement.destinationAccount.id}`]);
+        await this.datasource.queryResultCache.remove([`account${movement.originAccount.id}`]);
+        await this.datasource.queryResultCache.remove([`accounts${movement.originAccount.user.id}`]);
+        await this.datasource.queryResultCache.remove([`accounts${movement.destinationAccount.user.id}`]);
+        
+        if (delStatus.affected == 0) throw ("Delete Error. 0 Rows Deleted");
     }
 
 
     //              UPDATE QUERIES
-    async updateUser(id: number, name: string, password: string, email: string) {
-        return await this.usersRepository.save({
-            id:id,
-            name:name,
-            password:password,
-            email:email
-        });
+    async updateUser(user:Users) {
+        return await this.usersRepository.save(user);
     }
 
 

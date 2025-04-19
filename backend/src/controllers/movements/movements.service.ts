@@ -1,5 +1,6 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { DatabaseRepository } from "src/database/database.repository";
+import { Accounts } from "src/database/entity/accounts.entity";
 import { Movements } from "src/database/entity/movements.entity";
 import { Users } from "src/database/entity/users.entity";
 import { RabbitMQ } from "src/rabbitmq/rabbitmq.service";
@@ -12,21 +13,22 @@ export class MovementsService {
         private rabbitMq: RabbitMQ
     ) { }
 
-    async createMovement(userid:number, originAccount: number, destinationAccount: number, money: number) {
+    async createMovement(movement: Movements) {
         //Check if origin account is from the user
-        let searchUserandAcc = await this.database.selectAccountById(userid, originAccount);
-        
+        let searchUserandAcc = await this.database.selectAccountById(movement.originAccount);
+
         if (searchUserandAcc != null && searchUserandAcc != undefined) {
             //Get the userDestinationId for use in RabbitMQ
-            let userDestination: Users = await this.database.selectUserFromAccountId(destinationAccount);
-            
-            //Create Movement and GET ID of Movement
-            let movement = await this.database.createMovement(userid, originAccount, destinationAccount, money, userDestination.id);
-            
-            
-            if (movement!=undefined) {
+            let userDestination: Users = await this.database.selectUserFromAccountId(movement.destinationAccount);
+            movement.destinationAccount.user = userDestination;
+
+            //Create Movement and GET ID of Movement for use in RabbitMQ
+            let movementInserted = await this.database.createMovement(movement);
+
+
+            if (movementInserted != undefined) {
                 //Get The Movement
-                movement=await this.database.get1Movement(movement.id);
+                movement = await this.database.get1Movement(movementInserted);
 
                 //Send the Event to RabbitMQ exchange of Destination User Account
                 await this.rabbitMq.channel.assertExchange(`exchange${userDestination.id}`, "fanout");
@@ -36,35 +38,28 @@ export class MovementsService {
                 ))
                 return true;
 
-            } else return false;
+            } else throw "Error on Create Movement";
 
-        } else return false;
-        
+        } else throw "Error on Create Movement. Cant Validate User Session with Account";
+
     }
 
-    async listMovements(userid: number, originAccount: number) {
+    async listMovements(account: Accounts) {
         //Check if origin account is from the User
-        
-        let searchUserandAcc = await this.database.selectAccountById(userid, originAccount);
-        if (searchUserandAcc != null && searchUserandAcc != undefined) {
-            //Get List of Movements of this Account
-            return await this.database.selectMovementsFromAccountId(userid, originAccount);
-        } else return false;
-         
-        
+
+        //let searchUserandAcc = await this.database.selectAccountById(userid, originAccount);
+        //if (searchUserandAcc != null && searchUserandAcc != undefined) {
+        //Get List of Movements of this Account
+        return await this.database.selectMovementsFromAccountId(account);
+        //} else return false;
+
+
 
     }
 
-    async deleteMovement(userid: number, originAccount: number, id: number, destinationAccount: number) {
+    async deleteMovement(movement: Movements) {
         //Check if origin Account is from the user
-        
-        let searchUserandAcc = await this.database.selectAccountById(userid,originAccount);
-        if (searchUserandAcc != null && searchUserandAcc != undefined) {
-            //Try to Delete the Movement
-            let userDestination = await this.database.selectUserFromAccountId(destinationAccount);
-            return await this.database.deleteMovementById(userid, originAccount, id, destinationAccount,userDestination.id);
-        } else return false;
-        
-        
+        movement = await this.database.selectMovementsFullAccountsUsersFromMovementId(movement);
+        return await this.database.deleteMovementById(movement);
     }
 }

@@ -1,17 +1,30 @@
-import { BadRequestException, Body, Controller, Post, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Post, Res, UnauthorizedException } from "@nestjs/common";
 import { AuthLoginService } from "./authlogin.service";
 import { Users } from "src/database/entity/users.entity";
+import { Response } from "express";
 
 @Controller('login')
-export class AuthLoginController{
-    constructor (
+export class AuthLoginController {
+    constructor(
         private authLoginService: AuthLoginService
-    ) {}
+    ) { }
     @Post('login')
-    async loginUser (@Body() body:Users) {
-        let token = await this.authLoginService.login(body.name,body.password);
-        if (token!=null) return token;
-        else throw new UnauthorizedException;
+    async loginUser(@Body() user: Users, @Res() res: Response) {
+        try {
+            let userLoginResp = await this.authLoginService.login(user);
+
+            res.cookie("JWTToken", userLoginResp.jwtToken, {
+                httpOnly: true,
+                secure: false
+            })
+
+            res.send(JSON.stringify(userLoginResp));
+            return userLoginResp;
+
+        } catch (error) {
+            throw new UnauthorizedException;
+        }
+
     }
 }
 

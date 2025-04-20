@@ -4,10 +4,10 @@ import { promisify } from "util";
 
 @Injectable()
 export class CryptoService {
-    async encrypt (data:string,password:string) : Promise<string> {
+    async encrypt (data:string,password:string,salt:string) : Promise<string> {
         const iv=randomBytes(16);
 
-        const key=await (promisify(scrypt)(password,"salt",32)) as Buffer;
+        const key=await (promisify(scrypt)(password,salt,32)) as Buffer;
 
         const cipher= createCipheriv("aes-256-ctr",key,iv);
 
@@ -20,11 +20,11 @@ export class CryptoService {
         return hexEncryptedIvAndText;
     }
 
-    async decrypt (data:string,password:string) {
+    async decrypt (data:string,password:string,salt:string) {
         const iv=data.slice(0,32);
         const encryptedText=data.slice(32);
 
-        const key=await (promisify(scrypt)(password,"salt",32)) as Buffer;
+        const key=await (promisify(scrypt)(password,salt,32)) as Buffer;
 
         const decipher=createDecipheriv("aes-256-ctr",key,Buffer.from(iv,"hex"));
 

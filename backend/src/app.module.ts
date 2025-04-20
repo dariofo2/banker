@@ -8,6 +8,7 @@ import { AccountsModule } from './controllers/accounts/accounts.module';
 import { JwtModule } from '@nestjs/jwt';
 import { WebSocketModule } from './websockets/websockets.module';
 import { ConfigModule } from '@nestjs/config';
+import { CryptoModule } from './crypto/crypto.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { ConfigModule } from '@nestjs/config';
     UsersModule,
     MovementsModule,
     AccountsModule,
-    WebSocketModule
+    WebSocketModule,
+    CryptoModule
   ],
   controllers: [AppController],
   providers: [AppService],

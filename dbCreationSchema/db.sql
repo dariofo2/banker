@@ -28,6 +28,15 @@ CREATE TABLE IF NOT EXISTS movements (
     FOREIGN KEY (destinationAccountId) REFERENCES accounts(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS blockchain_account (
+    id VARCHAR NOT NULL,
+    userId INT NOT NULL,
+    name VARCHAR NOT NULL,
+    privateKey VARCHAR NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (userid) REFERENCES users(id) ON DELETE CASCADE
+);
+
 DELIMITER $$
 
 CREATE TRIGGER update_money_on_insert_movement

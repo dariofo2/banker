@@ -43,11 +43,13 @@ export class AppService {
       
     console.log(decryptedText.toString());
     */
-    
+    /*
     const encrypted=await this.cryptoService.encrypt("Mis amigos","abc123.","hola");
     console.log(encrypted);
     const decrypted=await this.cryptoService.decrypt(encrypted,"abc123.","hola");
     console.log(decrypted);
     return "hola";
+    */
+   return "Hello World";
   }
 }

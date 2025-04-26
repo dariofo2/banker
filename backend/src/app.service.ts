@@ -3,11 +3,17 @@ import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { promisify } from 'util';
 import { CryptoService } from './crypto/crypto.service';
+import { BullMQClientService } from './bullMQ/bullMQClient.service';
+import { CeleryClientService } from './celery/celeryclient.service';
+import { CeleryWorkerService } from './celery/celeryWorker.service';
 
 @Injectable()
 export class AppService {
   constructor (
-    private readonly cryptoService: CryptoService
+    private readonly cryptoService: CryptoService,
+    private readonly bullMQClientService: BullMQClientService,
+    private readonly celeryClient: CeleryClientService,
+    private readonly celeryWorker: CeleryWorkerService,
   ) {}
   async getHello(): Promise<string> {
     //const hashB=await bcrypt.hash("holaaa",10);
@@ -50,6 +56,11 @@ export class AppService {
     console.log(decrypted);
     return "hola";
     */
+   //this.bullMQClientService.addJob();
+
+    //await this.celeryWorker.registerAdd();
+    //await this.celeryWorker.registerAdd();
+    await this.celeryClient.createTask();
    return "Hello World";
   }
 }

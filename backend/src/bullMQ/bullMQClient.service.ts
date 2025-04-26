@@ -1,6 +1,6 @@
 import { InjectQueue } from "@nestjs/bullmq";
 import { Injectable } from "@nestjs/common";
-import { Queue } from "bullmq";
+import { Queue, QueueEvents } from "bullmq";
 
 @Injectable()
 export class BullMQClientService {
@@ -9,11 +9,28 @@ export class BullMQClientService {
     ) {}
 
     async addJob () {
-        await this.backendQueue.add(
+        const queue="backend";
+        const queueEvent=new QueueEvents("backend")
+        const job=await this.backendQueue.add(
             "generateAccountNumber",
             {
                 foo:"bar"
             }
         )
+
+        //this.backendQueue.
+        const promiseQueue= new Promise((resolve,reject)=>{
+            queueEvent.on("completed", async (jobb) => {
+                
+                if (job.id==jobb.jobId) {
+
+                    resolve(jobb.returnvalue);
+                }
+            })
+        })
+
+        console.log(await promiseQueue);
+        
+        
     }
 }

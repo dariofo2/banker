@@ -14,10 +14,8 @@ import { BullMQWorkerService } from "./bullMQWorker.service";
                 }
             })
         }),
-        BullModule.registerQueueAsync({
-            useFactory: ()=>({
-                name: "backend"
-            })
+        BullModule.registerQueue({
+            name:"backend"
         })
     ],
     providers:[BullMQClientService,BullMQWorkerService],

@@ -9,6 +9,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { WebSocketModule } from './websockets/websockets.module';
 import { ConfigModule } from '@nestjs/config';
 import { CryptoModule } from './crypto/crypto.module';
+import { BullMQModule } from './bullMQ/bullMQ.module';
+import { CeleryModule } from './celery/celery.module';
 
 @Module({
   imports: [
@@ -20,7 +22,9 @@ import { CryptoModule } from './crypto/crypto.module';
     MovementsModule,
     AccountsModule,
     WebSocketModule,
-    CryptoModule
+    CryptoModule,
+    BullMQModule,
+    CeleryModule
   ],
   controllers: [AppController],
   providers: [AppService],

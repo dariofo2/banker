@@ -4,6 +4,7 @@ import { BullModule } from "@nestjs/bullmq";
 import { BullMQWorkerService } from "./bullMQWorker.service";
 
 @Module({
+    
     imports: [
         BullModule.forRootAsync({
             useFactory: ()=>({
@@ -18,6 +19,7 @@ import { BullMQWorkerService } from "./bullMQWorker.service";
             name:"backend"
         })
     ],
+    
     providers:[BullMQClientService,BullMQWorkerService],
     exports:[BullModule,BullMQClientService,BullMQWorkerService]
 })

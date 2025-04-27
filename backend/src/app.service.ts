@@ -56,11 +56,11 @@ export class AppService {
     console.log(decrypted);
     return "hola";
     */
-   //this.bullMQClientService.addJob();
+   
 
     //await this.celeryWorker.registerAdd();
     //await this.celeryWorker.registerAdd();
-    await this.celeryClient.createTask();
-   return "Hello World";
+    //await this.celeryClient.createTask();
+   return await this.bullMQClientService.addJob();
   }
 }

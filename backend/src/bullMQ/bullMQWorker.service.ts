@@ -7,7 +7,11 @@ export class BullMQWorkerService extends WorkerHost {
         switch (job.name) {
             case "generateAccountNumber": {
                 let foundNumber=false;
-                console.log("holaa")
+                //console.log("holaa")
+                for (let index = 0; index < 10000; index++) {
+                    await console.log("b");
+                    
+                }
                 return "hola";
             }
         }

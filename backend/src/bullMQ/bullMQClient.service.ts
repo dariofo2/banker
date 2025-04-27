@@ -1,36 +1,46 @@
 import { InjectQueue } from "@nestjs/bullmq";
 import { Injectable } from "@nestjs/common";
-import { Queue, QueueEvents } from "bullmq";
+import { Job, Queue, QueueEvents } from "bullmq";
 
 @Injectable()
 export class BullMQClientService {
     constructor (
         @InjectQueue("backend") private backendQueue: Queue
     ) {}
-
-    async addJob () {
-        const queue="backend";
-        const queueEvent=new QueueEvents("backend")
+    /*
+    queue= new Queue("backend",{
+        connection: {
+            host:process.env.REDIS_HOST,
+            port:parseInt(process.env.REDIS_PORT),
+            password:process.env.REDIS_PASSWORD
+        }
+    });
+    */
+    queueEvents= new QueueEvents("backend",{
+        connection: {
+            host:process.env.REDIS_HOST,
+            port:parseInt(process.env.REDIS_PORT),
+            password:process.env.REDIS_PASSWORD
+        }
+    });
+    async addJob () : Promise<string>{
         const job=await this.backendQueue.add(
             "generateAccountNumber",
             {
                 foo:"bar"
             }
         )
-
-        //this.backendQueue.
+        const result=await job.waitUntilFinished(this.queueEvents);
+        return result as string;
+        /*
         const promiseQueue= new Promise((resolve,reject)=>{
-            queueEvent.on("completed", async (jobb) => {
+            const event=this.queueEvents.on("completed", async (jobb) => {
                 
                 if (job.id==jobb.jobId) {
-
                     resolve(jobb.returnvalue);
                 }
             })
         })
-
-        console.log(await promiseQueue);
-        
-        
+            */
     }
 }

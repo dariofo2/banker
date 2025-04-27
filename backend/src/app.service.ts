@@ -12,8 +12,6 @@ export class AppService {
   constructor (
     private readonly cryptoService: CryptoService,
     private readonly bullMQClientService: BullMQClientService,
-    private readonly celeryClient: CeleryClientService,
-    private readonly celeryWorker: CeleryWorkerService,
   ) {}
   async getHello(): Promise<string> {
     //const hashB=await bcrypt.hash("holaaa",10);
@@ -61,6 +59,6 @@ export class AppService {
     //await this.celeryWorker.registerAdd();
     //await this.celeryWorker.registerAdd();
     //await this.celeryClient.createTask();
-   return await this.bullMQClientService.addJob();
+   return await this.bullMQClientService.addJobGenerateAccountNumber();
   }
 }

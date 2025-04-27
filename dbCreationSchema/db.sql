@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS accounts (
     id INT NOT NULL AUTO_INCREMENT,
     userId INT NOT NULL,
-    name VARCHAR(256) NOT NULL,
+    number VARCHAR(256) NOT NULL,
     type VARCHAR(256) NOT NULL,
     balance INT NOT NULL,
     PRIMARY KEY (id),
@@ -29,11 +29,11 @@ CREATE TABLE IF NOT EXISTS movements (
 );
 
 CREATE TABLE IF NOT EXISTS blockchain_accounts (
+    id INT NOT NULL AUTO_INCREMENT,
     address VARCHAR(256) NOT NULL,
     userId INT NOT NULL,
-    name VARCHAR(256) NOT NULL,
-    privateKey VARCHAR(256) NOT NULL,
-    PRIMARY KEY (address),
+    privatekey VARCHAR(256) NOT NULL,
+    PRIMARY KEY (id),
     FOREIGN KEY (userid) REFERENCES users(id) ON DELETE CASCADE
 );
 

@@ -26,7 +26,7 @@ describe('Accounts Service', () => {
   }
   const account:Accounts= {
     id:1,
-    name:"hola",
+    number:"hola",
     type:accountType.corriente,
     balance:500,
     user: user,

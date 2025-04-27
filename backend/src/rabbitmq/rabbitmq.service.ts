@@ -6,8 +6,9 @@ import * as amqplib from "amqplib";
 @Injectable()
 export class RabbitMQ implements OnApplicationBootstrap,OnApplicationShutdown{
     urlRabbitMQ:string=process.env.RABBITMQ_HOST
-    connection: amqplib.Connection;
+    connection:amqplib.ChannelModel;
     channel: amqplib.Channel;
+
     //          CONFIGURACION Y CONEXION
     // Conectar a Rabbit y crear canal
     async onApplicationBootstrap() {

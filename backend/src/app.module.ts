@@ -11,6 +11,7 @@ import { ConfigModule } from '@nestjs/config';
 import { CryptoModule } from './crypto/crypto.module';
 import { BullMQModule } from './bullMQ/bullMQ.module';
 import { CeleryModule } from './celery/celery.module';
+import { BlockchainAccountsModule } from './controllers/blockchainAccounts/blockchainAccounts.module';
 
 @Module({
   imports: [
@@ -21,10 +22,10 @@ import { CeleryModule } from './celery/celery.module';
     UsersModule,
     MovementsModule,
     AccountsModule,
+    BlockchainAccountsModule,
     WebSocketModule,
     CryptoModule,
     BullMQModule,
-    CeleryModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -4,6 +4,7 @@ import { Users } from "./entity/users.entity";
 import { DataSource, Equal, Repository } from "typeorm";
 import { Accounts } from "./entity/accounts.entity";
 import { Movements } from "./entity/movements.entity";
+import { BlockchainAccounts } from "./entity/blockchainAccounts.entity";
 /**
  * @author Alejandro Darío Fuentefría Oróns
  */
@@ -17,6 +18,8 @@ export class DatabaseRepository {
         private accountsRepository: Repository<Accounts>,
         @InjectRepository(Movements)
         private movementsRepository: Repository<Movements>,
+        @InjectRepository(BlockchainAccounts)
+        private blockchainAccountsRepository: Repository<BlockchainAccounts>
     ) { }
 
     /**
@@ -47,6 +50,9 @@ export class DatabaseRepository {
         return <Movements>test.generatedMaps[0];
     }
 
+    async createBlockchainAccount(blockchainAccount:BlockchainAccounts) {
+        let test= await this.blockchainAccountsRepository.insert(blockchainAccount);
+    }
 
     /**
      *      LOGIN Queries
@@ -98,6 +104,33 @@ export class DatabaseRepository {
         });
     }
 
+    async selectBlockChainAccountsByUserId(user:Users) {
+        return await this.blockchainAccountsRepository.findOne({
+            where: {
+                user: {
+                    id:Equal(user.id)
+                }
+            },
+            relations:{
+                user:true
+            }
+        })
+    }
+
+    async selectBlockChainAccountById(blockchainAccount:BlockchainAccounts) {
+        return await this.blockchainAccountsRepository.findOne({
+            where: {
+                user: {
+                    id:Equal(blockchainAccount.user.id)
+                },
+                id:Equal(blockchainAccount.id)
+            },
+            relations:{
+                user:true
+            }
+        })
+    }
+
     async selectUserFromAccountId(account:Accounts): Promise<Users> {
         let response = await this.accountsRepository.findOne({
             select: {
@@ -141,14 +174,14 @@ export class DatabaseRepository {
             select: {
                 originAccount: {
                     id: true,
-                    name: true,
+                    number: true,
                     user: {
                         name: true
                     }
                 },
                 destinationAccount: {
                     id: true,
-                    name: true,
+                    number: true,
                     user: {
                         name: true
                     }
@@ -246,6 +279,10 @@ export class DatabaseRepository {
         if (delResult.affected == 0) throw ("Delete Error. 0 Rows Deleted");
     }
 
+    async deleteBlockchainAccountById(blockchainAccount:BlockchainAccounts) {
+        await this.blockchainAccountsRepository.delete(blockchainAccount);
+    }
+
     async deleteMovementById(movement:Movements) {
         
         let delStatus = await this.movementsRepository.delete(movement.id);
@@ -266,6 +303,9 @@ export class DatabaseRepository {
         return await this.usersRepository.save(user);
     }
 
+    async updateBlockChainAccount (blockChainAccount:BlockchainAccounts) {
+        return await this.blockchainAccountsRepository.save(blockChainAccount);
+    }
 
     async updateTransactionExample() {
         //Que quede claro que DataSource es lo que genera el typeORMModule.forroot() y .feature():

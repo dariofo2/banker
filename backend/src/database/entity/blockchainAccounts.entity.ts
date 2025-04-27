@@ -2,12 +2,12 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Users } from "./users.entity";
 
 @Entity()
-export class blockchainAccounts {
+export class BlockchainAccounts {
     @PrimaryGeneratedColumn()
-    address:string
+    id:number
 
     @Column()
-    name:string
+    address:string
 
     @Column()
     privatekey:string

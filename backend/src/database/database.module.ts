@@ -4,7 +4,7 @@ import { Users } from "./entity/users.entity";
 import { Accounts } from "./entity/accounts.entity";
 import { Movements } from "./entity/movements.entity";
 import { DatabaseRepository } from "./database.repository";
-import { blockchainAccounts } from "./entity/blockchainAccounts.entity";
+import { BlockchainAccounts } from "./entity/blockchainAccounts.entity";
 
 @Module({
     imports: [
@@ -16,7 +16,7 @@ import { blockchainAccounts } from "./entity/blockchainAccounts.entity";
                 username: process.env.DATABASE_USERNAME,
                 password: process.env.DATABASE_PASSWORD,
                 database: process.env.DATABASE_DATABASE,
-                entities: [Users, Accounts, Movements,blockchainAccounts],
+                entities: [Users, Accounts, Movements,BlockchainAccounts],
                 synchonize: false,
                 cache: {
                     type: "redis",
@@ -30,7 +30,7 @@ import { blockchainAccounts } from "./entity/blockchainAccounts.entity";
                 }
             })
         }),
-        TypeOrmModule.forFeature([Users, Accounts, Movements,blockchainAccounts])
+        TypeOrmModule.forFeature([Users, Accounts, Movements,BlockchainAccounts])
     ],
     providers: [DatabaseRepository],
     exports: [

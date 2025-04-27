@@ -38,7 +38,7 @@ describe('Movements Service', () => {
   }
   const account : Accounts = {
     id:1,
-    name:"Cuenta",
+    number:"Cuenta",
     type:accountType.corriente,
     balance: 500,
     user:user,

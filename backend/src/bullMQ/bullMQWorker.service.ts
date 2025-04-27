@@ -7,12 +7,19 @@ export class BullMQWorkerService extends WorkerHost {
         switch (job.name) {
             case "generateAccountNumber": {
                 let foundNumber=false;
-                //console.log("holaa")
-                for (let index = 0; index < 10000; index++) {
-                    await console.log("b");
-                    
+                let accountNumber="";
+                
+                accountNumber+=process.env.ACCOUNT_NUMBER_START;
+                accountNumber+=process.env.ACCOUNT_NUMBER_BANK;
+                accountNumber+=process.env.ACCOUNT_NUMBER_OFFICE;
+                
+                //accountNumber.slice(2)
+                for (let i = 0; i < 12; i++) {
+                    let lastNumber:number=Math.floor(Math.random()*10);
+                    accountNumber+=lastNumber;
                 }
-                return "hola";
+                
+                return accountNumber;
             }
         }
     }

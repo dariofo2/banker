@@ -7,6 +7,10 @@ import { fromEvent, interval, map, Observable } from "rxjs";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { EventEmitter } from "events";
 import { Response } from "express";
+import { DeleteUserDTO } from "src/database/dto/users/deleteUser.dto";
+import { plainToInstance } from "class-transformer";
+import { UpdateUserPasswordDTO } from "src/database/dto/users/updateUserPassword.dto";
+import { UpdateUserDto } from "src/database/dto/users/updateUser.dto";
 @Controller('user')
 export class UsersController {
     constructor(
@@ -21,9 +25,10 @@ export class UsersController {
 
     @UseGuards(MainAuthGuard)
     @Post('delete')
-    async deleteUser(@Body() user: Users, @Req() req: any,@Res({passthrough:true}) res:Response) {
-        user.id=req.user.id
-        console.log(req.user);
+    async deleteUser(@Body() deleteUserDTO: DeleteUserDTO, @Req() req: any,@Res({passthrough:true}) res:Response) {
+        const user: Users = plainToInstance(Users,deleteUserDTO);
+        user.id=req.user.id;
+        
         try {
             await this.usersService.deleteUser(user);
             res.cookie("JWTToken","")
@@ -36,8 +41,23 @@ export class UsersController {
     @UseGuards(MainAuthGuard)
     @UsePipes(new ValidationPipe())
     @Post('update')
-    async updateUser(@Req() req: any, @Body() user:Users) {
+    async updateUser(@Req() req: any, @Body() updateUserDTO: UpdateUserDto) {
+        const user: Users = plainToInstance(Users,updateUserDTO);
         user.id=req.user.id;
+        user.password=undefined;
+        await this.usersService.updateUser(user);
+    }
+
+    @UseGuards(MainAuthGuard)
+    @Post('updatePassword')
+    @UsePipes(new ValidationPipe())
+    async updateUserPassword(@Req() req: any, @Body() updateUserPasswordDTO: UpdateUserPasswordDTO) {
+        const user: Users = plainToInstance(Users,updateUserPasswordDTO);
+        user.id=req.user.id;
+        user.email=undefined;
+        user.accounts=undefined;
+        user.name=undefined;
+        
         await this.usersService.updateUser(user);
     }
 

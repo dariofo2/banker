@@ -20,11 +20,13 @@ export class AccountsService {
     }
 
     async deleteAccount (account:Accounts) {
+        await this.databaseRepository.selectAccountByIdAndUserId(account.id,account.user.id);
         return await this.databaseRepository.deleteAccountById(account);
     }
 
-    updateAccount () {
-        
+    async updateAccount (account:Accounts) {
+        await this.databaseRepository.selectAccountByIdAndUserId(account.id,account.user.id);
+        return await this.databaseRepository.updateAccount(account);
     }
 
     async listAccount (account:Accounts) : Promise<Accounts> {

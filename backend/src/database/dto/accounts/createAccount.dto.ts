@@ -4,8 +4,4 @@ import { accountType } from "../enumAccountType";
 export class CreateAccountDTO {
     @IsEnum(accountType)
     type: accountType;
-
-    user: {
-        id:number
-    }
 }

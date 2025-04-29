@@ -1,5 +1,5 @@
 export class ListMovementsDTO {
-    account: {
+    originAccount: {
         id: number
     }
 

@@ -20,14 +20,16 @@ export class BlockchainAccountsService {
   }
 
   async findOne(blockchainAccount:BlockchainAccounts) {
-    return await this.databaseRepository.selectBlockChainAccountById(blockchainAccount);
+    return await this.databaseRepository.selectBlockChainAccountByIdAndUserId(blockchainAccount.id,blockchainAccount.user.id);
   }
 
   async update(blockchainAccount: BlockchainAccounts) {
+    await this.databaseRepository.selectBlockChainAccountByIdAndUserId(blockchainAccount.id,blockchainAccount.user.id);
     return await this.databaseRepository.updateBlockChainAccount(blockchainAccount);
   }
 
   async remove(@Body() blockchainAccount:BlockchainAccounts) {
+    await this.databaseRepository.selectBlockChainAccountByIdAndUserId(blockchainAccount.id,blockchainAccount.user.id);
     await this.databaseRepository.deleteBlockchainAccountById(blockchainAccount);
     return "Delete Done";
   }

@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS movements (
     originAccountId INT NOT NULL,
     destinationAccountId INT NOT NULL,
     money INT NOT NULL,
+    date DATE NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (originAccountId) REFERENCES accounts(id) ON DELETE CASCADE,
     FOREIGN KEY (destinationAccountId) REFERENCES accounts(id) ON DELETE CASCADE

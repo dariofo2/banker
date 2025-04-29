@@ -99,7 +99,7 @@ export class DatabaseRepository {
     }
 
     async selectAccountByIdAndUserId(accountId:number,userId:number): Promise<Accounts> {
-        return await this.accountsRepository.findOne({
+        return await this.accountsRepository.findOneOrFail({
             select: {},
             where: {
                 user: {
@@ -146,7 +146,7 @@ export class DatabaseRepository {
     }
 
     async selectBlockChainAccountsByUserId(userId:number) {
-        return await this.blockchainAccountsRepository.findOne({
+        return await this.blockchainAccountsRepository.find({
             where: {
                 user: {
                     id:Equal(userId)
@@ -158,13 +158,13 @@ export class DatabaseRepository {
         })
     }
 
-    async selectBlockChainAccountById(blockchainAccount:BlockchainAccounts) {
-        return await this.blockchainAccountsRepository.findOne({
+    async selectBlockChainAccountByIdAndUserId(id:number,userId:number) {
+        return await this.blockchainAccountsRepository.findOneOrFail({
             where: {
                 user: {
-                    id:Equal(blockchainAccount.user.id)
+                    id:Equal(userId)
                 },
-                id:Equal(blockchainAccount.id)
+                id:Equal(id)
             },
             relations:{
                 user:true
@@ -344,6 +344,10 @@ export class DatabaseRepository {
     //              UPDATE QUERIES
     async updateUser(user:Users) {
         return await this.usersRepository.save(user);
+    }
+
+    async updateAccount(account:Accounts) {
+        return await this.accountsRepository.save(account);
     }
 
     async updateBlockChainAccount (blockChainAccount:BlockchainAccounts) {

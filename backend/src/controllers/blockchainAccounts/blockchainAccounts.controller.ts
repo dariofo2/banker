@@ -1,48 +1,78 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, BadRequestException, ValidationPipe, UsePipes } from '@nestjs/common';
 import { BlockchainAccountsService } from './blockchainAccounts.service';
 import { BlockchainAccounts } from 'src/database/entity/blockchainAccounts.entity';
 import { Users } from 'src/database/entity/users.entity';
 import { MainAuthGuard } from 'src/auth/mainauth.guard';
 import { CreateBlockchainAccountDTO } from 'src/database/dto/blockchainAccounts/createBlockchainAccount.dto';
+import { plainToInstance } from 'class-transformer';
+import { GetBlockchainAccountDTO } from 'src/database/dto/blockchainAccounts/getBlockChainAccount.dto';
+import { UpdateBlockchainAccountDTO } from 'src/database/dto/blockchainAccounts/updateBlockchainAccount.dto';
+import { DeleteBlockchainAccountDTO } from 'src/database/dto/blockchainAccounts/deleteBlockchainAccount.dto';
 
 @Controller('blockchainAccounts')
 @UseGuards(MainAuthGuard)
 export class BlockchainAccountsController {
-  constructor(private readonly blockchainAccountsService: BlockchainAccountsService) {}
+  constructor(private readonly blockchainAccountsService: BlockchainAccountsService) { }
 
   @Post("create")
-  create(@Req() req:any, @Body() blockChainAccount:BlockchainAccounts) {
+  @UsePipes(new ValidationPipe())
+  async create(@Req() req: any, @Body() createBlockchainAccountDTO: CreateBlockchainAccountDTO) {
     try {
-      return this.blockchainAccountsService.create(blockChainAccount);
+      const blockChainAccount: BlockchainAccounts = plainToInstance(BlockchainAccounts, createBlockchainAccountDTO);
+      blockChainAccount.user = req.user;
 
+      return await this.blockchainAccountsService.create(blockChainAccount);
     } catch (error) {
       console.error(error);
       throw new BadRequestException;
     }
-    
+
   }
 
   @Post("lists")
-  findAll(@Req() req:any) {
-    const user:Users=req.user;
-    return this.blockchainAccountsService.findAll(user);
+  async findAll(@Req() req: any) {
+    const user: Users = req.user;
+
+    return await this.blockchainAccountsService.findAll(user);
   }
 
   @Post("list")
-  findOne(@Req() req:any,@Body() blockchainAccount: BlockchainAccounts) {
-    blockchainAccount.user=req.user;
-    return this.blockchainAccountsService.findOne(blockchainAccount);
+  async findOne(@Req() req: any, @Body() getBlockchainAccountDTO: GetBlockchainAccountDTO) {
+    try {
+      const blockchainAccount: BlockchainAccounts = plainToInstance(BlockchainAccounts, getBlockchainAccountDTO);
+      blockchainAccount.user = req.user;
+
+      return await this.blockchainAccountsService.findOne(blockchainAccount);
+    } catch (error) {
+      //console.error(error);
+      throw new BadRequestException;
+    }
   }
 
   @Post('update')
-  update(@Req() req:any,@Body() blockchainAccount: BlockchainAccounts) {
-    blockchainAccount.user=req.user;
-    return this.blockchainAccountsService.update(blockchainAccount);
+  @UsePipes(new ValidationPipe())
+  async update(@Req() req: any, @Body() updateBlockchainAccountDTO: UpdateBlockchainAccountDTO) {
+    try {
+      const blockchainAccount: BlockchainAccounts = plainToInstance(BlockchainAccounts, updateBlockchainAccountDTO);
+      blockchainAccount.user = req.user;
+      console.log(blockchainAccount);
+      return await this.blockchainAccountsService.update(blockchainAccount);
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException;
+    }
   }
 
   @Delete('delete')
-  remove(@Req() req:any,@Body() blockchainAccount: BlockchainAccounts) {
-    blockchainAccount.user=req.user;
-    return this.blockchainAccountsService.remove(blockchainAccount);
+  async remove(@Req() req: any, @Body() deleteBlockchainAccountDTO: DeleteBlockchainAccountDTO) {
+    try {
+      const blockchainAccount: BlockchainAccounts = plainToInstance(BlockchainAccounts, deleteBlockchainAccountDTO);
+      blockchainAccount.user = req.user;
+
+      return await this.blockchainAccountsService.remove(blockchainAccount);
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException;
+    }
   }
 }

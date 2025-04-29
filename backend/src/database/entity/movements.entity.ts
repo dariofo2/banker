@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Users } from "./users.entity";
 import { Accounts } from "./accounts.entity";
-import { IsNumber } from "class-validator";
+import { IsDate, IsNumber } from "class-validator";
 
 @Entity()
 export class Movements {
@@ -12,6 +12,10 @@ export class Movements {
     @IsNumber()
     money: number;
 
+    @Column()
+    @IsDate()
+    date: Date;
+    
     @ManyToOne(()=>Accounts,account=>account.id)
     originAccount: Accounts;
 

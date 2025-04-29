@@ -1,7 +1,8 @@
-import { IsAlpha, IsEmail, MinLength } from "class-validator";
+import { IsAlpha, IsEmail, IsNotEmpty, MinLength } from "class-validator";
 
 export class CreateUserDTO {
     @IsAlpha()
+    @IsNotEmpty()
     name:string;
 
     @IsEmail()

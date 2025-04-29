@@ -14,7 +14,11 @@ export class UsersService {
         return await this.databaseRepository.deleteUserById(user);
     }
 
-    updateUser (user:Users) {
+    async updateUser (user:Users) {
+        if (user.password) {
+            const hashedPassword=await hash(user.password,parseInt(process.env.BCRYPT_ROUNDS));
+            user.password=hashedPassword;
+        }
         return this.databaseRepository.updateUser(user);
     }
 

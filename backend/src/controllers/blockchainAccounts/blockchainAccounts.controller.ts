@@ -3,6 +3,7 @@ import { BlockchainAccountsService } from './blockchainAccounts.service';
 import { BlockchainAccounts } from 'src/database/entity/blockchainAccounts.entity';
 import { Users } from 'src/database/entity/users.entity';
 import { MainAuthGuard } from 'src/auth/mainauth.guard';
+import { CreateBlockchainAccountDTO } from 'src/database/dto/blockchainAccounts/createBlockchainAccount.dto';
 
 @Controller('blockchainAccounts')
 @UseGuards(MainAuthGuard)
@@ -10,10 +11,10 @@ export class BlockchainAccountsController {
   constructor(private readonly blockchainAccountsService: BlockchainAccountsService) {}
 
   @Post("create")
-  create(@Req() req:any, @Body() blockChainAccount: BlockchainAccounts) {
+  create(@Req() req:any, @Body() blockChainAccount:BlockchainAccounts) {
     try {
-      blockChainAccount.user=req.user;
       return this.blockchainAccountsService.create(blockChainAccount);
+
     } catch (error) {
       console.error(error);
       throw new BadRequestException;

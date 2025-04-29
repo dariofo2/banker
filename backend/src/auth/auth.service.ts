@@ -4,6 +4,7 @@ import { compare, hash } from "bcrypt";
 
 import { DatabaseRepository } from "src/database/database.repository";
 import { UserLoginResp } from "src/database/dto/userLoginResp.dto";
+import { CreateUserDTO } from "src/database/dto/users/createUser.dto";
 import { Users } from "src/database/entity/users.entity";
 
 @Injectable()

@@ -3,6 +3,9 @@ import { MovementsService } from "./movements.service";
 import { MainAuthGuard } from "src/auth/mainauth.guard";
 import { Movements } from "src/database/entity/movements.entity";
 import { Accounts } from "src/database/entity/accounts.entity";
+import CreateMovementDTO from "src/database/dto/movements/createMovement.dto";
+import { Users } from "src/database/entity/users.entity";
+import { ListMovementsDTO } from "src/database/dto/movements/listMovements.dto";
 
 @UseGuards(MainAuthGuard)
 @Controller('movements')
@@ -12,9 +15,9 @@ export class MovementsController {
     //Asi evitamos que nadie pueda listar, crear o borrar cuentas que no sean suyas.
     //solo puede el user que se ha loggeado con ese token.
     @Post('create')
-    async createMovement(@Req() req, @Body() movement: Movements) {
+    async createMovement(@Req() req, @Body() movement:Movements) {
         try {
-            movement.originAccount.user = req.user;
+            movement.originAccount.user=req.user;
             
             await this.movementsService.createMovement(movement);
         } catch (error) {
@@ -39,9 +42,9 @@ export class MovementsController {
     }
 
     @Post('list')
-    async listMovement(@Req() req, @Body() account:Accounts): Promise<false | Movements[]> {
-        account.user=req.user;
-        let selectResult = await this.movementsService.listMovements(account);
+    async listMovement(@Req() req, @Body() listMovementDTO: ListMovementsDTO): Promise<false | Movements[]> {
+        const user:Users=req.user;
+        let selectResult = await this.movementsService.listMovements(listMovementDTO,user);
 
         return selectResult;
     }

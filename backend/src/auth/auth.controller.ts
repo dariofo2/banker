@@ -2,6 +2,7 @@ import { BadRequestException, Body, Controller, Post, Res, UnauthorizedException
 import { AuthService } from "./auth.service";
 import { Users } from "src/database/entity/users.entity";
 import { Response } from "express";
+import { CreateUserDTO } from "src/database/dto/users/createUser.dto";
 
 @Controller('auth')
 export class AuthController {
@@ -29,7 +30,7 @@ export class AuthController {
 
     @Post("signin")
     @UsePipes(new ValidationPipe())
-    async signInUser(@Body() user: Users) {
+    async signInUser(@Body() user:Users) {
         try {
             await this.authService.signInUser(user);
         } catch (error) {

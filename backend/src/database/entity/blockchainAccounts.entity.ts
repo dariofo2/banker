@@ -1,11 +1,13 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Users } from "./users.entity";
+import { IsAlphanumeric } from "class-validator";
 
 @Entity()
 export class BlockchainAccounts {
     @PrimaryGeneratedColumn()
     id:number
 
+    @IsAlphanumeric()
     @Column()
     address:string
 

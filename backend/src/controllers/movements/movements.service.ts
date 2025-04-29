@@ -1,5 +1,7 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { Injectable, Move, UnauthorizedException } from "@nestjs/common";
 import { DatabaseRepository } from "src/database/database.repository";
+import CreateMovementDTO from "src/database/dto/movements/createMovement.dto";
+import { ListMovementsDTO } from "src/database/dto/movements/listMovements.dto";
 import { Accounts } from "src/database/entity/accounts.entity";
 import { Movements } from "src/database/entity/movements.entity";
 import { Users } from "src/database/entity/users.entity";
@@ -13,8 +15,9 @@ export class MovementsService {
         private rabbitMq: RabbitMQ
     ) { }
 
-    async createMovement(movement: Movements) {
+    async createMovement(movement:Movements) {
         //Check if origin account is from the user
+        /*
         let searchUserandAcc = await this.database.selectAccountById(movement.originAccount);
 
         if (searchUserandAcc != null && searchUserandAcc != undefined) {
@@ -42,19 +45,26 @@ export class MovementsService {
 
         } else throw "Error on Create Movement. Cant Validate User Session with Account";
 
+        */
+        
+        movement.originAccount = await this.database.selectAccountByNumberAndUserId(movement.originAccount.number, movement.originAccount.user.id);
+        movement.destinationAccount = await this.database.selectAccountByNumber(movement.destinationAccount.number);
+
+        const movementInserted = await this.database.createMovement(movement);
+        movement.id=movementInserted.id;
+        
+        const movementWithAccountAndUser= await this.database.getOneMovementById(movement.id);
+        
+        const destinationUserId= movement.destinationAccount.user.id;
+        await this.rabbitMq.channel.assertExchange(`exchange${destinationUserId}`, "fanout");
+        await this.rabbitMq.channel.publish(`exchange${destinationUserId}`, "", Buffer.from(
+            JSON.stringify(movementWithAccountAndUser)
+            //`{origin_account_id':'${originAccount}','destination_account_id':'${destinationAccount}','money':'${money}'}`
+        ))
     }
 
-    async listMovements(account: Accounts) {
-        //Check if origin account is from the User
-
-        //let searchUserandAcc = await this.database.selectAccountById(userid, originAccount);
-        //if (searchUserandAcc != null && searchUserandAcc != undefined) {
-        //Get List of Movements of this Account
-        return await this.database.selectMovementsFromAccountId(account);
-        //} else return false;
-
-
-
+    async listMovements(listMovementDTO:ListMovementsDTO,user:Users) {
+        return await this.database.selectMovementsFromAccountIdAndUserIdOffset(listMovementDTO.account.id,user.id,listMovementDTO.offset);
     }
 
     async deleteMovement(movement: Movements) {

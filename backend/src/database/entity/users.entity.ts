@@ -7,7 +7,6 @@ export class Users {
     @PrimaryGeneratedColumn('increment')
     id: number;
 
-    
     @Column()
     @IsAlpha()
     name: string;

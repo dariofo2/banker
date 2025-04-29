@@ -5,6 +5,10 @@ import { DataSource, Equal, Repository } from "typeorm";
 import { Accounts } from "./entity/accounts.entity";
 import { Movements } from "./entity/movements.entity";
 import { BlockchainAccounts } from "./entity/blockchainAccounts.entity";
+import { CreateUserDTO } from "./dto/users/createUser.dto";
+import { CreateAccountDTO } from "./dto/accounts/createAccount.dto";
+import { CreateBlockchainAccountDTO } from "./dto/blockchainAccounts/createBlockchainAccount.dto";
+import CreateMovementDTO from "./dto/movements/createMovement.dto";
 /**
  * @author Alejandro Darío Fuentefría Oróns
  */
@@ -27,18 +31,21 @@ export class DatabaseRepository {
      * @returns string
      */
 
-    async createUser(user: Users) {
-        let result = await this.usersRepository.insert(user);
+    async createUser(user:Users) : Promise<Users> {
+        const insertResult = await this.usersRepository.insert(user);
+        return <Users> insertResult.generatedMaps[0];
     }
 
-    async createAccount(account: Accounts) {
-        await this.accountsRepository.insert(account);
+    async createAccount(account:Accounts) : Promise<Accounts> {
+        const insertResult = await this.accountsRepository.insert(account);
 
         await this.datasource.queryResultCache.remove([`accounts${account.user.id}`]);
+
+        return <Accounts> insertResult.generatedMaps[0];
     }
 
-    async createMovement(movement: Movements): Promise<Movements> {
-        let test = await this.movementsRepository.insert(movement);
+    async createMovement(movement:Movements): Promise<Movements> {
+        let insertResult = await this.movementsRepository.insert(movement);
 
         await this.datasource.queryResultCache.remove([`movements${movement.originAccount.id}`]);
         await this.datasource.queryResultCache.remove([`movements${movement.destinationAccount.id}`]);
@@ -47,11 +54,14 @@ export class DatabaseRepository {
         await this.datasource.queryResultCache.remove([`accounts${movement.originAccount.user.id}`]);
         await this.datasource.queryResultCache.remove([`accounts${movement.destinationAccount.user.id}`]);
         
-        return <Movements>test.generatedMaps[0];
+        if (insertResult.generatedMaps[0]) return <Movements>insertResult.generatedMaps[0];
+        else throw "Couldnt Create Movement";
+        
     }
 
     async createBlockchainAccount(blockchainAccount:BlockchainAccounts) {
-        let test= await this.blockchainAccountsRepository.insert(blockchainAccount);
+        const insertResult= await this.blockchainAccountsRepository.insert(blockchainAccount);
+        return <BlockchainAccounts>insertResult.generatedMaps[0];
     }
 
     /**
@@ -72,15 +82,15 @@ export class DatabaseRepository {
     /**
      *      SELECT QUERIES
      */
-    async selectAccountsByUserId(account:Accounts): Promise<Accounts[]> {
+    async selectAccountsByUserId(userId:number): Promise<Accounts[]> {
         let response = await this.accountsRepository.find({
             where: {
                 user: {
-                    id: Equal(account.user.id)
+                    id: Equal(userId)
                 }
             },
             cache: {
-                id: `accounts${account.user.id}`,
+                id: `accounts${userId}`,
                 milliseconds: 10
             }
         });
@@ -88,27 +98,58 @@ export class DatabaseRepository {
         return response;
     }
 
-    async selectAccountById(account:Accounts): Promise<Accounts> {
+    async selectAccountByIdAndUserId(accountId:number,userId:number): Promise<Accounts> {
         return await this.accountsRepository.findOne({
             select: {},
             where: {
                 user: {
-                    id: Equal(account.user.id)
+                    id: Equal(userId)
                 },
-                id: Equal(account.id)
+                id: Equal(accountId)
             },
             cache: {
-                id: `account${account.id}`,
+                id: `account${accountId}`,
                 milliseconds: 10,
             }
         });
     }
 
-    async selectBlockChainAccountsByUserId(user:Users) {
+    /**
+     * 
+     * @param accountNumber 
+     * @param userId 
+     * @returns Account with User
+     */
+    async selectAccountByNumberAndUserId(accountNumber:string,userId:number) : Promise<Accounts> {
+        return await this.accountsRepository.findOneOrFail({
+            where: {
+                number:Equal(accountNumber),
+                user: {
+                    id:Equal(userId)
+                },
+            },
+            relations:{
+                user:true
+            }
+        })
+    }
+
+    async selectAccountByNumber(accountNumber:string) : Promise<Accounts> {
+        return await this.accountsRepository.findOneOrFail({
+            where: {
+                number:Equal(accountNumber)
+            },
+            relations:{
+                user:true
+            }
+        })
+    }
+
+    async selectBlockChainAccountsByUserId(userId:number) {
         return await this.blockchainAccountsRepository.findOne({
             where: {
                 user: {
-                    id:Equal(user.id)
+                    id:Equal(userId)
                 }
             },
             relations:{
@@ -148,7 +189,7 @@ export class DatabaseRepository {
     }
 
     async selectMovementsFullAccountsUsersFromMovementId (movement:Movements) : Promise<Movements> {
-        let response = await this.movementsRepository.findOne({
+        let response = await this.movementsRepository.findOneOrFail({
             where:{
                 id:Equal(movement.id),
                 originAccount:{
@@ -169,7 +210,7 @@ export class DatabaseRepository {
         
         return response;
     }
-    async selectMovementsFromAccountId(account:Accounts): Promise<Movements[]> {
+    async selectMovementsFromAccountIdAndUserIdOffset(accountId:number,userId:number,offset:number): Promise<Movements[]> {
         let response = await this.movementsRepository.find({
             select: {
                 originAccount: {
@@ -190,27 +231,29 @@ export class DatabaseRepository {
             where: [
                 {
                     originAccount: {
-                        id: Equal(account.id),
+                        id: Equal(accountId),
                         user: {
-                            id: Equal(account.user.id)
+                            id: Equal(userId)
                         }
                     }
                 },
                 {
                     destinationAccount: {
-                        id: Equal(account.id),
+                        id: Equal(accountId),
                         user: {
-                            id: Equal(account.user.id)
+                            id: Equal(userId)
                         }
                     }
                 }
             ],
             relations: { originAccount: { user: true }, destinationAccount: { user: true } },
+            skip:offset,
+            take:25,
             order: {
                 id: "DESC"
             },
             cache: {
-                id: `movements${account.id}`,
+                id: `movements${accountId}`,
                 milliseconds: 10
             }
         })
@@ -221,7 +264,7 @@ export class DatabaseRepository {
     }
 
 
-    async get1Movement(movement:Movements): Promise<Movements> {
+    async getOneMovementById(id:number): Promise<Movements> {
         let movementResp = await this.movementsRepository.findOne({
             select: {
                 originAccount: {
@@ -238,7 +281,7 @@ export class DatabaseRepository {
                 }
             },
             where: {
-                id: Equal(movement.id)
+                id: Equal(id)
             },
             relations: {
                 originAccount: {

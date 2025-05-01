@@ -14,6 +14,7 @@ import CreateMovementDTO from "./dto/movements/createMovement.dto";
  */
 @Injectable()
 export class DatabaseRepository {
+    cacheMovementsSelect = new Map<number, Set<number>>
     constructor(
         private datasource: DataSource,
         @InjectRepository(Users)
@@ -31,36 +32,39 @@ export class DatabaseRepository {
      * @returns string
      */
 
-    async createUser(user:Users) : Promise<Users> {
+    async createUser(user: Users): Promise<Users> {
         const insertResult = await this.usersRepository.insert(user);
-        return <Users> insertResult.generatedMaps[0];
+        return <Users>insertResult.generatedMaps[0];
     }
 
-    async createAccount(account:Accounts) : Promise<Accounts> {
+    async createAccount(account: Accounts): Promise<Accounts> {
         const insertResult = await this.accountsRepository.insert(account);
 
         await this.datasource.queryResultCache.remove([`accounts${account.user.id}`]);
 
-        return <Accounts> insertResult.generatedMaps[0];
+        return <Accounts>insertResult.generatedMaps[0];
     }
 
-    async createMovement(movement:Movements): Promise<Movements> {
+    async createMovement(movement: Movements): Promise<Movements> {
         let insertResult = await this.movementsRepository.insert(movement);
 
-        await this.datasource.queryResultCache.remove([`movements${movement.originAccount.id}`]);
-        await this.datasource.queryResultCache.remove([`movements${movement.destinationAccount.id}`]);
+        //await this.datasource.queryResultCache.remove([`movements${movement.originAccount.id}`]);
+        //await this.datasource.queryResultCache.remove([`movements${movement.destinationAccount.id}`]);
+        await this.deleteCacheMovementSelects(movement.originAccount.id);
+        await this.deleteCacheMovementSelects(movement.destinationAccount.id);
+        //await this.datasource.queryResultCache.remove(['movements380']);
         await this.datasource.queryResultCache.remove([`account${movement.destinationAccount.id}`]);
         await this.datasource.queryResultCache.remove([`account${movement.originAccount.id}`]);
         await this.datasource.queryResultCache.remove([`accounts${movement.originAccount.user.id}`]);
         await this.datasource.queryResultCache.remove([`accounts${movement.destinationAccount.user.id}`]);
-        
+
         if (insertResult.generatedMaps[0]) return <Movements>insertResult.generatedMaps[0];
         else throw "Couldnt Create Movement";
-        
+
     }
 
-    async createBlockchainAccount(blockchainAccount:BlockchainAccounts) {
-        const insertResult= await this.blockchainAccountsRepository.insert(blockchainAccount);
+    async createBlockchainAccount(blockchainAccount: BlockchainAccounts) {
+        const insertResult = await this.blockchainAccountsRepository.insert(blockchainAccount);
         return <BlockchainAccounts>insertResult.generatedMaps[0];
     }
 
@@ -82,7 +86,7 @@ export class DatabaseRepository {
     /**
      *      SELECT QUERIES
      */
-    async selectAccountsByUserId(userId:number): Promise<Accounts[]> {
+    async selectAccountsByUserId(userId: number): Promise<Accounts[]> {
         let response = await this.accountsRepository.find({
             where: {
                 user: {
@@ -98,7 +102,7 @@ export class DatabaseRepository {
         return response;
     }
 
-    async selectAccountByIdAndUserId(accountId:number,userId:number): Promise<Accounts> {
+    async selectAccountByIdAndUserId(accountId: number, userId: number): Promise<Accounts> {
         return await this.accountsRepository.findOneOrFail({
             select: {},
             where: {
@@ -120,59 +124,59 @@ export class DatabaseRepository {
      * @param userId 
      * @returns Account with User
      */
-    async selectAccountByNumberAndUserId(accountNumber:string,userId:number) : Promise<Accounts> {
+    async selectAccountByNumberAndUserId(accountNumber: string, userId: number): Promise<Accounts> {
         return await this.accountsRepository.findOneOrFail({
             where: {
-                number:Equal(accountNumber),
+                number: Equal(accountNumber),
                 user: {
-                    id:Equal(userId)
+                    id: Equal(userId)
                 },
             },
-            relations:{
-                user:true
+            relations: {
+                user: true
             }
         })
     }
 
-    async selectAccountByNumber(accountNumber:string) : Promise<Accounts> {
+    async selectAccountByNumber(accountNumber: string): Promise<Accounts> {
         return await this.accountsRepository.findOneOrFail({
             where: {
-                number:Equal(accountNumber)
+                number: Equal(accountNumber)
             },
-            relations:{
-                user:true
+            relations: {
+                user: true
             }
         })
     }
 
-    async selectBlockChainAccountsByUserId(userId:number) {
+    async selectBlockChainAccountsByUserId(userId: number) {
         return await this.blockchainAccountsRepository.find({
             where: {
                 user: {
-                    id:Equal(userId)
+                    id: Equal(userId)
                 }
             },
-            relations:{
-                user:true
+            relations: {
+                user: true
             }
         })
     }
 
-    async selectBlockChainAccountByIdAndUserId(id:number,userId:number) {
+    async selectBlockChainAccountByIdAndUserId(id: number, userId: number) {
         return await this.blockchainAccountsRepository.findOneOrFail({
             where: {
                 user: {
-                    id:Equal(userId)
+                    id: Equal(userId)
                 },
-                id:Equal(id)
+                id: Equal(id)
             },
-            relations:{
-                user:true
+            relations: {
+                user: true
             }
         })
     }
 
-    async selectUserFromAccountId(account:Accounts): Promise<Users> {
+    async selectUserFromAccountId(account: Accounts): Promise<Users> {
         let response = await this.accountsRepository.findOne({
             select: {
                 user: {
@@ -188,29 +192,29 @@ export class DatabaseRepository {
         return response.user;
     }
 
-    async selectMovementsFullAccountsUsersFromMovementId (movement:Movements) : Promise<Movements> {
+    async selectMovementsFullAccountsUsersFromMovementId(movement: Movements): Promise<Movements> {
         let response = await this.movementsRepository.findOneOrFail({
-            where:{
-                id:Equal(movement.id),
-                originAccount:{
+            where: {
+                id: Equal(movement.id),
+                originAccount: {
                     user: {
-                        id:Equal(movement.originAccount.user.id)
+                        id: Equal(movement.originAccount.user.id)
                     }
                 }
             },
             relations: {
-                originAccount:{
-                    user:true
+                originAccount: {
+                    user: true
                 },
-                destinationAccount:{
-                    user:true
+                destinationAccount: {
+                    user: true
                 }
             }
-        }) 
-        
+        })
+
         return response;
     }
-    async selectMovementsFromAccountIdAndUserIdOffset(accountId:number,userId:number,offset:number): Promise<Movements[]> {
+    async selectMovementsFromAccountIdAndUserIdOffset(accountId: number, userId: number, offset: number): Promise<Movements[]> {
         let response = await this.movementsRepository.find({
             select: {
                 originAccount: {
@@ -247,16 +251,19 @@ export class DatabaseRepository {
                 }
             ],
             relations: { originAccount: { user: true }, destinationAccount: { user: true } },
-            skip:offset,
-            take:25,
+            skip: offset,
+            take: 25,
             order: {
                 id: "DESC"
             },
             cache: {
-                id: `movements${accountId}`,
-                milliseconds: 10
+                id: `movements${accountId}:${offset}`,
+                milliseconds: 50000,
+                
             }
         })
+
+        await this.createCacheMovementSelects(accountId,offset);
         return response;
 
 
@@ -264,7 +271,7 @@ export class DatabaseRepository {
     }
 
 
-    async getOneMovementById(id:number): Promise<Movements> {
+    async getOneMovementById(id: number): Promise<Movements> {
         let movementResp = await this.movementsRepository.findOne({
             select: {
                 originAccount: {
@@ -300,7 +307,7 @@ export class DatabaseRepository {
      *      DELETE QUERIES
      */
 
-    async deleteUserById(user:Users) {
+    async deleteUserById(user: Users) {
         let delResult = await this.usersRepository.delete({
             id: Equal(user.id)
         });
@@ -308,7 +315,7 @@ export class DatabaseRepository {
         if (delResult.affected == 0) throw ("Delete Error. 0 Rows Deleted");
     }
 
-    async deleteAccountById(account:Accounts) {
+    async deleteAccountById(account: Accounts) {
         let delResult = await this.accountsRepository.delete({
             id: Equal(account.id),
             user: {
@@ -322,35 +329,37 @@ export class DatabaseRepository {
         if (delResult.affected == 0) throw ("Delete Error. 0 Rows Deleted");
     }
 
-    async deleteBlockchainAccountById(blockchainAccount:BlockchainAccounts) {
+    async deleteBlockchainAccountById(blockchainAccount: BlockchainAccounts) {
         await this.blockchainAccountsRepository.delete(blockchainAccount);
     }
 
-    async deleteMovementById(movement:Movements) {
-        
+    async deleteMovementById(movement: Movements) {
+
         let delStatus = await this.movementsRepository.delete(movement.id);
 
-        await this.datasource.queryResultCache.remove([`movements${movement.originAccount.id}`]);
-        await this.datasource.queryResultCache.remove([`movements${movement.destinationAccount.id}`]);
+        //await this.datasource.queryResultCache.remove([`movements${movement.originAccount.id}`]);
+        //await this.datasource.queryResultCache.remove([`movements${movement.destinationAccount.id}`]);
+        await this.deleteCacheMovementSelects(movement.originAccount.id);
+        await this.deleteCacheMovementSelects(movement.destinationAccount.id);
         await this.datasource.queryResultCache.remove([`account${movement.destinationAccount.id}`]);
         await this.datasource.queryResultCache.remove([`account${movement.originAccount.id}`]);
         await this.datasource.queryResultCache.remove([`accounts${movement.originAccount.user.id}`]);
         await this.datasource.queryResultCache.remove([`accounts${movement.destinationAccount.user.id}`]);
-        
+
         if (delStatus.affected == 0) throw ("Delete Error. 0 Rows Deleted");
     }
 
 
     //              UPDATE QUERIES
-    async updateUser(user:Users) {
+    async updateUser(user: Users) {
         return await this.usersRepository.save(user);
     }
 
-    async updateAccount(account:Accounts) {
+    async updateAccount(account: Accounts) {
         return await this.accountsRepository.save(account);
     }
 
-    async updateBlockChainAccount (blockChainAccount:BlockchainAccounts) {
+    async updateBlockChainAccount(blockChainAccount: BlockchainAccounts) {
         return await this.blockchainAccountsRepository.save(blockChainAccount);
     }
 
@@ -382,5 +391,36 @@ export class DatabaseRepository {
         */
     }
 
+    async createCacheMovementSelects(accountId: number, offset: number) {
+        const userMovementsCache = this.cacheMovementsSelect.get(accountId);
+        
+        if (userMovementsCache) {
+            userMovementsCache
+            userMovementsCache.add(offset);
+        } else {
+            const newSet=new Set<number>();
+            newSet.add(offset);
+            this.cacheMovementsSelect.set(accountId, newSet);
+        }
+    }
 
+    async deleteCacheMovementSelects(accountId: number) {
+        const userMovementsCache=this.cacheMovementsSelect.get(accountId);
+        if (userMovementsCache) {
+            for (const x of userMovementsCache) {
+                await this.datasource.queryResultCache.remove([`movements${accountId}:${x}`,`movements${accountId}:${x}-pagination`])
+            }
+            /*
+            for (let i = 0; i < userMovementsCache.length; i++) {
+                const x = userMovementsCache[i];
+                console.log(x);
+                console.log(`movements${accountId}:${x}`)
+                await this.datasource.queryResultCache.remove([`movements${accountId}:${x}`,`movements${accountId}:${x}-pagination`])
+            }
+            */
+            this.cacheMovementsSelect.delete(accountId);
+        } else {
+
+        }
+    }
 }

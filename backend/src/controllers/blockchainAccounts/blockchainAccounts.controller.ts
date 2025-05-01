@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, BadRequestException, ValidationPipe, UsePipes } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, BadRequestException, ValidationPipe, UsePipes, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { BlockchainAccountsService } from './blockchainAccounts.service';
 import { BlockchainAccounts } from 'src/database/entity/blockchainAccounts.entity';
 import { Users } from 'src/database/entity/users.entity';
@@ -8,9 +8,10 @@ import { plainToInstance } from 'class-transformer';
 import { GetBlockchainAccountDTO } from 'src/database/dto/blockchainAccounts/getBlockChainAccount.dto';
 import { UpdateBlockchainAccountDTO } from 'src/database/dto/blockchainAccounts/updateBlockchainAccount.dto';
 import { DeleteBlockchainAccountDTO } from 'src/database/dto/blockchainAccounts/deleteBlockchainAccount.dto';
-
-@Controller('blockchainAccounts')
 @UseGuards(MainAuthGuard)
+@UsePipes(new ValidationPipe({transform:true}))
+@UseInterceptors(ClassSerializerInterceptor)
+@Controller('blockchainAccounts')
 export class BlockchainAccountsController {
   constructor(private readonly blockchainAccountsService: BlockchainAccountsService) { }
 
@@ -50,7 +51,6 @@ export class BlockchainAccountsController {
   }
 
   @Post('update')
-  @UsePipes(new ValidationPipe())
   async update(@Req() req: any, @Body() updateBlockchainAccountDTO: UpdateBlockchainAccountDTO) {
     try {
       const blockchainAccount: BlockchainAccounts = plainToInstance(BlockchainAccounts, updateBlockchainAccountDTO);

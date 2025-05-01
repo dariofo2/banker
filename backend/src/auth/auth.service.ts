@@ -1,9 +1,10 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { compare, hash } from "bcrypt";
+import { instanceToPlain, plainToClass, plainToInstance } from "class-transformer";
 
 import { DatabaseRepository } from "src/database/database.repository";
-import { UserLoginResp } from "src/database/dto/userLoginResp.dto";
+import { UserLoginResp } from "src/database/dto/auth/userLoginResp.dto";
 import { CreateUserDTO } from "src/database/dto/users/createUser.dto";
 import { Users } from "src/database/entity/users.entity";
 
@@ -24,12 +25,11 @@ export class AuthService {
         const payload = { id: loginResp.id, name: loginResp.name, email: loginResp.email };
         const jwtToken = await this.jwtService.signAsync(payload);
 
-        loginResp.password = undefined;
-        const userLoginResp: UserLoginResp = <UserLoginResp>loginResp;
+        const userRespTransformed=instanceToPlain(loginResp);
+        const userLoginResp: UserLoginResp = plainToInstance(UserLoginResp,userRespTransformed);
         userLoginResp.jwtToken = "Bearer " + jwtToken;
         
         return userLoginResp;
-
     }
 
     async signInUser (user:Users) {

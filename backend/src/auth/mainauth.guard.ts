@@ -16,6 +16,9 @@ export class MainAuthGuard implements CanActivate {
         const request = context.switchToHttp().getRequest();
         //const authValue=request.headers.authorization;
         const authValue=request.cookies["JWTToken"];
+
+        if (!authValue) throw new UnauthorizedException;
+        
         const token=this.checkAuthJwt(authValue);
         
         try {

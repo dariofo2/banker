@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Accounts } from "./accounts.entity";
 import { IsAlpha, IsEmail, MinLength } from "class-validator";
+import { Exclude } from "class-transformer";
 
 @Entity()
 export class Users {
@@ -13,6 +14,7 @@ export class Users {
 
     @Column()
     @MinLength(1)
+    @Exclude({toPlainOnly:true})
     password: string;
 
     @Column()

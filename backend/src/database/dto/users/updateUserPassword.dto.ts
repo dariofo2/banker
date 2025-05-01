@@ -1,12 +1,9 @@
+import { Exclude, Expose } from "class-transformer";
 import { IsEmpty, MinLength } from "class-validator";
 
+@Exclude()
 export class UpdateUserPasswordDTO {
-    @IsEmpty()
-    name: string;
-
-    @IsEmpty()
-    email: string;
-
+    @Expose()
     @MinLength(5)
     password: string;
 }

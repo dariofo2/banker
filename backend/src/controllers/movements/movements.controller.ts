@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Headers, Post, Req, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Get, Headers, Post, Req, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
 import { MovementsService } from "./movements.service";
 import { MainAuthGuard } from "src/auth/mainauth.guard";
 import { Movements } from "src/database/entity/movements.entity";
@@ -10,6 +10,8 @@ import { plainToInstance } from "class-transformer";
 import { DeleteMovementDTO } from "src/database/dto/movements/deleteMovement.dto";
 
 @UseGuards(MainAuthGuard)
+@UsePipes(new ValidationPipe({transform:true}))
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('movements')
 export class MovementsController {
     constructor(private movementsService: MovementsService) { }
@@ -53,5 +55,4 @@ export class MovementsController {
 
         return selectResult;
     }
-
 }

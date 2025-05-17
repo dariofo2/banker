@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="239.57332"
+   height="68.593536"
+   viewBox="0 0 239.57332 68.593536"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <rect
+       x="123.65283"
+       y="160.36226"
+       width="293.03143"
+       height="61.182388"
+       id="rect1" />
+  </defs>
+  <g
+     id="layer1"
+     transform="translate(-157.60551,-161.51546)">
+    <text
+       xml:space="preserve"
+       id="text1"
+       style="font-size:53.3333px;line-height:1;text-align:start;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect1);fill:#c548ff;fill-opacity:1"
+       transform="translate(30.913209,-3.8641509)"><tspan
+         x="123.65234"
+         y="202.71296"
+         id="tspan4"><tspan
+           style="font-weight:900;font-family:Montserrat;-inkscape-font-specification:'Montserrat Heavy'"
+           id="tspan3">BANKER</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Montserrat;-inkscape-font-specification:Montserrat;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000"
+       x="289.1673"
+       y="229.91698"
+       id="text2"><tspan
+         id="tspan2"
+         x="289.1673"
+         y="229.91698"
+         style="font-size:32px;fill:#ffffff;fill-opacity:1">Online</tspan></text>
+  </g>
+</svg>

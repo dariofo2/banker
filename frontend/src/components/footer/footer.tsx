@@ -1,7 +1,64 @@
-export default function Footer () {
+export default function FooterComponent() {
     return (
-        <footer>
-            Alejandro Darío Fuentefría Oróns &copy; Todos los Derechos Reservados
+        <footer className="bg-black p-5">
+            <div className="container-fluid text-white">
+                <div className="row justify-content-center g-4">
+                    <div className="col-2">
+                        <div className="m-auto" style={{ width: "fit-content" }}>
+                            <h5>Contacto</h5>
+                            <ul className="list-unstyled">
+                                <li>Ubicación</li>
+                                <li>Teléfono</li>
+                                <li>Email</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div className="col-2">
+                        <div className="m-auto" style={{ width: "fit-content" }}>
+                            <h5>Página</h5>
+                            <ul className="list-unstyled">
+                                <li>Home</li>
+                                <li>BlockChain</li>
+                                <li>Manual</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div className="col-2">
+                        <div className="m-auto" style={{ width: "fit-content" }}>
+                            <h5>Legal</h5>
+                            <ul className="list-unstyled">
+                                <li>Aviso Legal</li>
+                                <li>Política de Cookies</li>
+                                <li>Política de Privacidad</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div className="container">
+                    <div className="border-top border-1 border-white mt-4"></div>
+                    <div className="row justify-content-between">
+                        <div className="col-3">
+                            <p className="">2025 All rights Reserved</p>
+                        </div>
+                        <div className="col-3 text-center">
+                            <img className="img-fluid mt-3" src="/BankerLogo.svg" />
+                        </div>
+                        <div className="col-3">
+                            <div className="d-flex justify-content-end column-gap-3 fs-1">
+                                <div>
+                                    <i className="bi bi-instagram"></i>
+                                </div>
+                                <div>
+                                    <i className="bi bi-facebook"></i>
+                                </div>
+                                <div>
+                                    <i className="bi bi-twitter"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </footer>
     );
 }

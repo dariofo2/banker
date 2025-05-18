@@ -28,6 +28,17 @@
   color: #F19EDC;
 }
 
+.divSpyActive {
+  width:0%;
+  height:5px;
+  background-color: orange;
+}
+.scrollSpy .active ~ div {
+  transition:all 0.3s;
+  width:100%;
+}
+
+
 .gradientTextPink {
   background: -webkit-linear-gradient(280deg,#eee, #FF00E5);
   background-clip: text;

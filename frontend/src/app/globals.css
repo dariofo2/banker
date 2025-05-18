@@ -12,6 +12,39 @@
   font-family: var(--montserrat);
 }
 
+.text-purple-dark {
+  color: #21005B; 
+}
+
+.text-purple-dark-lighter {
+  color: #4F00BD;
+}
+
+.text-pink-dark {
+  color: #C548FF;
+}
+
+.text-pink-dark-lighter {
+  color: #F19EDC;
+}
+
+.gradientTextPink {
+  background: -webkit-linear-gradient(280deg,#eee, #FF00E5);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradientBlueWhite {
+  background: -webkit-linear-gradient(black 0%, #a62bf8 67%, #2E0066 100%);
+}
+
+.gradientPinkBlack {
+  background: linear-gradient(120deg,black 0%, #BC57FF 50%, #4E0062 100%);
+}
+
+.gradientePurpleBlack {
+
+}
 h1 {
   font-size: 50px;
   font-weight: bold;
@@ -19,18 +52,22 @@ h1 {
 
 h2 {
   font-size: 40px;
+  font-weight: 700;
 }
 
 h3 {
-  font-size: 34px;
+  font-size: 32px;
+  font-weight: 700;
 }
 
 h4 {
-  font-size: 30px;
+  font-size: 28px;
+  font-weight: 600;
 }
 
 h5 {
   font-size: 24px;
+  font-weight: 500;
 }
 
 h6 {

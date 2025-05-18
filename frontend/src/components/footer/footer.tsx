@@ -1,6 +1,6 @@
 export default function FooterComponent() {
     return (
-        <footer className="bg-black p-5">
+        <footer className="bg-black p-5 montserrat">
             <div className="container-fluid text-white">
                 <div className="row justify-content-center g-4">
                     <div className="col-2">

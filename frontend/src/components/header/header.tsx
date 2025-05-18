@@ -44,7 +44,7 @@ useEffect(()=>{
 
     return (
         <motion.div className="fixed-top w-100 montserrat" style={{backgroundColor:colorsFade}}>
-            <nav className="navbar navbar-expand-lg sticky-top">
+            <nav className="navbar navbar-expand-lg navbar-dark sticky-top">
                 <div className="container-fluid">
                     <a className="navbar-brand ms-5" href="#">
                         <div style={{width:200}}>

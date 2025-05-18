@@ -3,7 +3,7 @@ export default function YourNewBankComponent() {
         <div>
             <div className="container p-3 pb-5 montserrat">
                 <h2 className="m-auto text-center mt-5 mb-4 text-purple-dark" style={{ maxWidth: 200 }}>Tu Nuevo Banco</h2>
-                <div className="row pt-5 g-5 align-items-center">
+                <div className="row pt-5 g-3 g-lg-5 align-items-center">
                     <div className="col-lg-6 order-1 order-lg-0">
                         <div>
                             <h3 className="text-purple-dark mb-0">Nuestra Visión</h3>
@@ -12,13 +12,13 @@ export default function YourNewBankComponent() {
                         </div>
                     </div>
                     <div className="col-lg-6 order-0 order-lg-1">
-                        <div className="">
-                            <img className="img-fluid" src="/bank.jpg"></img>
+                        <div className="ratio ratio-16x9">
+                            <img className="img-fluid object-fit-cover" src="/bank.jpg"></img>
                         </div>
                     </div>
                     <div className="col-lg-6 order-2 order-lg-2">
-                        <div>
-                            <img className="img-fluid" height={50} src="/bank.jpg"></img>
+                        <div className="ratio ratio-16x9">
+                            <img className="img-fluid object-fit-cover" src="/bank.jpg"></img>
                         </div>
                     </div>
                     <div className="col-lg-6 order-3 order-lg-3">

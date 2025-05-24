@@ -9,7 +9,7 @@ export default function ManualStaticComponent() {
     useEffect(() => {
         const scrollSpy = new ScrollSpy(document.body, {
             target: "#listNavSpy",
-            rootMargin: "0px 0px -80%"
+            rootMargin:"-25% 0px -25% 0px"
         })
     }, [])
     return (
@@ -72,7 +72,7 @@ export default function ManualStaticComponent() {
                         </div>
                     </div>
                     <div className="col-8">
-                        <div className="scrollId" data-bs-smooth-scroll="true">
+                        <div className="scrollId position-relative" data-bs-smooth-scroll="true">
                             {/* Introducción */}
                             <h2 id="scroll1" style={{ scrollMarginTop: 80 }}>1. Introducción</h2>
                             <p>
@@ -206,20 +206,19 @@ export default function ManualStaticComponent() {
 
 
                             {/* 5. API de PAGOS */}
-                            <h2 id="scroll5">5. API De Pagos</h2>
-                            <p>La API de Pagos es una funcionalidad exclusiva de Banker</p>
-                            <p>Permite que puedas habilitar aceptar pagos desde tú pagina a través de Banker</p>
-                            <p>Increíble no? Empieza a usar Banker y prueba nuestras ventajas</p>
-                            <p>Para ello, lo unico que tienes que hacer es usar una librería de sencillo uso habilitada por nosotros</p>
+                            <h2 id="scroll5">5. API de pagos</h2>
+                            <p>La API de Pagos es una funcionalidad exclusiva de Banker.</p>
+                            <p>Permite que puedas habilitar aceptar pagos desde tú pagina a través de Banker.</p>
+                            <p>Increíble no? Empieza a usar Banker y prueba nuestras ventajas.</p>
+                            <p>Para ello, lo unico que tienes que hacer es usar una librería de sencillo uso habilitada por nosotros.</p>
                             <h2>5.1 Como utilizarla</h2>
                             <p>
                                 Para usar nuestra Api de Pagos, simplemente tienes que usar la Libreria BankerApi, disponible en nuestro Github, la descargas y
                                 puedes usarla en cualquier proyecto, importándola desde JavaScript o Typescript, y tan solo usando un método para
                                 mandar al usuario a la página de banker cobros, se te dará un código único y cuando el usuario haya hecho la transacción
                                 se te mandará el codigo para revisarla y comprobar que es verdad, recibirás tu dinero en tu Cuenta de Banker y le darás al cliente
-                                lo que le hayas prometido
+                                lo que le hayas prometido.
                             </p>
-                            <h1>HOLAAA</h1>
                         </div>
                     </div>
 

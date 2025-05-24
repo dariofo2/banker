@@ -33,11 +33,14 @@
   height:5px;
   background-color: orange;
 }
-.scrollSpy .active ~ div {
+.scrollSpy .active + div {
   transition:all 0.3s;
   width:100%;
 }
 
+.scrollId h2 {
+  scroll-margin-top: 80px;
+}
 
 .gradientTextPink {
   background: -webkit-linear-gradient(280deg,#eee, #FF00E5);

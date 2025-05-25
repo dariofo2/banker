@@ -1,3 +1,5 @@
+import Login from "../users/user/login/login";
+
 export default function HeroComponent () {
     return (
         <main className="montserrat">
@@ -17,23 +19,7 @@ export default function HeroComponent () {
                                 <div className="bg-white p-4 pt-5 pb-5 shadow-lg">
                                     <h4 className="">Iniciar Sesión</h4>
                                     <hr></hr>
-                                    <form>
-                                        <div className="mt-5 mb-4">
-                                            <label className="form-label mb-2 fw-medium">E-Mail</label>
-                                            <div className="input-group">
-                                                <span className="input-group-text"><i className="bi bi-envelope fs-5"></i></span>
-                                                <input className="form-control" type="email" name="email" placeholder="E-Mail"></input>
-                                            </div>
-                                        </div>
-                                        <div className="mb-2">
-                                            <label className="form-label mb-2 fw-medium">Password</label>
-                                            <div className="input-group">
-                                                <span className="input-group-text"><i className="bi bi-key fs-5"></i></span>
-                                                <input className="form-control" type="password" name="password" placeholder="Password"></input>
-                                            </div>
-                                        </div>
-                                        <button className="btn btn-dark w-100 mt-3">Log - In</button>
-                                    </form>
+                                    <Login />
                                 </div>
                             </div>
                         </div>

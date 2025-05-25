@@ -44,9 +44,16 @@ export class UsersController {
     async updateUser(@Req() req: any, @Body() updateUserDTO: UpdateUserDto) {
         const user: Users = plainToInstance(Users,updateUserDTO);
         user.id=req.user.id;
-        console.log(user);
-        console.log(updateUserDTO);
         return await this.usersService.updateUser(user);
+    }
+
+    @UseGuards(MainAuthGuard)
+    @Post('get')
+    async getUser(@Req() req: any) {
+        const user=new Users;
+        user.id=req.user.id;
+        
+        return await this.usersService.getUser(user);
     }
 
     

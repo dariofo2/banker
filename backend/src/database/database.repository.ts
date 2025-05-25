@@ -124,6 +124,14 @@ export class DatabaseRepository {
      * @param userId 
      * @returns Account with User
      */
+
+    async getUserById (user:Users) {
+        return await this.usersRepository.findOne({
+            where:{
+                id:Equal(user.id),
+            }
+        })
+    }
     async selectAccountByNumberAndUserId(accountNumber: string, userId: number): Promise<Accounts> {
         return await this.accountsRepository.findOneOrFail({
             where: {

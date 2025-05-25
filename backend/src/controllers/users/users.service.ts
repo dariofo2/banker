@@ -22,4 +22,8 @@ export class UsersService {
         return this.databaseRepository.updateUser(user);
     }
 
+    async getUser (user: Users) {
+        this.databaseRepository.getUserById(user);
+    }
+
 }

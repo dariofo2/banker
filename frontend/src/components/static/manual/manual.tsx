@@ -1,6 +1,6 @@
 "use client"
 
-import BootstrapClient from "@/components/bootstrapClient"
+import BootstrapClient from "@/components/utils/bootstrapClient"
 import { ScrollSpy, Toast } from "bootstrap";
 import { useEffect, useRef } from "react";
 

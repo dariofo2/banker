@@ -1,7 +1,7 @@
 
-import UserAccounts from "@/components/account/userAccounts";
+import UserAccounts from "@/components/accounts/account/userAccounts";
 import Footer from "@/components/footer/footer";
-import HeaderComponent from "@/components/header/header";
+import HeaderComponent from "@/components/navbar/navbar";
 
 //Not needed Cookies from client, We want Server Cookies sent by Request from the User To sever
 //import Cookies from "js-cookie";

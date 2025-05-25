@@ -1,6 +1,6 @@
 import FooterComponent from "@/components/footer/footer";
 import FrontStaticComponent from "@/components/front/frontStatic";
-import HeaderComponent from "@/components/header/header";
+import HeaderComponent from "@/components/navbar/navbar";
 import LegalAdvertStaticComponent from "@/components/static/legalAdvert/legalAdvert";
 
 export default function LegalAdvertPage () {

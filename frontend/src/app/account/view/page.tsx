@@ -1,8 +1,9 @@
 
+/*
 import UserAccount from "@/components/account/userAccount";
 import UserAccounts from "@/components/account/userAccounts";
 import Footer from "@/components/footer/footer";
-import HeaderComponent from "@/components/header/header";
+import HeaderComponent from "@/components/navbar/navbar";
 import { RequestCookie, RequestCookies } from "next/dist/compiled/@edge-runtime/cookies";
 
 //Not needed Cookies from client, We want Server Cookies sent by Request from the User To sever
@@ -53,3 +54,4 @@ export default function MainPage() {
         </div>
     );
 }
+    */

@@ -1,5 +1,6 @@
 import { Injectable, Move, UnauthorizedException } from "@nestjs/common";
 import { DatabaseRepository } from "src/database/database.repository";
+import { ListRequestDTO } from "src/database/dto/listRequestDTO";
 import CreateMovementDTO from "src/database/dto/movements/createMovement.dto";
 import { ListMovementsDTO } from "src/database/dto/movements/listMovementsDTO";
 import { Accounts } from "src/database/entity/accounts.entity";

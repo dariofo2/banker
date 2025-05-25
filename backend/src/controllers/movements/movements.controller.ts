@@ -8,6 +8,7 @@ import { Users } from "src/database/entity/users.entity";
 import { plainToInstance } from "class-transformer";
 import { DeleteMovementDTO } from "src/database/dto/movements/deleteMovement.dto";
 import { ListMovementsDTO } from "src/database/dto/movements/listMovementsDTO";
+import { ListRequestDTO } from "src/database/dto/listRequestDTO";
 
 @UseGuards(MainAuthGuard)
 @UsePipes(new ValidationPipe({transform:true}))

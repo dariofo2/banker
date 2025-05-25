@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Users } from "./entity/users.entity";
-import { DataSource, Equal, Repository } from "typeorm";
+import { And, DataSource, Equal, LessThanOrEqual, MoreThanOrEqual, Repository } from "typeorm";
 import { Accounts } from "./entity/accounts.entity";
 import { Movements } from "./entity/movements.entity";
 import { BlockchainAccounts } from "./entity/blockchainAccounts.entity";
@@ -222,8 +222,8 @@ export class DatabaseRepository {
 
         return response;
     }
-    async selectMovementsFromAccountIdAndUserIdOffset(accountId: number, userId: number, offset: number): Promise<Movements[]> {
-        let response = await this.movementsRepository.find({
+    async selectMovementsFromAccountIdAndUserIdOffset(accountId: number, userId: number, offset: number): Promise<ListResponseDTO<Movements>> {
+        let response = await this.movementsRepository.findAndCount({
             select: {
                 originAccount: {
                     id: true,
@@ -256,6 +256,70 @@ export class DatabaseRepository {
                             id: Equal(userId)
                         }
                     }
+                }
+            ],
+            relations: { originAccount: { user: true }, destinationAccount: { user: true } },
+            skip: offset,
+            take: 25,
+            order: {
+                id: "DESC"
+            },
+            cache: {
+                id: `movements${accountId}:${offset}`,
+                milliseconds: 50,
+                
+            }
+        })
+        const listResponseDTO= new ListResponseDTO<Movements>;
+        listResponseDTO.data=response[0];
+        listResponseDTO.totalRecords=response[1];
+        listResponseDTO.filteredRecords=response[0].length;
+        listResponseDTO.limit=25;
+        listResponseDTO.page=(offset+25)/25;
+
+        await this.createCacheMovementSelects(accountId,offset);
+        return listResponseDTO;
+
+
+
+    }
+
+    async selectMovementsFromAccountIdAndUserIdByDateInterval(accountId: number, userId: number, offset: number, dateStart: Date, dateEnd: Date): Promise<Movements[]> {
+        let response = await this.movementsRepository.find({
+            select: {
+                originAccount: {
+                    id: true,
+                    number: true,
+                    user: {
+                        name: true
+                    }
+                },
+                destinationAccount: {
+                    id: true,
+                    number: true,
+                    user: {
+                        name: true
+                    }
+                }
+            },
+            where: [
+                {
+                    originAccount: {
+                        id: Equal(accountId),
+                        user: {
+                            id: Equal(userId)
+                        }
+                    },
+                    date: And(MoreThanOrEqual(dateStart),LessThanOrEqual(dateEnd))
+                },
+                {
+                    destinationAccount: {
+                        id: Equal(accountId),
+                        user: {
+                            id: Equal(userId)
+                        }
+                    },
+                    date: And(MoreThanOrEqual(dateStart),LessThanOrEqual(dateEnd))
                 }
             ],
             relations: { originAccount: { user: true }, destinationAccount: { user: true } },

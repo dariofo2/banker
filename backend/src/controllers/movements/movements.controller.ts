@@ -5,9 +5,9 @@ import { Movements } from "src/database/entity/movements.entity";
 import { Accounts } from "src/database/entity/accounts.entity";
 import CreateMovementDTO from "src/database/dto/movements/createMovement.dto";
 import { Users } from "src/database/entity/users.entity";
-import { ListMovementsDTO } from "src/database/dto/movements/listMovements.dto";
 import { plainToInstance } from "class-transformer";
 import { DeleteMovementDTO } from "src/database/dto/movements/deleteMovement.dto";
+import { ListMovementsDTO } from "src/database/dto/movements/listMovementsDTO";
 
 @UseGuards(MainAuthGuard)
 @UsePipes(new ValidationPipe({transform:true}))
@@ -46,12 +46,10 @@ export class MovementsController {
     }
 
     @Post('list')
-    async listMovements(@Req() req, @Body() listMovementsDTO: ListMovementsDTO): Promise<false | Movements[]> {
-        const movement=plainToInstance(Movements,listMovementsDTO);
-        movement.originAccount.user=req.user;
-        const offset= listMovementsDTO.offset;
+    async listMovements(@Req() req, @Body() listRequestDTO: ListRequestDTO<ListMovementsDTO>): Promise<ListResponseDTO<Movements>> {
+        listRequestDTO.data.originAccount.user=req.user;
 
-        let selectResult = await this.movementsService.listMovements(movement,offset);
+        let selectResult = await this.movementsService.listMovements(listRequestDTO);
 
         return selectResult;
     }

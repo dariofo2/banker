@@ -42,5 +42,19 @@ export class AuthController {
             throw new BadRequestException;
         }
     }
+
+    @Post("logout")
+    async logoutUser(@Res({passthrough:true}) res: Response) {
+        try {
+            res.cookie("JWTToken","",{
+                maxAge:0,
+                httpOnly:true,
+                secure:false
+            });
+        } catch (error) {
+            console.error(error);
+            throw new BadRequestException;
+        }
+    }
 }
 

@@ -1,4 +1,4 @@
-import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Get, MessageEvent, Post, Req, Res, SerializeOptions, Sse, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
+import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Get, MessageEvent, Post, Req, Res, SerializeOptions, Sse, UnauthorizedException, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { MainAuthGuard } from "src/auth/mainauth.guard";
 import { Users } from "src/database/entity/users.entity";
@@ -61,10 +61,14 @@ export class UsersController {
         // ExcludeExtraneousValues takes @expose() only, the others cancel. 
     @Post('updatePassword')
     async updateUserPassword(@Req() req: any, @Body() updateUserPasswordDTO: UpdateUserPasswordDTO) {
-        const user: Users = plainToInstance(Users,updateUserPasswordDTO);
-        user.id=req.user.id;
+        try {
+        const user:Users= plainToInstance(Users,req.user);
         
-        return await this.usersService.updateUser(user);
+         await this.usersService.updateUserPassword(user,updateUserPasswordDTO);
+        } catch (error) {
+            console.error(error);
+            throw new BadRequestException("Invalid Password");
+        }
     }
 
     @Post('rabbitmqsend')

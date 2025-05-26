@@ -1,7 +1,8 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { hash } from "bcrypt";
+import { compare, hash } from "bcrypt";
 import { DatabaseRepository } from "src/database/database.repository";
+import { UpdateUserPasswordDTO } from "src/database/dto/users/updateUserPassword.dto";
 import { Users } from "src/database/entity/users.entity";
 //import { hash } from "crypto";
 @Injectable()
@@ -15,10 +16,20 @@ export class UsersService {
     }
 
     async updateUser (user:Users) {
-        if (user.password) {
-            const hashedPassword=await hash(user.password,parseInt(process.env.BCRYPT_ROUNDS));
+        return this.databaseRepository.updateUser(user);
+    }
+
+    async updateUserPassword (user:Users,updateUserPassword:UpdateUserPasswordDTO) {
+        //Comprobamos la antigua contraseña
+        const userResponse=await this.databaseRepository.login(user);
+        const compareHash=await compare(updateUserPassword.lastPassword,userResponse.password);
+        
+        //Generamos una nueva contraseña
+        if (compareHash) {
+            const hashedPassword=await hash(updateUserPassword.password,parseInt(process.env.BCRYPT_ROUNDS));
             user.password=hashedPassword;
-        }
+        } else throw new BadRequestException;
+
         return this.databaseRepository.updateUser(user);
     }
 

@@ -9,6 +9,7 @@ import { plainToInstance } from "class-transformer";
 import { DeleteMovementDTO } from "src/database/dto/movements/deleteMovement.dto";
 import { ListMovementsDTO } from "src/database/dto/movements/listMovementsDTO";
 import { ListRequestDTO } from "src/database/dto/listRequestDTO";
+import { ListResponseDTO } from "src/database/dto/listResponseDTO";
 
 @UseGuards(MainAuthGuard)
 @UsePipes(new ValidationPipe({transform:true}))
@@ -48,6 +49,7 @@ export class MovementsController {
 
     @Post('list')
     async listMovements(@Req() req, @Body() listRequestDTO: ListRequestDTO<ListMovementsDTO>): Promise<ListResponseDTO<Movements>> {
+        console.log(listRequestDTO);
         listRequestDTO.data.originAccount.user=req.user;
 
         let selectResult = await this.movementsService.listMovements(listRequestDTO);

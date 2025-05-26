@@ -1,4 +1,4 @@
-class ListResponseDTO<T> {
+export class ListResponseDTO<T> {
     data: T[];
     page: number;
     limit: number;

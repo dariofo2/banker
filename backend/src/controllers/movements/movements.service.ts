@@ -1,6 +1,7 @@
 import { Injectable, Move, UnauthorizedException } from "@nestjs/common";
 import { DatabaseRepository } from "src/database/database.repository";
 import { ListRequestDTO } from "src/database/dto/listRequestDTO";
+import { ListResponseDTO } from "src/database/dto/listResponseDTO";
 import CreateMovementDTO from "src/database/dto/movements/createMovement.dto";
 import { ListMovementsDTO } from "src/database/dto/movements/listMovementsDTO";
 import { Accounts } from "src/database/entity/accounts.entity";
@@ -36,9 +37,9 @@ export class MovementsService {
 
     async listMovements(listRequestDTO:ListRequestDTO<ListMovementsDTO>) : Promise<ListResponseDTO<Movements>> {
         const account=listRequestDTO.data.originAccount;
-        const offset= listRequestDTO.page-1*25;
+        const offset= (listRequestDTO.page-1)*25;
         if (listRequestDTO.data.dateEnd && listRequestDTO.data.dateStart) {
-            //return await this.database.selectMovementsFromAccountIdAndUserIdByDateInterval(account.id,account.user.id,offset,listRequestDTO.data.dateStart,listRequestDTO.data.dateEnd);
+            return await this.database.selectMovementsFromAccountIdAndUserIdByDateInterval(account.id,account.user.id,offset,listRequestDTO.data.dateStart,listRequestDTO.data.dateEnd);
         } else {
             return await this.database.selectMovementsFromAccountIdAndUserIdOffset(account.id, account.user.id, offset);
         }

@@ -5,16 +5,13 @@ import { And, DataSource, Equal, LessThanOrEqual, MoreThanOrEqual, Repository } 
 import { Accounts } from "./entity/accounts.entity";
 import { Movements } from "./entity/movements.entity";
 import { BlockchainAccounts } from "./entity/blockchainAccounts.entity";
-import { CreateUserDTO } from "./dto/users/createUser.dto";
-import { CreateAccountDTO } from "./dto/accounts/createAccount.dto";
-import { CreateBlockchainAccountDTO } from "./dto/blockchainAccounts/createBlockchainAccount.dto";
-import CreateMovementDTO from "./dto/movements/createMovement.dto";
+import { ListResponseDTO } from "./dto/listResponseDTO";
 /**
  * @author Alejandro Darío Fuentefría Oróns
  */
 @Injectable()
 export class DatabaseRepository {
-    cacheMovementsSelect = new Map<number, Set<number>>
+    cacheMovementsSelect = new Map<number, Set<string>>
     constructor(
         private datasource: DataSource,
         @InjectRepository(Users)
@@ -266,10 +263,11 @@ export class DatabaseRepository {
             },
             cache: {
                 id: `movements${accountId}:${offset}`,
-                milliseconds: 50,
+                milliseconds: 50000,
                 
             }
         })
+        
         const listResponseDTO= new ListResponseDTO<Movements>;
         listResponseDTO.data=response[0];
         listResponseDTO.totalRecords=response[1];
@@ -277,15 +275,16 @@ export class DatabaseRepository {
         listResponseDTO.limit=25;
         listResponseDTO.page=(offset+25)/25;
 
-        await this.createCacheMovementSelects(accountId,offset);
+        await this.createCacheMovementSelects(accountId,`${offset}`);
+
         return listResponseDTO;
 
 
 
     }
 
-    async selectMovementsFromAccountIdAndUserIdByDateInterval(accountId: number, userId: number, offset: number, dateStart: Date, dateEnd: Date): Promise<Movements[]> {
-        let response = await this.movementsRepository.find({
+    async selectMovementsFromAccountIdAndUserIdByDateInterval(accountId: number, userId: number, offset: number, dateStart: Date, dateEnd: Date): Promise<ListResponseDTO<Movements>> {
+        let response = await this.movementsRepository.findAndCount({
             select: {
                 originAccount: {
                     id: true,
@@ -329,14 +328,23 @@ export class DatabaseRepository {
                 id: "DESC"
             },
             cache: {
-                id: `movements${accountId}:${offset}`,
+                id: `movements${accountId}:${offset}${dateStart}${dateEnd}`,
                 milliseconds: 50000,
                 
             }
         })
 
-        await this.createCacheMovementSelects(accountId,offset);
-        return response;
+
+        const listResponseDTO=new ListResponseDTO<Movements>;
+        listResponseDTO.data=response[0];
+        listResponseDTO.totalRecords=response[1];
+        listResponseDTO.filteredRecords=response[0].length;
+        listResponseDTO.limit=25;
+        listResponseDTO.page=offset/25;
+
+        await this.createCacheMovementSelects(accountId,`${offset}${dateStart}${dateEnd}`);
+
+        return listResponseDTO;
 
 
 
@@ -463,24 +471,25 @@ export class DatabaseRepository {
         */
     }
 
-    async createCacheMovementSelects(accountId: number, offset: number) {
+    async createCacheMovementSelects(accountId: number, text: string) {
         const userMovementsCache = this.cacheMovementsSelect.get(accountId);
         
         if (userMovementsCache) {
             userMovementsCache
-            userMovementsCache.add(offset);
+            userMovementsCache.add(text);
         } else {
-            const newSet=new Set<number>();
-            newSet.add(offset);
+            const newSet=new Set<string>();
+            newSet.add(text);
             this.cacheMovementsSelect.set(accountId, newSet);
         }
+        console.log(this.cacheMovementsSelect);
     }
 
     async deleteCacheMovementSelects(accountId: number) {
         const userMovementsCache=this.cacheMovementsSelect.get(accountId);
         if (userMovementsCache) {
             for (const x of userMovementsCache) {
-                await this.datasource.queryResultCache.remove([`movements${accountId}:${x}`,`movements${accountId}:${x}-pagination`])
+                await this.datasource.queryResultCache.remove([`movements${accountId}:${x}`,`movements${accountId}:${x}-pagination`,`movements${accountId}:${x}-count`]);
             }
             /*
             for (let i = 0; i < userMovementsCache.length; i++) {

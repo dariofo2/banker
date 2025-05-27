@@ -54,6 +54,28 @@ export class axiosFetchs {
         }
     }
 
+    //          L O G O U T
+    /**
+     * Logout User
+     * 
+     * @returns {Promise<Boolean>} Booleano
+     */
+    static async logout(): Promise<AxiosResponse|AxiosError> {
+        try {
+            let response = await axios.post<UserLoginResp>(
+                `${this.URL}/auth/login`,
+                {
+                    withCredentials:true,
+                }
+            );
+            this.logoutRemoveCookies();
+            return response;
+        } catch (error){
+            this.logoutRemoveCookies();
+            return <AxiosError>error;
+        }
+    }
+
 
 
     //      C O O K I E S

@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { UpdateUserContext } from "./userContext";
 
-export default function UserUpdate () {
+export default function UserUpdateModal () {
     const [user,setUser]=useState();
-
+    const updateUserContext=useContext(UpdateUserContext);
+    console.log(updateUserContext);
     return (
         <div className="modal fade" id="updateUserModal" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div className="modal-dialog">

@@ -3,6 +3,7 @@
 import { CreateUserDTO } from "@/components/classes/dto/users/createUser.dto";
 import { Users } from "@/components/classes/entity/users.entity";
 import { axiosFetchs } from "@/components/utils/axios";
+import { CryptoUtils } from "@/components/utils/crypto";
 import { AxiosError, AxiosResponse } from "axios";
 import { Toast } from "bootstrap";
 import { plainToClass } from "class-transformer";
@@ -28,7 +29,8 @@ export default function CreateUserForm() {
         
         if (formElement.checkValidity()) {
             const createUserDto = plainToClass(CreateUserDTO, user);
-
+            createUserDto.password=await CryptoUtils.hashPasswordToSha256(createUserDto.password as string);
+            
             const response = await axiosFetchs.createUser(createUserDto);
 
             if (response instanceof AxiosError) {

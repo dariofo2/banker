@@ -1,4 +1,4 @@
-export default function UserUpdatePassword() {
+export default function UserUpdatePasswordModal() {
     return (
         <div className="modal fade" id="updatePasswordModal" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div className="modal-dialog">
@@ -10,9 +10,9 @@ export default function UserUpdatePassword() {
                     <div className="modal-body">
                         <form>
                             <label>Contraseña Actual</label>
-                            <input type="password" className="form-control" name="password" placeholder="Contraseña Actual..." required />
+                            <input type="password" className="form-control" name="lastPassword" placeholder="Contraseña Actual..." required />
                             <label>Nueva Contraseña</label>
-                            <input type="password" className="form-control" name="newPassword" placeholder="Nueva Contraseña..." required />
+                            <input type="password" className="form-control" name="Password" placeholder="Nueva Contraseña..." required />
                             <label>Repite Contraseña</label>
                             <input type="password" className="form-control" name="repeatPassword" placeholder="Repite Contraseña..." required />
                         </form>

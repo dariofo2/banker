@@ -34,7 +34,7 @@ export class UsersService {
     }
 
     async getUser (user: Users) {
-        this.databaseRepository.getUserById(user);
+        return this.databaseRepository.getUserById(user);
     }
 
 }

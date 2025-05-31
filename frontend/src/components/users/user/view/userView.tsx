@@ -2,31 +2,52 @@
 import { Users } from "@/components/classes/entity/users.entity";
 import FooterComponent from "@/components/footer/footer";
 import NavBar from "@/components/navbar/navbar";
-import { ChangeEvent, useContext, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import UserUpdateModal from "./updateUserModal";
 import UserUpdatePasswordModal from "./updatePasswordModal";
 import { UpdateUserContext } from "./userViewContext";
 import { Modal } from "bootstrap";
+import { axiosFetchs } from "@/components/utils/axios";
+import { AxiosError } from "axios";
+import { ToastContainer } from "react-toastify";
 
 class Props {
     user?: Users;
 }
-export default function UserView (props:Props) {
-    const user=props.user as Users;
+export default function UserView () {
+    const [user,setUser]=useState(null as Users|null);
 
+    useEffect(()=>{
+        getUser();
+    },[]);
+
+    async function getUser () {
+        const response=await axiosFetchs.getUser();
+        console.log(response)
+        setUser({
+            ...response
+        });
+    }
+
+    async function openUpdateForm () {
+        await getUser();
+        Modal.getOrCreateInstance("#updateUserModal")?.show();
+    }
+
+    if (!user) return (<div style={{margin:500}}>Loading...</div>)
     return (
         <div style={{margin:80}}>
-            
             <h2>
                 {}
-                Nombre Usuario {props.user?.name}
+                Nombre Usuario {user.name}
             </h2>
-            <h2> Email Usuario {props.user?.email}</h2>
-            <button className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateUserModal">Editar Usuario</button>
+            <h2> Email Usuario {user.email}</h2>
+            <button className="btn btn-primary" onClick={openUpdateForm}>Editar Usuario</button>
             <button className="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#updateUserPasswordModal">Cambiar Contraseña</button>
-            <UserUpdateModal user={props.user} />
+            <UserUpdateModal onSubmited={()=>getUser()} user={user} />
             <UserUpdatePasswordModal />
             
+            <ToastContainer containerId="axios" />
         </div>
     )
 }

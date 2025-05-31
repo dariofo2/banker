@@ -15,6 +15,7 @@ import { DeleteUserDTO } from "../classes/dto/users/deleteUser.dto";
 import { UpdateUserPasswordDTO } from "../classes/dto/users/updateUserPassword.dto";
 import { UpdateUserDto } from "../classes/dto/users/updateUser.dto";
 import { CreateAccountDTO } from "../classes/dto/accounts/createAccount.dto";
+import { toast } from "react-toastify";
 
 export class RequestObject {
     headers: AxiosHeaders = new AxiosHeaders;
@@ -27,8 +28,8 @@ export class RequestObject {
 }
 
 export class axiosFetchs {
-    static URL=process.env.NEXT_PUBLIC_BACKEND_URL
-
+    static URL = process.env.NEXT_PUBLIC_BACKEND_URL
+    static frontendURL= process.env.NEXT_PUBLIC_FRONTEND_URL
 
     //          L O G I N
     /**
@@ -36,20 +37,23 @@ export class axiosFetchs {
      * @param {UserLoginDTO} userLoginDto
      * @returns {Promise<Boolean>} Booleano
      */
-    static async fetchLogin(userLoginDto:UserLoginDTO): Promise<AxiosResponse<UserLoginResp>|AxiosError> {
+    static async fetchLogin(userLoginDto: UserLoginDTO): Promise<AxiosResponse<UserLoginResp> | AxiosError> {
         try {
             let response = await axios.post<UserLoginResp>(
                 `${this.URL}/auth/login`,
                 userLoginDto,
                 {
-                    withCredentials:true,
+                    withCredentials: true,
                 }
             );
-
-            //await this.SetcookiesAtLogin(userLoginFetch);
+            toast.success("Login Exitoso",{
+                containerId:"axios"
+            });
+            await this.SetcookiesAtLogin(response.data);
             return response;
-        } catch (error){
+        } catch (error) {
             this.logoutRemoveCookies();
+            this.handleAxiosError(error as AxiosError);
             return <AxiosError>error;
         }
     }
@@ -60,17 +64,17 @@ export class axiosFetchs {
      * 
      * @returns {Promise<Boolean>} Booleano
      */
-    static async logout(): Promise<AxiosResponse|AxiosError> {
+    static async logout(): Promise<AxiosResponse | AxiosError> {
         try {
             let response = await axios.post<UserLoginResp>(
                 `${this.URL}/auth/login`,
                 {
-                    withCredentials:true,
+                    withCredentials: true,
                 }
             );
             this.logoutRemoveCookies();
             return response;
-        } catch (error){
+        } catch (error) {
             this.logoutRemoveCookies();
             return <AxiosError>error;
         }
@@ -80,6 +84,7 @@ export class axiosFetchs {
 
     //      C O O K I E S
     static async SetcookiesAtLogin(userLoginResp: UserLoginResp) {
+
         Cookies.set("user", JSON.stringify(userLoginResp));
     }
 
@@ -93,33 +98,52 @@ export class axiosFetchs {
     static async handleAxiosError(error: AxiosError): Promise<any> {
         if (error.status == 401) {
             await this.logoutRemoveCookies();
-            window.location.replace("http://localhost:5000/login");
+            //window.location.replace(`${this.frontendURL}`);
+        } else {
+
         }
+        const messageError = (error.response?.data as any).message
+        console.log(messageError)
+        if (messageError instanceof Array) {
+            messageError.forEach(x => {
+                toast.error(x, {
+                    containerId: "axios"
+                });
+            })
+        } else {
+            toast.error(messageError,{
+                containerId: "axios"
+            });
+        }
+
     }
 
 
 
     //      U S E R S
-    static async createUser(createUserDto:CreateUserDTO): Promise<AxiosResponse|AxiosError> {
+    static async createUser(createUserDto: CreateUserDTO): Promise<UserLoginResp> {
         try {
-        const response=await axios.post(
-            `${this.URL}/auth/signin`,
-            createUserDto,
-            {
-                withCredentials:true
-            }
-        )
-        return response;
+            const response = await axios.post<UserLoginResp>(
+                `${this.URL}/auth/signin`,
+                createUserDto,
+                {
+                    withCredentials: true
+                }
+            )
+            toast.success("Usuario Creado Correctamente",{
+                containerId:"axios"
+            });
+            return response.data;
         } catch (error) {
             this.handleAxiosError(<AxiosError>error);
-            return <AxiosError>error
+            throw Error;
         }
     }
 
-    static async deleteUser(deleteUserDTO:DeleteUserDTO): Promise<AxiosResponse|AxiosError> {
+    static async deleteUser(deleteUserDTO: DeleteUserDTO): Promise<AxiosResponse | AxiosError> {
         let reqObject = new RequestObject(Cookies.get("access_token"));
         try {
-            const response=await axios.post(
+            const response = await axios.post(
                 "http://localhost:3000/user/delete",
                 deleteUserDTO,
                 reqObject
@@ -129,72 +153,80 @@ export class axiosFetchs {
             this.handleAxiosError(<AxiosError>error);
             return <AxiosError>error;
         }
-        
+
     }
 
-    /*
-    static async getUser(deleteUserDTO:DeleteUserDTO): Promise<AxiosResponse|AxiosError> {
-        let reqObject = new RequestObject(Cookies.get("access_token"));
+
+    static async getUser(): Promise<Users> {
         try {
-            const response=await axios.post(
-                "http://localhost:3000/user/delete",
-                { id: id },
-                reqObject
+            const response = await axios.post<Users>(
+                "http://localhost:3000/user/get",
+                {},
+                {
+                    withCredentials: true
+                }
             )
-            return response;
+            return response.data;
         } catch (error) {
             this.handleAxiosError(<AxiosError>error);
-            return false;
+            throw Error;
         }
-        
-    }
-        */
 
-    static async updateUser(updateUserDTO:UpdateUserDto) : Promise<AxiosResponse|AxiosError> {
+    }
+
+
+    static async updateUser(updateUserDTO: UpdateUserDto): Promise<AxiosResponse | AxiosError> {
         let reqObject = new RequestObject(Cookies.get("access_token"));
         try {
-            const response= await axios.post(
+            const response = await axios.post(
                 "http://localhost:3000/user/update",
                 updateUserDTO,
                 {
-                    withCredentials:true
+                    withCredentials: true
                 }
             )
+
+            toast.success("Usuario Actualizado Correctamente",{
+                containerId:"axios"
+            });
             return response;
         } catch (error) {
             this.handleAxiosError(<AxiosError>error);
             return <AxiosError>error;
         }
-        
+
     }
 
-    static async updateUserPassword(updateUserPasswordDTO:UpdateUserPasswordDTO) : Promise<AxiosResponse|AxiosError> {
+    static async updateUserPassword(updateUserPasswordDTO: UpdateUserPasswordDTO): Promise<AxiosResponse | AxiosError> {
         try {
-            const response= await axios.post(
-                "http://localhost:3000/user/update",
+            const response = await axios.post(
+                "http://localhost:3000/user/updatePassword",
                 updateUserPasswordDTO,
                 {
-                    withCredentials:true
+                    withCredentials: true
                 }
             )
+            toast.success("Contraseña Actualizada Correctamente",{
+                containerId:"axios"
+            });
             return response;
         } catch (error) {
             this.handleAxiosError(<AxiosError>error);
-            return <AxiosError>error;
+            throw error;
         }
-        
+
     }
 
 
 
     //      A C C O U N T S
-    static async createAccount(createAccountDTO: CreateAccountDTO): Promise<AxiosResponse|AxiosError> {
+    static async createAccount(createAccountDTO: CreateAccountDTO): Promise<AxiosResponse | AxiosError> {
         try {
-            const response=await axios.post(
+            const response = await axios.post(
                 `${this.URL}/account/create`,
                 createAccountDTO,
                 {
-                    withCredentials:true
+                    withCredentials: true
                 }
             )
             return response;
@@ -204,13 +236,13 @@ export class axiosFetchs {
         }
     }
 
-    static async deleteAccount(deleteAccountDTO:DeleteAccountDTO): Promise<AxiosResponse|AxiosError> {
+    static async deleteAccount(deleteAccountDTO: DeleteAccountDTO): Promise<AxiosResponse | AxiosError> {
         try {
-            const response=await axios.post(
+            const response = await axios.post(
                 `${this.URL}/account/delete`,
                 deleteAccountDTO,
                 {
-                    withCredentials:true
+                    withCredentials: true
                 }
             )
             return response;
@@ -221,13 +253,13 @@ export class axiosFetchs {
     }
 
 
-    static async fetchAccounts(): Promise<AxiosResponse<Accounts[]>|AxiosError> {
+    static async fetchAccounts(): Promise<AxiosResponse<Accounts[]> | AxiosError> {
         try {
             let response = await axios.post<Accounts[]>(
                 `${this.URL}/accounts/lists`,
                 {},
                 {
-                    withCredentials:true
+                    withCredentials: true
                 }
             );
             return response;
@@ -237,17 +269,17 @@ export class axiosFetchs {
         }
     }
 
-    static async setAccountIdCookie (accountId:number) {
-        Cookies.set("accountId",accountId.toString());
+    static async setAccountIdCookie(accountId: number) {
+        Cookies.set("accountId", accountId.toString());
     }
-    
-    static async getAccount(getAccountDTO:GetAccountDTO): Promise<AxiosResponse<Accounts>|AxiosError> {
+
+    static async getAccount(getAccountDTO: GetAccountDTO): Promise<AxiosResponse<Accounts> | AxiosError> {
         try {
             let response = await axios.post<Accounts>(
                 `${this.URL}/accounts/list`,
                 getAccountDTO,
                 {
-                    withCredentials:true
+                    withCredentials: true
                 }
             );
             return response;
@@ -260,13 +292,13 @@ export class axiosFetchs {
 
 
     //      M O V E M E N T S
-    static async createMovement(createMovementDto:CreateMovementDTO): Promise<AxiosResponse|AxiosError> {
+    static async createMovement(createMovementDto: CreateMovementDTO): Promise<AxiosResponse | AxiosError> {
         try {
             const response = await axios.post(
                 `${this.URL}/movement/create`,
                 createMovementDto,
                 {
-                    withCredentials:true
+                    withCredentials: true
                 }
             )
             return response;
@@ -276,13 +308,13 @@ export class axiosFetchs {
         }
     }
 
-    static async deleteMovement(deleteMovementDTO:DeleteMovementDTO): Promise<AxiosResponse|AxiosError> {
+    static async deleteMovement(deleteMovementDTO: DeleteMovementDTO): Promise<AxiosResponse | AxiosError> {
         try {
             let response = await axios.post(
                 `${this.URL}/movement/delete`,
                 deleteMovementDTO,
                 {
-                    withCredentials:true
+                    withCredentials: true
                 }
             )
             return response;
@@ -293,13 +325,13 @@ export class axiosFetchs {
 
     }
 
-    static async listMovementsByAccount(listMovementsDTO:ListMovementsDTO): Promise<AxiosResponse<Movements[]>|AxiosError> {
+    static async listMovementsByAccount(listMovementsDTO: ListMovementsDTO): Promise<AxiosResponse<Movements[]> | AxiosError> {
         try {
             let response = await axios.post<Movements[]>(
                 `${this.URL}/movements/list`,
                 listMovementsDTO,
                 {
-                    withCredentials:true
+                    withCredentials: true
                 }
             );
             return response;
@@ -309,13 +341,13 @@ export class axiosFetchs {
         }
     }
 
-    static async getMovement(listMovementsDTO:ListMovementsDTO): Promise<AxiosResponse<Movements>|AxiosError> {
+    static async getMovement(listMovementsDTO: ListMovementsDTO): Promise<AxiosResponse<Movements> | AxiosError> {
         try {
             let response = await axios.post<Movements>(
                 `${this.URL}/movements/list`,
                 listMovementsDTO,
                 {
-                    withCredentials:true
+                    withCredentials: true
                 }
             );
             return response;

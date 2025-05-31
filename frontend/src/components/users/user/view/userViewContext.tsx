@@ -4,23 +4,34 @@ import { Users } from "@/components/classes/entity/users.entity";
 import { axiosFetchs } from "@/components/utils/axios";
 import { createContext, ReactNode, useState } from "react";
 
-export const UpdateUserContext = createContext({user:{hola:"h"},updateUser:()=>{}});
-
-interface DatosProviderProps {
-    children: ReactNode
+class ContextUser {
+    user?:Users;
+    updateUser?:Users;
+    updatePassword?: Users;
+    setUser=(user:Users)=>{};
+    setUpdateUser= () => {};
+    setUpdatePassword= () => {};
 }
-export default function UpdateUserProvider ({children}:DatosProviderProps) {
-    const [user,setUser]=useState({hola:"hola"});
-    const [updateUserPasswordDTO,setUpdatePasswordDTO]=useState(new UpdateUserPasswordDTO);
-    const [updateUserDTO,setUpdateUserDTO]=useState(new UpdateUserDto);
+export const UpdateUserContext = createContext<ContextUser|undefined>(undefined);
 
-    function updateUser () {
-        setUser({hola:"holaa"});
-        console.log("hola");
+export default function UpdateUserProvider () {
+    const [user,setUser]=useState(undefined as Users|undefined);
+    const [updateUserPasswordDTO,setUpdatePasswordDTO]=useState(undefined as UpdateUserPasswordDTO|undefined);
+    const [updateUser,setUpdateUser]=useState(undefined as Users|undefined);
+
+    function setUserFunc (user:Users) {
+        setUser({...user});
+    }
+
+    function setUpdateUserFunc (user:Users) {
+        setUpdateUser({...user})
+    }
+    function setUpdateUserPasswordFunc () {
+        setUpdatePasswordDTO()
     }
     return (
-        <UpdateUserContext.Provider value={{user,updateUser}}>
-            {children}
+        <UpdateUserContext.Provider value={{user:user,updateUser:updateUser,updatePassword:updateUserPasswordDTO,setUser:setUserFunc,}}>
+            <{children}>
         </UpdateUserContext.Provider>
     )
 }

@@ -47,7 +47,7 @@ export default function UserView () {
             <UserUpdateModal onSubmited={()=>getUser()} user={user} />
             <UserUpdatePasswordModal />
             
-            <ToastContainer containerId="axios" />
+            <ToastContainer containerId="axios" position="top-center"/>
         </div>
     )
 }

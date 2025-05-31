@@ -1,5 +1,5 @@
 import FooterComponent from "@/components/footer/footer";
-import FrontStaticComponent from "@/components/front/frontStatic";
+import FrontStaticComponent from "@/components/static/front/frontStatic";
 import HeaderComponent from "@/components/navbar/navbar";
 import LegalAdvertStaticComponent from "@/components/static/legalAdvert/legalAdvert";
 import PrivacyPoliciyComponent from "@/components/static/privacyPolicy/privacyPolicy";

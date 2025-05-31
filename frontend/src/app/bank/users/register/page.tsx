@@ -1,9 +1,9 @@
 
 import FooterComponent from "@/components/footer/footer";
-import FrontStaticComponent from "@/components/front/frontStatic";
+import FrontStaticComponent from "@/components/static/front/frontStatic";
 import NavBar from "@/components/navbar/navbar";
-import Register from "@/components/users/user/register/register";
-import UserRegister from "@/components/users/user/register/register";
+import Register from "@/components/bank/users/register/register";
+import UserRegister from "@/components/bank/users/register/register";
 
 export default function RegisterPage () {
     return (

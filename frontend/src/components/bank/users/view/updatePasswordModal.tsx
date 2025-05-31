@@ -31,6 +31,7 @@ export default function UserUpdatePasswordModal() {
 
     function hideModal () {
         Modal.getOrCreateInstance("#updateUserPasswordModal").hide();
+        formElement.current?.classList.remove("was-validated");
         resetStates();
     }
 
@@ -39,23 +40,24 @@ export default function UserUpdatePasswordModal() {
         setPasswordRepeat(elem.value);
     }
 
-    async function submitForm (e:FormEvent) {
+    async function submitForm () {
         const form=formElement.current;
         form?.classList.add("was-validated");
-        
+
         if (form?.checkValidity()) {
             if (checkPasswords()) {
-                updatePasswordDTO.lastPassword=CryptoUtils.hashPasswordToSha256(updatePasswordDTO.lastPassword as string);
-                updatePasswordDTO.password=CryptoUtils.hashPasswordToSha256(updatePasswordDTO.password as string);
+                const updatePasswordDTOToSend=new UpdateUserPasswordDTO;
+                updatePasswordDTOToSend.lastPassword=CryptoUtils.hashPasswordToSha256(updatePasswordDTO.lastPassword as string);
+                updatePasswordDTOToSend.password=CryptoUtils.hashPasswordToSha256(updatePasswordDTO.password as string);
                 try {
-                const response = await axiosFetchs.updateUserPassword(updatePasswordDTO);
-                resetStates();
+                const response = await axiosFetchs.updateUserPassword(updatePasswordDTOToSend);
                 hideModal();
                 } catch (error) {
                     
                 }
             } else {
                 toast.error("Las Contraseñas no coinciden, vuelva a intentarlo",{containerId:"axios"})
+                document.getElementById("repeatPassword")?.classList.add("is-invalid");
             }
         }
     }
@@ -70,16 +72,16 @@ export default function UserUpdatePasswordModal() {
                 <div className="modal-content">
                     <div className="modal-header">
                         <h1 className="modal-title fs-5" id="staticBackdropLabel">Actualizar Contraseña</h1>
-                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" className="btn-close" onClick={hideModal} aria-label="Close"></button>
                     </div>
                     <div className="modal-body">
-                        <form onSubmit={e=>submitForm(e)} ref={formElement} noValidate>
+                        <form onSubmit={submitForm} ref={formElement} noValidate>
                             <label>Contraseña Actual</label>
-                            <input type="password" className="form-control" name="lastPassword" placeholder="Contraseña Actual..." onChange={e=>onChangeInputs(e)} value={updatePasswordDTO.lastPassword} required />
+                            <input type="text" className="form-control" name="lastPassword" id="lastPassword" placeholder="Contraseña Actual..." onChange={e=>onChangeInputs(e)} value={updatePasswordDTO.lastPassword} required />
                             <label>Nueva Contraseña</label>
-                            <input type="password" className="form-control" name="password" placeholder="Nueva Contraseña..." onChange={e=>onChangeInputs(e)} value={updatePasswordDTO.password} required />
+                            <input type="text" className="form-control" name="password" id="password" placeholder="Nueva Contraseña..." onChange={e=>onChangeInputs(e)} value={updatePasswordDTO.password} required />
                             <label>Repite Contraseña</label>
-                            <input type="password" className="form-control" name="repeatPassword" placeholder="Repite Contraseña..." onChange={e=>onChangePasswordRepeat(e)} value={passwordRepeat} required />
+                            <input type="text" className="form-control" name="repeatPassword" id="repeatPassword" placeholder="Repite Contraseña..." onChange={e=>onChangePasswordRepeat(e)} value={passwordRepeat} required />
                         </form>
                     </div>
                     <div className="modal-footer">

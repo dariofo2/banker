@@ -1,4 +1,4 @@
-import Login from "../users/user/login/login";
+import Login from "../bank/users/login/login";
 
 export default function HeroComponent () {
     return (

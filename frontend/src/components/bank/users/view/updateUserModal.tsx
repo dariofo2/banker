@@ -8,36 +8,40 @@ import { axiosFetchs } from "@/components/utils/axios";
 
 class Props {
     user?: Users;
-    onSubmited = ()=>{}
+    onSubmited = () => { }
 }
 
-export default function UserUpdateModal (props:Props) {
-    const [updateUserDTO,setUpdateUserDTO]=useState(undefined as UpdateUserDto|undefined);
-    const formElement=useRef(null as HTMLFormElement|null);
+export default function UserUpdateModal(props: Props) {
+    const [updateUserDTO, setUpdateUserDTO] = useState(undefined as UpdateUserDto | undefined);
+    const formElement = useRef(null as HTMLFormElement | null);
 
-    function hideUpdateUserModal () {
+    function hideUpdateUserModal() {
         Modal.getOrCreateInstance("#updateUserModal").hide();
     }
 
-    useEffect(()=>{
-        setUpdateUserDTO(plainToClass(UpdateUserDto,props.user));
-    },[props.user]);
+    useEffect(() => {
+        setUpdateUserDTO(plainToClass(UpdateUserDto, props.user));
+    }, [props.user]);
 
-    function onChangeInput (e:ChangeEvent) {
-        const inputElement=e.target as HTMLInputElement;
+    function onChangeInput(e: ChangeEvent) {
+        const inputElement = e.target as HTMLInputElement;
         setUpdateUserDTO({
             ...updateUserDTO,
-            [inputElement.name]:inputElement.value
+            [inputElement.name]: inputElement.value
         });
     }
 
-    async function submitForm () {
+    async function submitForm() {
         formElement.current?.classList.add("was-validated");
 
         if (formElement.current?.checkValidity()) {
-            await axiosFetchs.updateUser(updateUserDTO as UpdateUserDto);
-            hideUpdateUserModal();
-            props.onSubmited();
+            try {
+                await axiosFetchs.updateUser(updateUserDTO as UpdateUserDto);
+                hideUpdateUserModal();
+                props.onSubmited();
+            } catch (error) {
+
+            }
         }
     }
 
@@ -52,17 +56,17 @@ export default function UserUpdateModal (props:Props) {
                     <div className="modal-body">
                         <form ref={formElement} onSubmit={submitForm} noValidate >
                             <div className="form-floating">
-                                <input className="form-control" type="text" name="name" value={updateUserDTO?.name} onChange={onChangeInput} placeholder="Nombre" required/>
+                                <input className="form-control" type="text" name="name" value={updateUserDTO?.name} onChange={onChangeInput} placeholder="Nombre" required />
                                 <label className="form-label">Nombre</label>
                             </div>
                             <div className="form-floating">
-                                <input className="form-control" type="text" name="email" value={updateUserDTO?.email} onChange={onChangeInput} placeholder="Email" required/>
+                                <input className="form-control" type="text" name="email" value={updateUserDTO?.email} onChange={onChangeInput} placeholder="Email" required />
                                 <label className="form-label">Email</label>
                             </div>
                         </form>
                     </div>
                     <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" onClick={()=>hideUpdateUserModal()}>Cerrar</button>
+                        <button type="button" className="btn btn-secondary" onClick={() => hideUpdateUserModal()}>Cerrar</button>
                         <button type="button" className="btn btn-primary" onClick={submitForm}>Guardar</button>
                     </div>
                 </div>

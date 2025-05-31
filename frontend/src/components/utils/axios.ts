@@ -16,6 +16,14 @@ import { UpdateUserPasswordDTO } from "../classes/dto/users/updateUserPassword.d
 import { UpdateUserDto } from "../classes/dto/users/updateUser.dto";
 import { CreateAccountDTO } from "../classes/dto/accounts/createAccount.dto";
 import { toast } from "react-toastify";
+import { ListRequestDTO } from "../classes/dto/listRequestDTO";
+import { ListResponseDTO } from "../classes/dto/listResponseDTO";
+import { DeleteBlockchainAccountDTO } from "../classes/dto/blockchainAccounts/deleteBlockchainAccount.dto";
+import { BlockchainAccounts } from "../classes/entity/blockchainAccounts.entity";
+import { GetBlockchainAccountDTO } from "../classes/dto/blockchainAccounts/getBlockChainAccount.dto";
+import { UpdateBlockchainAccountDTO } from "../classes/dto/blockchainAccounts/updateBlockchainAccount.dto";
+import { CreateBlockchainAccountDTO } from "../classes/dto/blockchainAccounts/createBlockchainAccount.dto";
+import { UpdateAccountDTO } from "../classes/dto/accounts/updateAccount.dto";
 
 export class RequestObject {
     headers: AxiosHeaders = new AxiosHeaders;
@@ -29,7 +37,7 @@ export class RequestObject {
 
 export class axiosFetchs {
     static URL = process.env.NEXT_PUBLIC_BACKEND_URL
-    static frontendURL= process.env.NEXT_PUBLIC_FRONTEND_URL
+    static frontendURL = process.env.NEXT_PUBLIC_FRONTEND_URL
 
     //          L O G I N
     /**
@@ -37,7 +45,7 @@ export class axiosFetchs {
      * @param {UserLoginDTO} userLoginDto
      * @returns {Promise<Boolean>} Booleano
      */
-    static async fetchLogin(userLoginDto: UserLoginDTO): Promise<AxiosResponse<UserLoginResp> | AxiosError> {
+    static async fetchLogin(userLoginDto: UserLoginDTO): Promise<UserLoginResp> {
         try {
             let response = await axios.post<UserLoginResp>(
                 `${this.URL}/auth/login`,
@@ -46,15 +54,15 @@ export class axiosFetchs {
                     withCredentials: true,
                 }
             );
-            toast.success("Login Exitoso",{
-                containerId:"axios"
+            toast.success("Login Exitoso", {
+                containerId: "axios"
             });
             await this.SetcookiesAtLogin(response.data);
-            return response;
+            return response.data;
         } catch (error) {
             this.logoutRemoveCookies();
             this.handleAxiosError(error as AxiosError);
-            return <AxiosError>error;
+            throw error;
         }
     }
 
@@ -64,19 +72,18 @@ export class axiosFetchs {
      * 
      * @returns {Promise<Boolean>} Booleano
      */
-    static async logout(): Promise<AxiosResponse | AxiosError> {
+    static async logout(): Promise<void> {
         try {
             let response = await axios.post<UserLoginResp>(
-                `${this.URL}/auth/login`,
+                `${this.URL}/auth/logout`,
                 {
                     withCredentials: true,
                 }
             );
             this.logoutRemoveCookies();
-            return response;
         } catch (error) {
             this.logoutRemoveCookies();
-            return <AxiosError>error;
+            throw error;
         }
     }
 
@@ -111,7 +118,7 @@ export class axiosFetchs {
                 });
             })
         } else {
-            toast.error(messageError,{
+            toast.error(messageError, {
                 containerId: "axios"
             });
         }
@@ -130,17 +137,17 @@ export class axiosFetchs {
                     withCredentials: true
                 }
             )
-            toast.success("Usuario Creado Correctamente",{
-                containerId:"axios"
+            toast.success("Usuario Creado Correctamente", {
+                containerId: "axios"
             });
             return response.data;
         } catch (error) {
             this.handleAxiosError(<AxiosError>error);
-            throw Error;
+            throw error;
         }
     }
 
-    static async deleteUser(deleteUserDTO: DeleteUserDTO): Promise<AxiosResponse | AxiosError> {
+    static async deleteUser(deleteUserDTO: DeleteUserDTO): Promise<void> {
         let reqObject = new RequestObject(Cookies.get("access_token"));
         try {
             const response = await axios.post(
@@ -148,10 +155,9 @@ export class axiosFetchs {
                 deleteUserDTO,
                 reqObject
             )
-            return response;
         } catch (error) {
             this.handleAxiosError(<AxiosError>error);
-            return <AxiosError>error;
+            throw error;
         }
 
     }
@@ -169,13 +175,13 @@ export class axiosFetchs {
             return response.data;
         } catch (error) {
             this.handleAxiosError(<AxiosError>error);
-            throw Error;
+            throw error;
         }
 
     }
 
 
-    static async updateUser(updateUserDTO: UpdateUserDto): Promise<AxiosResponse | AxiosError> {
+    static async updateUser(updateUserDTO: UpdateUserDto): Promise<void> {
         let reqObject = new RequestObject(Cookies.get("access_token"));
         try {
             const response = await axios.post(
@@ -186,18 +192,17 @@ export class axiosFetchs {
                 }
             )
 
-            toast.success("Usuario Actualizado Correctamente",{
-                containerId:"axios"
+            toast.success("Usuario Actualizado Correctamente", {
+                containerId: "axios"
             });
-            return response;
         } catch (error) {
             this.handleAxiosError(<AxiosError>error);
-            return <AxiosError>error;
+            throw error;
         }
 
     }
 
-    static async updateUserPassword(updateUserPasswordDTO: UpdateUserPasswordDTO): Promise<AxiosResponse | AxiosError> {
+    static async updateUserPassword(updateUserPasswordDTO: UpdateUserPasswordDTO): Promise<void> {
         try {
             const response = await axios.post(
                 "http://localhost:3000/user/updatePassword",
@@ -206,10 +211,9 @@ export class axiosFetchs {
                     withCredentials: true
                 }
             )
-            toast.success("Contraseña Actualizada Correctamente",{
-                containerId:"axios"
+            toast.success("Contraseña Actualizada Correctamente", {
+                containerId: "axios"
             });
-            return response;
         } catch (error) {
             this.handleAxiosError(<AxiosError>error);
             throw error;
@@ -220,40 +224,44 @@ export class axiosFetchs {
 
 
     //      A C C O U N T S
-    static async createAccount(createAccountDTO: CreateAccountDTO): Promise<AxiosResponse | AxiosError> {
+    static async createAccount(createAccountDTO: CreateAccountDTO): Promise<void> {
         try {
             const response = await axios.post(
-                `${this.URL}/account/create`,
+                `${this.URL}/accounts/create`,
                 createAccountDTO,
                 {
                     withCredentials: true
                 }
             )
-            return response;
+            toast.success("Cuenta Creada con Éxito", {
+                containerId: "axios"
+            });
         } catch (error) {
             this.handleAxiosError(<AxiosError>error);
-            return <AxiosError>error;
+            throw error;
         }
     }
 
-    static async deleteAccount(deleteAccountDTO: DeleteAccountDTO): Promise<AxiosResponse | AxiosError> {
+    static async deleteAccount(deleteAccountDTO: DeleteAccountDTO): Promise<void> {
         try {
             const response = await axios.post(
-                `${this.URL}/account/delete`,
+                `${this.URL}/accounts/delete`,
                 deleteAccountDTO,
                 {
                     withCredentials: true
                 }
             )
-            return response;
+            toast.success("Cuenta Borrada con Éxito", {
+                containerId: "axios"
+            });
         } catch (error) {
             this.handleAxiosError(<AxiosError>error);
-            return <AxiosError>error;
+            throw error;
         }
     }
 
 
-    static async fetchAccounts(): Promise<AxiosResponse<Accounts[]> | AxiosError> {
+    static async fetchAccounts(): Promise<Accounts[]> {
         try {
             let response = await axios.post<Accounts[]>(
                 `${this.URL}/accounts/lists`,
@@ -262,18 +270,38 @@ export class axiosFetchs {
                     withCredentials: true
                 }
             );
-            return response;
+            return response.data;
         } catch (error) {
             this.handleAxiosError(<AxiosError>error);
-            return <AxiosError>error;
+            throw error;
         }
+    }
+
+    static async updateAccount(updateAccountDTO: UpdateAccountDTO): Promise<void> {
+        try {
+            const response = await axios.post(
+                "http://localhost:3000/accounts/update",
+                updateAccountDTO,
+                {
+                    withCredentials: true
+                }
+            )
+
+            toast.success("Cuenta Actualizado Correctamente", {
+                containerId: "axios"
+            });
+        } catch (error) {
+            this.handleAxiosError(<AxiosError>error);
+            throw error;
+        }
+
     }
 
     static async setAccountIdCookie(accountId: number) {
         Cookies.set("accountId", accountId.toString());
     }
 
-    static async getAccount(getAccountDTO: GetAccountDTO): Promise<AxiosResponse<Accounts> | AxiosError> {
+    static async getAccount(getAccountDTO: GetAccountDTO): Promise<Accounts> {
         try {
             let response = await axios.post<Accounts>(
                 `${this.URL}/accounts/list`,
@@ -282,10 +310,10 @@ export class axiosFetchs {
                     withCredentials: true
                 }
             );
-            return response;
+            return response.data;
         } catch (error) {
             this.handleAxiosError(<AxiosError>error);
-            return <AxiosError>error;
+            throw error;
         }
     }
 
@@ -301,14 +329,17 @@ export class axiosFetchs {
                     withCredentials: true
                 }
             )
+            toast.success("Transferencia creada con Éxito", {
+                containerId: "axios"
+            });
             return response;
         } catch (error) {
             this.handleAxiosError(<AxiosError>error);
-            return <AxiosError>error;
+            throw error;
         }
     }
 
-    static async deleteMovement(deleteMovementDTO: DeleteMovementDTO): Promise<AxiosResponse | AxiosError> {
+    static async deleteMovement(deleteMovementDTO: DeleteMovementDTO): Promise<void> {
         try {
             let response = await axios.post(
                 `${this.URL}/movement/delete`,
@@ -317,31 +348,33 @@ export class axiosFetchs {
                     withCredentials: true
                 }
             )
-            return response;
+            toast.success("Transferencia Borrada con Éxito", {
+                containerId: "axios"
+            });
         } catch (error) {
             this.handleAxiosError(<AxiosError>error);
-            return <AxiosError>error;
+            throw error;
         }
 
     }
 
-    static async listMovementsByAccount(listMovementsDTO: ListMovementsDTO): Promise<AxiosResponse<Movements[]> | AxiosError> {
+    static async listMovementsByAccount(listMovementsDTO: ListRequestDTO<ListMovementsDTO>): Promise<ListResponseDTO<Movements>> {
         try {
-            let response = await axios.post<Movements[]>(
+            let response = await axios.post<ListResponseDTO<Movements>>(
                 `${this.URL}/movements/list`,
                 listMovementsDTO,
                 {
                     withCredentials: true
                 }
             );
-            return response;
+            return response.data;
         } catch (error) {
             this.handleAxiosError(<AxiosError>error);
-            return <AxiosError>error;
+            throw error;
         }
     }
 
-    static async getMovement(listMovementsDTO: ListMovementsDTO): Promise<AxiosResponse<Movements> | AxiosError> {
+    static async getMovement(listMovementsDTO: ListMovementsDTO): Promise<Movements> {
         try {
             let response = await axios.post<Movements>(
                 `${this.URL}/movements/list`,
@@ -350,10 +383,98 @@ export class axiosFetchs {
                     withCredentials: true
                 }
             );
-            return response;
+            return response.data;
         } catch (error) {
             this.handleAxiosError(<AxiosError>error);
-            return <AxiosError>error;
+            throw error;
+        }
+    }
+
+
+    //          B L O C K C H A I N     A C C O U N T S
+    static async createBlockChainAccount (createBlockchainAccountDTO: CreateBlockchainAccountDTO) : Promise<void> {
+        try {
+            let response = await axios.post<Movements>(
+                `${this.URL}/blockchainAccounts/create`,
+                createBlockchainAccountDTO,
+                {
+                    withCredentials: true
+                }
+            );
+            toast.success("Cuenta de Blockchain Creada con Éxito", {
+                containerId: "axios"
+            });
+        } catch (error) {
+            this.handleAxiosError(<AxiosError>error);
+            throw error;
+        }
+    }
+
+    static async updateBlockChainAccount (updateBlockchainAccountDTO:UpdateBlockchainAccountDTO) : Promise<void> {
+        try {
+            let response = await axios.post<Movements>(
+                `${this.URL}/blockchainAccounts/update`,
+                updateBlockchainAccountDTO,
+                {
+                    withCredentials: true
+                }
+            );
+            toast.success("Cuenta de Blockchain Actualizada con Éxito", {
+                containerId: "axios"
+            });
+        } catch (error) {
+            this.handleAxiosError(<AxiosError>error);
+            throw error;
+        }
+    }
+
+    static async getBlockChainAccount (getBlockChainAccountDTO:GetBlockchainAccountDTO) : Promise<BlockchainAccounts> {
+        try {
+            let response = await axios.post<BlockchainAccounts>(
+                `${this.URL}/blockchainAccounts/list`,
+                getBlockChainAccountDTO,
+                {
+                    withCredentials: true
+                }
+            );
+            return response.data;
+        } catch (error) {
+            this.handleAxiosError(<AxiosError>error);
+            throw error;
+        }
+    }
+
+    static async listBlockChainAccounts () : Promise<BlockchainAccounts[]> {
+        try {
+            let response = await axios.post<BlockchainAccounts[]>(
+                `${this.URL}/blockchainAccounts/lists`,
+                {},
+                {
+                    withCredentials: true
+                }
+            );
+            return response.data;
+        } catch (error) {
+            this.handleAxiosError(<AxiosError>error);
+            throw error;
+        }
+    }
+
+    static async deleteBlockChainAccount (deleteBlockChainAccountDTO: DeleteBlockchainAccountDTO) : Promise<void> {
+        try {
+            let response = await axios.post(
+                `${this.URL}/blockchainAccounts/delete`,
+                deleteBlockChainAccountDTO,
+                {
+                    withCredentials: true
+                }
+            );
+            toast.success("Cuenta de Blockchain Borrada con Éxito", {
+                containerId: "axios"
+            });
+        } catch (error) {
+            this.handleAxiosError(<AxiosError>error);
+            throw error;
         }
     }
 }

@@ -1,7 +1,19 @@
-export class ListMovementsDTO {
-    originAccount?: {
-        id: number
-    }
+import { Users } from "../../entity/users.entity";
 
-    offset?:number;
+export class ListMovementsDTO {
+    originAccount: {
+        id: number,
+        user: Users
+    }
+    dateStart?: Date;
+    dateEnd?: Date;
+
+    constructor(accountId:number,dateStart?:Date,dateEnd?: Date) {
+        this.originAccount={
+            id:accountId,
+            user:{}
+        };
+        this.dateStart=dateStart;
+        this.dateEnd=dateEnd;
+    }
 }

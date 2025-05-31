@@ -8,6 +8,5 @@ export class UpdateAccountDTO {
     id?:number;
 
     @Expose()
-    @IsEnum(accountType)
-    type?: string;
+    type?: "corriente"|"credito";
 }

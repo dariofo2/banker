@@ -19,6 +19,7 @@ const configData = [
 
 class Props {
     account?: Accounts
+    onSubmit=()=>{}
 }
 
 export default function ViewAccountUpdateModal(props: Props) {
@@ -32,7 +33,7 @@ export default function ViewAccountUpdateModal(props: Props) {
     function onChangeInput(newValue:SingleValue<{value:string}>) {
         setUpdateAccountDTO({
             ...updateAccountDTO,
-            'type': newValue?.value as "corriente"|"credito"
+            ['type']: newValue?.value as "corriente"|"credito"
         });
     }
 
@@ -41,6 +42,7 @@ export default function ViewAccountUpdateModal(props: Props) {
         form?.classList.add("was-validated");
         if (form?.checkValidity()) {
             await axiosFetchs.updateAccount(updateAccountDTO);
+            props.onSubmit();
             hideModal();
         }
     }
@@ -50,7 +52,7 @@ export default function ViewAccountUpdateModal(props: Props) {
     }
 
     return (
-        <div className="modal fade" id="updateAccountModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div className="modal fade" id="updateAccountModal" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div className="modal-dialog">
                 <div className="modal-content">
                     <div className="modal-header">
@@ -59,7 +61,8 @@ export default function ViewAccountUpdateModal(props: Props) {
                     </div>
                     <div className="modal-body">
                         <form ref={formElem}>
-                            <Select options={configData} onChange={onChangeInput} value={{value:updateAccountDTO.type as string}}/>
+                            <label>Hola</label>
+                            <Select options={configData} onChange={onChangeInput} value={configData.find(x=>x.value==updateAccountDTO.type)} required />
                         </form>
                     </div>
                     <div className="modal-footer">

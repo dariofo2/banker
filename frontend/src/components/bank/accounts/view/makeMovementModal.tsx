@@ -1,14 +1,42 @@
 import CreateMovementDTO from "@/components/classes/dto/movements/createMovement.dto";
 import { axiosFetchs } from "@/components/utils/axios";
 import { Modal } from "bootstrap";
-import { useRef, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
+import Cookies from "js-cookie";
+import { GetAccountDTO } from "@/components/classes/dto/accounts/getAccount.dto";
+import { Accounts } from "@/components/classes/entity/accounts.entity";
 
-export default function CreateMovementModal() {
-    const [createMovementDTO,setMovementDTO]=useState(null as CreateMovementDTO|null);
+class Props {
+    account?: Accounts;
+    onSubmit=()=>{};
+}
+export default function CreateMovementModal(props:Props) {
+    const account=props.account;
+    const [createMovementDTO,setCreateMovementDTO]=useState({originAccount:{number:account?.number}} as CreateMovementDTO);
     const formElem=useRef(null as HTMLFormElement|null);
+    
 
-    function changeInput () {
-
+    function changeInput (e:ChangeEvent) {
+        const elem=e.target as HTMLInputElement
+        
+        switch (elem.name) {
+            case "number":
+                setCreateMovementDTO({
+                    ...createMovementDTO?? {},
+                    destinationAccount:{
+                        number:elem.value
+                    }
+                })
+                
+            break;
+            case "money":
+                setCreateMovementDTO({
+                    ...createMovementDTO ?? {},
+                    money:parseInt(elem.value)
+                });
+            break;
+            
+        }
     }
 
     async function submitForm () {
@@ -16,7 +44,11 @@ export default function CreateMovementModal() {
         form?.classList.add("was-validated");
         if (form?.checkValidity()) {
             try {
+                //Create Movement Fetch
+                console.log(createMovementDTO);
                 await axiosFetchs.createMovement(createMovementDTO as CreateMovementDTO);
+                hideModal();
+                props.onSubmit();       
             } catch (error) {
                 form.classList.remove("was-validated");
             }
@@ -29,7 +61,7 @@ export default function CreateMovementModal() {
     }
     return (
         <div>
-            <div className="modal fade" id="createMovementModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div className="modal fade" id="createMovementModal" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">
@@ -37,9 +69,9 @@ export default function CreateMovementModal() {
                             <button type="button" className="btn-close" onClick={hideModal} aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
-                            <form ref={formElem}>
-                                <input type="text" name="number" placeholder="Numero de Cuenta"></input>
-                                <input type="text" name="money" placeholder="Dinero"></input>
+                            <form className="" ref={formElem}>
+                                <input className="form-control" type="text" name="number" placeholder="Numero de Cuenta" onChange={changeInput} required />
+                                <input className="form-control" type="text"  name="money" placeholder="Dinero" onChange={changeInput} required />
                             </form>
                         </div>
                         <div className="modal-footer">

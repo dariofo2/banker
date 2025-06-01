@@ -320,10 +320,10 @@ export class axiosFetchs {
 
 
     //      M O V E M E N T S
-    static async createMovement(createMovementDto: CreateMovementDTO): Promise<AxiosResponse | AxiosError> {
+    static async createMovement(createMovementDto: CreateMovementDTO): Promise<void> {
         try {
             const response = await axios.post(
-                `${this.URL}/movement/create`,
+                `${this.URL}/movements/create`,
                 createMovementDto,
                 {
                     withCredentials: true
@@ -332,7 +332,6 @@ export class axiosFetchs {
             toast.success("Transferencia creada con Éxito", {
                 containerId: "axios"
             });
-            return response;
         } catch (error) {
             this.handleAxiosError(<AxiosError>error);
             throw error;
@@ -342,7 +341,7 @@ export class axiosFetchs {
     static async deleteMovement(deleteMovementDTO: DeleteMovementDTO): Promise<void> {
         try {
             let response = await axios.post(
-                `${this.URL}/movement/delete`,
+                `${this.URL}/movements/delete`,
                 deleteMovementDTO,
                 {
                     withCredentials: true

@@ -6,7 +6,12 @@ import { Users } from 'src/database/entity/users.entity';
 import { Channel } from 'amqplib';
 
 
-@WebSocketGateway()
+@WebSocketGateway({
+  cors:{
+    credentials:true,
+    origin:process.env.FRONTEND_URL
+  }
+})
 export class WebsocketsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   constructor(private rabbitmq: RabbitMQ, private jwtService: JwtService) { }
 
@@ -22,7 +27,6 @@ export class WebsocketsGateway implements OnGatewayInit, OnGatewayConnection, On
     //Variables
     let token: string;
     let user: Users;
-
     try {
       //Auth JWT
       const jwtCookie = client.handshake.headers.cookie
@@ -76,7 +80,7 @@ export class WebsocketsGateway implements OnGatewayInit, OnGatewayConnection, On
   @SubscribeMessage('message')
   handleMessage(client: Socket, payload: any): WsResponse<unknown> {
     this.server.emit("Hola", { nombre: "hola", pass: "hola" })
-
+    
     return { event: "Hola", data: "Holaa" };
   }
 }

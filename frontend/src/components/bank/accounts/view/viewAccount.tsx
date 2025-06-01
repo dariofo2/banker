@@ -112,7 +112,7 @@ export default function ViewAccount () {
         setAccount({
             ...account
         });
-        
+
         Modal.getOrCreateInstance("#updateAccountModal").show();
     }
 
@@ -148,7 +148,7 @@ export default function ViewAccount () {
                 {movementsMap}
                 <button className="btn btn-success" onClick={nextMovementsPage}>Next Page</button>
             </div>
-            <CreateMovementModal account={account} onSubmit={()=>{getMovements()}}/>
+            <CreateMovementModal account={account} onSubmit={()=>{setListRequestMovementsDTO({...listRequestMovementsDTO,page:1})}}/>
             <ViewAccountUpdateModal account={account} onSubmit={()=>{getAccount()}} />
             <DeleteMovementModal message="¿Está seguro de que desea borrar la Transferencia?" onDeleteConfirm={()=>confirmDelete()} />
             <ToastContainer containerId="axios" />

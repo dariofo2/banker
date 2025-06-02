@@ -51,9 +51,6 @@ export default function ViewAccount () {
 
     async function addMovements () {
         const response=await axiosFetchs.listMovementsByAccount(listRequestMovementsDTO)
-        //const newMovements=response.data;
-        //const oldMovements=listResponseMovements?.data as Movements[];
-        //oldMovements.push(newMovements);
         setListResponseMovements(
             {...response,
                 data:(listResponseMovements?.data as Movements[]).concat(response.data)

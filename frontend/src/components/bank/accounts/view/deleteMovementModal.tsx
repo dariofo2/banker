@@ -1,9 +1,18 @@
+import { Modal } from "bootstrap";
+
 class Props {
     message: string = "¿Esta seguro de que quiere Borrar?";
     onDeleteConfirm = () => { };
 }
 
 export default function DeleteModal(props:Props) {
+    function deleteConfirm () {
+        props.onDeleteConfirm();
+        hideModal();
+    }
+    function hideModal() {
+        Modal.getOrCreateInstance("#deleteModal").hide();
+    }
     return (
         <div className="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div className="modal-dialog">
@@ -17,7 +26,7 @@ export default function DeleteModal(props:Props) {
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">No</button>
-                        <button type="button" className="btn btn-primary" onClick={props.onDeleteConfirm}>Si</button>
+                        <button type="button" className="btn btn-primary" onClick={deleteConfirm}>Si</button>
                     </div>
                 </div>
             </div>

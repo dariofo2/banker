@@ -18,7 +18,7 @@ export default function CreateMovementModal(props:Props) {
 
     function changeInput (e:ChangeEvent) {
         const elem=e.target as HTMLInputElement
-        
+
         switch (elem.name) {
             case "number":
                 setCreateMovementDTO({
@@ -50,13 +50,15 @@ export default function CreateMovementModal(props:Props) {
                 hideModal();
                 props.onSubmit();       
             } catch (error) {
-                form.classList.remove("was-validated");
+                form.classList.remove("was-validated"); 
             }
+            
         }
     }
 
     function hideModal () {
         formElem.current?.reset();
+        formElem.current?.classList.remove("was-validated"); 
         Modal.getOrCreateInstance("#createMovementModal").hide();
     }
     return (

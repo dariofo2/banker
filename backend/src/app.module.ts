@@ -12,6 +12,7 @@ import { CryptoModule } from './crypto/crypto.module';
 import { BullMQModule } from './bullMQ/bullMQ.module';
 import { CeleryModule } from './celery/celery.module';
 import { BlockchainAccountsModule } from './controllers/blockchainAccounts/blockchainAccounts.module';
+import { Web3Module } from './web3/web3.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { BlockchainAccountsModule } from './controllers/blockchainAccounts/block
     WebSocketModule,
     CryptoModule,
     BullMQModule,
+    Web3Module
   ],
   controllers: [AppController],
   providers: [AppService],

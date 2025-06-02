@@ -16,6 +16,15 @@ services:
     ports:
     - "5000:3000"
     command: sh -c "cd /app && npm install && npm run dev"
+  
+  blockchain:
+    image: node:latest
+    container_name: blockchain
+    volumes:
+    - ./blockchain:/app
+    ports:
+    - "8545:8545"
+    command: sh -c "cd /app && npm install && npx hardhat node"
 
   db:
     image: mariadb:latest

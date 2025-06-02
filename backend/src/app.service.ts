@@ -6,12 +6,14 @@ import { CryptoService } from './crypto/crypto.service';
 import { BullMQClientService } from './bullMQ/bullMQClient.service';
 import { CeleryClientService } from './celery/celeryclient.service';
 import { CeleryWorkerService } from './celery/celeryWorker.service';
+import { Web3Service } from './web3/web3.service';
 
 @Injectable()
 export class AppService {
   constructor (
     private readonly cryptoService: CryptoService,
     private readonly bullMQClientService: BullMQClientService,
+    private readonly web3Service: Web3Service
   ) {}
   async getHello(): Promise<string> {
     //const hashB=await bcrypt.hash("holaaa",10);
@@ -59,6 +61,9 @@ export class AppService {
     //await this.celeryWorker.registerAdd();
     //await this.celeryWorker.registerAdd();
     //await this.celeryClient.createTask();
-   return await this.bullMQClientService.addJobGenerateAccountNumber();
+    const transaction= (await this.web3Service.sendTransaction("0x70997970C51812dc3A010C7d01b50e0d17dc79C8",1000));
+    return (await this.web3Service.getTransaction(transaction.transactionHash)).value.toString();
+    //return await this.web3Service.getGasPrice();
+   //return await this.bullMQClientService.addJobGenerateAccountNumber();
   }
 }

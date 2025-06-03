@@ -4,6 +4,6 @@ export class CreateBlockchainAccountDTO {
     @IsAlphanumeric()
     address: string;
 
-    @IsAlphanumeric()
+    
     privatekey: string;
 }

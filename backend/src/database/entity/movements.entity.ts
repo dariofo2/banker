@@ -1,20 +1,29 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Users } from "./users.entity";
 import { Accounts } from "./accounts.entity";
-import { IsDate, IsNumber } from "class-validator";
+import { IsAlphanumeric, IsDate, IsNumber } from "class-validator";
 
 @Entity()
 export class Movements {
     @PrimaryGeneratedColumn()
+    @IsNumber()
     id: number;
+
+    @Column()
+    @IsAlphanumeric()
+    type: string;
+
+    @Column()
+    @IsAlphanumeric()
+    concept: string;
 
     @Column()
     @IsNumber()
     money: number;
 
     @Column()
-    @IsDate()
-    date: Date;
+    @IsNumber()
+    date: number;
     
     @ManyToOne(()=>Accounts,account=>account.id)
     originAccount: Accounts;

@@ -61,7 +61,7 @@ export class AppService {
     //await this.celeryWorker.registerAdd();
     //await this.celeryWorker.registerAdd();
     //await this.celeryClient.createTask();
-    const transaction= (await this.web3Service.sendTransaction("0x70997970C51812dc3A010C7d01b50e0d17dc79C8",1000));
+    const transaction= (await this.web3Service.signBankerTransaction("0x70997970C51812dc3A010C7d01b50e0d17dc79C8",1000));
     return (await this.web3Service.getTransaction(transaction.transactionHash)).value.toString();
     //return await this.web3Service.getGasPrice();
    //return await this.bullMQClientService.addJobGenerateAccountNumber();

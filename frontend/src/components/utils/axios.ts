@@ -24,6 +24,7 @@ import { GetBlockchainAccountDTO } from "../classes/dto/blockchainAccounts/getBl
 import { UpdateBlockchainAccountDTO } from "../classes/dto/blockchainAccounts/updateBlockchainAccount.dto";
 import { CreateBlockchainAccountDTO } from "../classes/dto/blockchainAccounts/createBlockchainAccount.dto";
 import { UpdateAccountDTO } from "../classes/dto/accounts/updateAccount.dto";
+import { DepositFromBlockChainDTO } from "../classes/dto/blockchainAccounts/depositFromBlockchain.dto";
 
 export class RequestObject {
     headers: AxiosHeaders = new AxiosHeaders;
@@ -469,6 +470,24 @@ export class axiosFetchs {
                 }
             );
             toast.success("Cuenta de Blockchain Borrada con Éxito", {
+                containerId: "axios"
+            });
+        } catch (error) {
+            this.handleAxiosError(<AxiosError>error);
+            throw error;
+        }
+    }
+
+    static async depositFromBlockChainAccount (depositFromBlockchainDTO:DepositFromBlockChainDTO) : Promise<void> {
+        try {
+            let response = await axios.post(
+                `${this.URL}/blockchainAccounts/deposit`,
+                depositFromBlockchainDTO,
+                {
+                    withCredentials: true
+                }
+            );
+            toast.success("Deposito Ingresado con Éxito", {
                 containerId: "axios"
             });
         } catch (error) {

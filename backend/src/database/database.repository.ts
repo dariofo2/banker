@@ -283,7 +283,7 @@ export class DatabaseRepository {
 
     }
 
-    async selectMovementsFromAccountIdAndUserIdByDateInterval(accountId: number, userId: number, offset: number, dateStart: Date, dateEnd: Date): Promise<ListResponseDTO<Movements>> {
+    async selectMovementsFromAccountIdAndUserIdByDateInterval(accountId: number, userId: number, offset: number, dateStart: number, dateEnd: number): Promise<ListResponseDTO<Movements>> {
         let response = await this.movementsRepository.findAndCount({
             select: {
                 originAccount: {

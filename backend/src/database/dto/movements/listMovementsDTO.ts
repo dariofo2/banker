@@ -6,6 +6,6 @@ export class ListMovementsDTO {
         id: number,
         user: Users
     }
-    dateStart: Date;
-    dateEnd: Date;
+    dateStart: number;
+    dateEnd: number;
 }

@@ -5,10 +5,10 @@ export class ListMovementsDTO {
         id: number,
         user: Users
     }
-    dateStart?: Date;
-    dateEnd?: Date;
+    dateStart?: number;
+    dateEnd?: number;
 
-    constructor(accountId:number,dateStart?:Date,dateEnd?: Date) {
+    constructor(accountId:number,dateStart?:number,dateEnd?: number) {
         this.originAccount={
             id:accountId,
             user:{}

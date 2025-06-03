@@ -16,6 +16,7 @@ import ViewAccountUpdateModal from "./viewAccountUpdateModal";
 import moment from "moment";
 import DeleteMovementModal from "./deleteMovementModal";
 import { DeleteMovementDTO } from "@/components/classes/dto/movements/deleteMovement.dto";
+import DepositModal from "./depositModal";
 
 export default function ViewAccount () {
     const [getAccountDTO, setGetAccountDTO]=useState({id:parseInt(Cookies.get("accountId") as string)});
@@ -61,15 +62,15 @@ export default function ViewAccount () {
     function changeDates (e:FormEvent) {
         const elem=e.target as HTMLInputElement;
         e.preventDefault();
-        const dateStart=moment((document.getElementById("dateStart") as HTMLInputElement).value).toDate();
-        const dateEnd=moment((document.getElementById("dateEnd") as HTMLInputElement).value).toDate();
+        const dateStart=moment((document.getElementById("dateStart") as HTMLInputElement).value).format("X");
+        const dateEnd=moment((document.getElementById("dateEnd") as HTMLInputElement).value).format("X");
 
         setListRequestMovementsDTO({
             ...listRequestMovementsDTO,
             data: {
                 originAccount:listRequestMovementsDTO.data.originAccount,
-                dateStart:dateStart,
-                dateEnd:dateEnd
+                dateStart:parseInt(dateStart),
+                dateEnd:parseInt(dateEnd)
             },
             page:1
         })
@@ -113,6 +114,10 @@ export default function ViewAccount () {
         Modal.getOrCreateInstance("#updateAccountModal").show();
     }
 
+    function showDepositModal () {
+        Modal.getOrCreateInstance("#depositModal").show();
+    }
+
     if (!account || !listResponseMovements) {
         return (
             <div style={{margin:300}}>
@@ -133,7 +138,7 @@ export default function ViewAccount () {
                     <h5>Balance: {account.balance}</h5>
                     <h6>Tipo: {account.type}</h6>
                     <button className="btn btn-warning" onClick={showUpdateAccountModal}>Editar Cuenta</button>
-                    <button className="btn btn-success">Ingresar</button>
+                    <button className="btn btn-success" onClick={showDepositModal}>Ingresar</button>
                     <button className="btn btn-primary" onClick={showCreateMovementModal}>Realizar Transferencia</button>
                 </div>
                 
@@ -148,6 +153,7 @@ export default function ViewAccount () {
             <CreateMovementModal account={account} onSubmit={()=>{setListRequestMovementsDTO({...listRequestMovementsDTO,page:1})}}/>
             <ViewAccountUpdateModal account={account} onSubmit={()=>{getAccount()}} />
             <DeleteMovementModal message="¿Está seguro de que desea borrar la Transferencia?" onDeleteConfirm={()=>confirmDelete()} />
+            <DepositModal account={account} />
             <ToastContainer containerId="axios" />
         </div>
     )

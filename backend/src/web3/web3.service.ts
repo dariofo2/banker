@@ -1,5 +1,5 @@
 import { Injectable, OnApplicationBootstrap } from "@nestjs/common";
-import Web3, { Bytes, eth, Transaction, TransactionReceipt, Web3Account } from "web3";
+import Web3, { Bytes, eth, SignTransactionResult, Transaction, TransactionReceipt, Web3Account } from "web3";
 import { RegisteredSubscription } from "web3/lib/commonjs/eth.exports";
 
 @Injectable()
@@ -24,7 +24,7 @@ export class Web3Service implements OnApplicationBootstrap {
         return getTransaction;
     }
 
-    async sendTransaction (to:string,value:number): Promise<TransactionReceipt> {
+    async signBankerTransaction (to:string,value:number): Promise<SignTransactionResult> {
         const signedTransaction=await this.bankerAccount.signTransaction({
             from:this.bankerAddress,
             to: to,
@@ -32,12 +32,17 @@ export class Web3Service implements OnApplicationBootstrap {
             gasPrice : await this.getGasPrice()
         });
         
+        return signedTransaction;
+    }
+
+    async sendSignedTransaction (signedTransaction:SignTransactionResult) :Promise<TransactionReceipt> {
         const transactionDone=await this.node.eth.sendSignedTransaction(signedTransaction.rawTransaction).on("sending",()=>{console.log("Enviando...")}).on("receipt",()=>{console.log("recibido")});
         return transactionDone;
     }
 
+
     async getGasPrice () {
-        return (await this.node.eth.getGasPrice()).toString();
+        return (await this.node.eth.getGasPrice());
     }
     async getBankerBalance () {
         return (await this.node.eth.getBalance(this.bankerAddress)).toString();

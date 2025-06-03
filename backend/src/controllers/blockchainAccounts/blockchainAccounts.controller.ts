@@ -8,6 +8,7 @@ import { plainToInstance } from 'class-transformer';
 import { GetBlockchainAccountDTO } from 'src/database/dto/blockchainAccounts/getBlockChainAccount.dto';
 import { UpdateBlockchainAccountDTO } from 'src/database/dto/blockchainAccounts/updateBlockchainAccount.dto';
 import { DeleteBlockchainAccountDTO } from 'src/database/dto/blockchainAccounts/deleteBlockchainAccount.dto';
+import { DepositFromBlockChainDTO } from 'src/database/dto/blockchainAccounts/depositFromBlockchain.dto';
 @UseGuards(MainAuthGuard)
 @UsePipes(new ValidationPipe({transform:true}))
 @UseInterceptors(ClassSerializerInterceptor)
@@ -63,7 +64,7 @@ export class BlockchainAccountsController {
     }
   }
 
-  @Delete('delete')
+  @Post('delete')
   async remove(@Req() req: any, @Body() deleteBlockchainAccountDTO: DeleteBlockchainAccountDTO) {
     try {
       const blockchainAccount: BlockchainAccounts = plainToInstance(BlockchainAccounts, deleteBlockchainAccountDTO);
@@ -73,6 +74,26 @@ export class BlockchainAccountsController {
     } catch (error) {
       console.error(error);
       throw new BadRequestException;
+    }
+  }
+
+  @Post('deposit')
+  async deposit (@Req() req:any,@Body() depositFromBlockChainDTO: DepositFromBlockChainDTO) {
+    try {
+      await this.blockchainAccountsService.deposit(depositFromBlockChainDTO,req.user);
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException("Transaction Failed"); 
+    }
+  }
+
+  @Post('depositBC')
+  async depositBC (@Req() req:any,@Body() depositFromBlockChainDTO: DepositFromBlockChainDTO) {
+    try {
+      await this.blockchainAccountsService.deposit(depositFromBlockChainDTO,req.user);
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException("Transaction Failed"); 
     }
   }
 }

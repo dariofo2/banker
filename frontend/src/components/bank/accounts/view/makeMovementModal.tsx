@@ -35,7 +35,12 @@ export default function CreateMovementModal(props:Props) {
                     money:parseInt(elem.value)
                 });
             break;
-            
+            case "concept":
+                setCreateMovementDTO({
+                    ...createMovementDTO ?? {},
+                    concept:elem.value
+                })
+            break;
         }
     }
 
@@ -45,7 +50,6 @@ export default function CreateMovementModal(props:Props) {
         if (form?.checkValidity()) {
             try {
                 //Create Movement Fetch
-                console.log(createMovementDTO);
                 await axiosFetchs.createMovement(createMovementDTO as CreateMovementDTO);
                 hideModal();
                 props.onSubmit();       
@@ -74,6 +78,7 @@ export default function CreateMovementModal(props:Props) {
                             <form className="" ref={formElem}>
                                 <input className="form-control" type="text" name="number" placeholder="Numero de Cuenta" onChange={changeInput} required />
                                 <input className="form-control" type="text"  name="money" placeholder="Dinero" onChange={changeInput} required />
+                                <input className="form-control" type="text"  name="concept" placeholder="Concepto" onChange={changeInput} required />
                             </form>
                         </div>
                         <div className="modal-footer">

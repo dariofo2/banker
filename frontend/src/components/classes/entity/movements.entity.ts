@@ -1,15 +1,21 @@
 import { Users } from "./users.entity";
 import { Accounts } from "./accounts.entity";
-import { IsDate, IsNumber } from "class-validator";
+import { IsDate, IsNumber, IsString } from "class-validator";
 
 export class Movements {
     id?: number;
 
+    @IsString()
+    type?: string;
+
+    @IsString()
+    concept?: string;
+
     @IsNumber()
     money?: number;
 
-    @IsDate()
-    date?: Date;
+    @IsNumber()
+    date?: number;
     
     originAccount?: Accounts;
 

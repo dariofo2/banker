@@ -1,4 +1,5 @@
 import { Injectable, Move, UnauthorizedException } from "@nestjs/common";
+import * as moment from "moment";
 import { DatabaseRepository } from "src/database/database.repository";
 import { ListRequestDTO } from "src/database/dto/listRequestDTO";
 import { ListResponseDTO } from "src/database/dto/listResponseDTO";
@@ -20,8 +21,8 @@ export class MovementsService {
     async createMovement(movement: Movements) {
         movement.originAccount = await this.database.selectAccountByNumberAndUserId(movement.originAccount.number, movement.originAccount.user.id);
         movement.destinationAccount = await this.database.selectAccountByNumber(movement.destinationAccount.number);
-        movement.date = new Date();
-
+        movement.date = parseInt(moment().format("X"));
+        console.log(movement);
         const movementInserted = await this.database.createMovement(movement);
         movement.id = movementInserted.id;
 

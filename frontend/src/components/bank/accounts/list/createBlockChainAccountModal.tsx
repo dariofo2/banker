@@ -4,6 +4,7 @@ import { CreateBlockchainAccountDTO } from "@/components/classes/dto/blockchainA
 import { axiosFetchs } from "@/components/utils/axios";
 import { CryptoUtils } from "@/components/utils/crypto";
 import { Modal } from "bootstrap";
+import { plainToClass } from "class-transformer";
 import { AES, enc } from "crypto-js";
 import { ChangeEvent, useRef, useState } from "react";
 
@@ -42,12 +43,10 @@ export default function CreateBlockchainAccountModal(props:Props) {
         form.classList.add("was-validated");
         if (form.checkValidity()) {
             //Create by Encrpyt
-            setCreateBlockchainAccountDTO({
-                ...createBlockchainAccountDTO,
-                privatekey:CryptoUtils.encryptAES2Factor(createBlockchainAccountDTO?.privatekey as string,password1,password2)
-            });
-
-            await axiosFetchs.createBlockChainAccount(createBlockchainAccountDTO as CreateBlockchainAccountDTO);
+            
+            const createDTO=plainToClass(CreateBlockchainAccountDTO,createBlockchainAccountDTO);
+            createDTO.privatekey=CryptoUtils.encryptAES2Factor(createBlockchainAccountDTO?.privatekey as string,password1,password2);
+            await axiosFetchs.createBlockChainAccount(createDTO);
             
             props.onSubmit();
             hideModal();

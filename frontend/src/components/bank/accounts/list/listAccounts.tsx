@@ -14,7 +14,7 @@ import BlockchainAccountCardList from "./blockchainAccountListCard";
 export default function ListAccounts () {
     const [accounts,setAccounts]=useState(null as Accounts[]|null);
     const [blockChainAccounts,setBlockChainAccounts] = useState(null as BlockchainAccounts[]|null);
-    const [accountToUpdate]=useState(null as Accounts|null);
+    const [accountToUpdate,setAccountToUpdate]=useState(null as Accounts|null);
 
     useEffect(()=>{
         getAccounts();

@@ -100,7 +100,13 @@ export class axiosFetchs {
         Cookies.remove("user");
     }
 
+    static async setAccountIdCookie(accountId: number) {
+        Cookies.set("accountId", accountId.toString());
+    }
 
+    static async setBlockchainAccountIdCookie(blockchainAccountId: number) {
+        Cookies.set("blockchainAccountId", blockchainAccountId.toString());
+    }
 
     //      A X I O S   E R R O R S
     static async handleAxiosError(error: AxiosError): Promise<any> {
@@ -296,10 +302,6 @@ export class axiosFetchs {
             throw error;
         }
 
-    }
-
-    static async setAccountIdCookie(accountId: number) {
-        Cookies.set("accountId", accountId.toString());
     }
 
     static async getAccount(getAccountDTO: GetAccountDTO): Promise<Accounts> {

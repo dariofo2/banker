@@ -7,9 +7,11 @@ import { ChangeEvent, useState } from "react";
 class Props {
     blockChainAccount?: BlockchainAccounts
     amountToSend?: number;
-    acceptDeposit=(privateKey:string)=>{}
+    estimateGas?: number;
+    acceptSend=(privateKey:string)=>{}
 }
-export default function AcceptDepositModal(props:Props) {
+
+export default function AcceptBlockchainSendModal(props:Props) {
     const blockChainAccount=props.blockChainAccount;
     const amounToSend=props.amountToSend;
 
@@ -29,18 +31,18 @@ export default function AcceptDepositModal(props:Props) {
 
     function submitForm () {
         const privateKey=getDecryptPrivateKeyToSign()
-        props.acceptDeposit(privateKey);
+        props.acceptSend(privateKey);
         hideModal();
     }
 
     function hideModal () {
         (document.getElementById("passwordForm") as HTMLFormElement).reset();
-        Modal.getOrCreateInstance("#acceptDepositModal").hide();
+        Modal.getOrCreateInstance("#acceptBlockChainSendModal").hide();
     }
 
     return (
         <div>
-            <div className="modal fade" id="acceptDepositModal" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div className="modal fade" id="acceptBlockChainSendModal" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">
@@ -48,7 +50,8 @@ export default function AcceptDepositModal(props:Props) {
                             <button type="button" className="btn-close" onClick={hideModal} aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
-                            
+                            Coste de Gas Estimado:{props.estimateGas}
+                            Coste en Eth:{props.amountToSend}
                             <form id="passwordForm">
                                 <input className="form-control" type="text" onChange={onChangeInputs} name="password1" placeholder="Key 1" />
                                 <input className="form-control" type="text" onChange={onChangeInputs} name="password2"  placeholder="Key 2"/>

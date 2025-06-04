@@ -17,7 +17,8 @@ static async signTransactionBCFromSendMethod (contractSendABIEncode:string,accou
         from: account.address,
         to: this.contractBuildingsAddress,
         value: value ?? 0,
-        data:contractSendABIEncode
+        data:contractSendABIEncode,
+        gasPrice:await this.node.eth.getGasPrice()
     },account.privateKey)
 
     return signedTransaction;
@@ -26,26 +27,26 @@ static async signTransactionBCFromSendMethod (contractSendABIEncode:string,accou
 
 // ERC20 BS COIN BALANCE
 static async getBalanceBS(address:string) {
-    const balance = await this.contractBuildings.methods.balanceOf(address).call() as string;
+    const balance = await this.contractBuildings.methods.balanceOf(address).call({from:address}) as string;
     console.log(balance);
     return balance;
 }
 
-static async getBalanceBsOfContract() {
-    const balance = await this.contractBuildings.methods.balanceOf(this.contractBuildingsAddress).call() as string;
+static async getBalanceBsOfContract(address:string) {
+    const balance = await this.contractBuildings.methods.balanceOf(this.contractBuildingsAddress).call({from:address}) as string;
     console.log(balance);
     return balance;
 }
 
 //ERC20 BS COIN DATA 
-static async nameCoin() {
-    const name = await this.contractBuildings.methods.name().call() as string;
+static async nameCoin(address:string) {
+    const name = await this.contractBuildings.methods.name().call({from:address}) as string;
     console.log(name);
     return name;
 }
 
-static async symbolCoin() {
-    const symbol = await this.contractBuildings.methods.symbol().call() as string;
+static async symbolCoin(address:string) {
+    const symbol = await this.contractBuildings.methods.symbol().call({from:address}) as string;
     console.log(symbol);
     return symbol;
 }
@@ -56,7 +57,7 @@ static async symbolCoin() {
 
 
 // FUNCTIONS TO ACCESS CONTRACT
-static async createBuilding(buildingName:string,account:Web3Account) {
+static async createBuilding(buildingName:string) {
     //const resp =await this.contractBuildings.methods.createBuilding(buildingName).send({ from: account, value: "1000000000000000000" });
     
     //console.log(resp);
@@ -64,14 +65,15 @@ static async createBuilding(buildingName:string,account:Web3Account) {
     //return resp;
 }
 
-static async getBuildings() {
-    const resp = await this.contractBuildings.methods.getBuildingsTokenIdsFromAddress().call();
+static async getBuildings(address:string) {
+    const resp = await this.contractBuildings.methods.getBuildingsTokenIdsFromAddress().call({from:address});
     //console.log(resp);
     return resp;
 }
 
-static async getBuilding(tokenId:number) {
-    const resp = await this.contractBuildings.methods.getBuilding(tokenId).call() as BCBuilding;
+static async getBuilding(tokenId:number,address:string) {
+    const resp = await this.contractBuildings.methods.getBuilding(tokenId).call({from:address}) as BCBuilding;
+    console.log(resp);
     //console.log(resp);
     return resp;
 }
@@ -105,8 +107,8 @@ static async transferBuyBuilding(tokenId:number) {
     //return resp;
 }
 
-static async getBuildingsOnSale() {
-    const resp = await this.contractBuildings.methods.getBuildingsOnSale().call();
+static async getBuildingsOnSale(address:string) {
+    const resp = await this.contractBuildings.methods.getBuildingsOnSale().call({from:address});
     console.log(resp);
     return resp;
 }

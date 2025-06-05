@@ -5,9 +5,15 @@ import { buildingsContract } from "@/components/web3.js/contractBuildings";
 
 class Props {
     building?:BCBuilding;
+    onBuyClick= (contractMethod:any,value:number)=>{};
 }
 export default function HouseOnSale(props:Props) {
     const building=props.building;
+
+    async function transferBuyBuilding () {
+        const contractMethod=await buildingsContract.transferBuyBuilding(parseInt(building?.tokenId?.toString() as string));
+        props.onBuyClick(contractMethod,0);
+    }
 
     function onSale () {
         if (building?.onSale) return (
@@ -23,10 +29,10 @@ export default function HouseOnSale(props:Props) {
             {onSale()}
             <img className="img-fluid" src="/house1.jpg"></img>
             <h2>{building?.name}</h2>
-            <h4>Level: {building?.level}</h4>
-            <h6>Precio de Venta: {building?.value}</h6>
+            <h4>Level: {building?.level?.toString()}</h4>
+            <h6>Precio de Venta: {building?.value?.toString()}</h6>
             <button className="btn btn-primary" onClick={() => {
-                buildingsContract.transferBuyBuilding(building?.tokenId as number);
+                //buildingsContract.transferBuyBuilding(building?.tokenId as number);
                 location.reload();
             }}>Comprar Casa</button>
             </div>

@@ -65,15 +65,16 @@ static async createBuilding(buildingName:string) {
     //return resp;
 }
 
-static async getBuildings(address:string) {
-    const resp = await this.contractBuildings.methods.getBuildingsTokenIdsFromAddress().call({from:address});
+static async getBuildings(address:string) : Promise<BigInt[]> {
+    const resp = await this.contractBuildings.methods.getBuildingsTokenIdsFromAddress().call({from:address}) as BigInt[];
+    
     //console.log(resp);
     return resp;
 }
 
-static async getBuilding(tokenId:number,address:string) {
+static async getBuilding(tokenId:number,address:string) : Promise<BCBuilding> {
     const resp = await this.contractBuildings.methods.getBuilding(tokenId).call({from:address}) as BCBuilding;
-    console.log(resp);
+    //console.log(resp);
     //console.log(resp);
     return resp;
 }
@@ -107,9 +108,9 @@ static async transferBuyBuilding(tokenId:number) {
     //return resp;
 }
 
-static async getBuildingsOnSale(address:string) {
-    const resp = await this.contractBuildings.methods.getBuildingsOnSale().call({from:address});
-    console.log(resp);
+static async getBuildingsOnSale(address:string) : Promise<BigInt[]> {
+    const resp = await this.contractBuildings.methods.getBuildingsOnSale().call({from:address}) as BigInt[];
+    
     return resp;
 }
 

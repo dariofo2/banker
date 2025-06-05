@@ -31,6 +31,10 @@ export default function ViewBlockChainAccount(props: any) {
         actualizarCuenta();
     }, []);
 
+    useEffect(()=>{
+        console.log("hola");
+    },[buildings])
+
     async function actualizarCuenta() {
         const responseBlockChainAccount=await axiosFetchs.getBlockChainAccount({id:parseInt(blockChainAccountId as string)});
         
@@ -38,8 +42,8 @@ export default function ViewBlockChainAccount(props: any) {
 
         const accData = new BlockchainAccountData();
         accData.address=responseBlockChainAccount.address;
-        accData.buildingsTokens = await buildingsContract.getBuildings(responseBlockChainAccount.address as string) as number[];
-        accData.buildingsOnSaleTokens = await buildingsContract.getBuildingsOnSale(responseBlockChainAccount.address as string) as number[];
+        accData.buildingsTokens = await buildingsContract.getBuildings(responseBlockChainAccount.address as string);
+        accData.buildingsOnSaleTokens = await buildingsContract.getBuildingsOnSale(responseBlockChainAccount.address as string);
         accData.coinBalance = await buildingsContract.getBalanceBS(responseBlockChainAccount.address as string);
         
         accData.coinContractBalance = await buildingsContract.getBalanceBsOfContract(responseBlockChainAccount.address as string);
@@ -49,33 +53,32 @@ export default function ViewBlockChainAccount(props: any) {
         console.log(accData)
         setAccountData({...accData});
 
-        actualizarBuildings({...accData.buildingsTokens});
-        actualizarBuildingsOnSale({...accData.buildingsOnSaleTokens});
+        actualizarBuildings([...accData.buildingsTokens]);
+        actualizarBuildingsOnSale([...accData.buildingsOnSaleTokens]);
     }
 
-    async function actualizarBuildings(buildingsTokens: number[]) {
+    async function actualizarBuildings(buildingsTokens: BigInt[]) {
         let buildingsObjetos = [];
-
+        console.log(buildingsTokens);
         //
         //NO FUNCIONA EL BUCLE PORQUE EL OBJETO BUILDINGS TOKENS NO ES UN ARRAY NORMAL, NO TIENE LENGTH
         //
         for (let i = 0; i < buildingsTokens.length; i++) {
-            
-            const x:number = buildingsTokens[i];
+            const x:number = parseInt(buildingsTokens[i].toString());
             
             const building: BCBuilding = await buildingsContract.getBuilding(x,accountData.address as string);
             if (building.name!="") {
-                building.tokenId = x;
-                console.log(building.onSale);
+                building.tokenId = BigInt(x);
+                console.log(building);
                 buildingsObjetos.push(building);
 
             }
             
         }
-        setBuildings(buildingsObjetos);
+        setBuildings([...buildingsObjetos]);
     }
 
-    async function actualizarBuildingsOnSale(buildingsTokens: number[]) {
+    async function actualizarBuildingsOnSale(buildingsTokens: BigInt[]) {
         let buildingsObjetos = [];
 
         //
@@ -83,15 +86,15 @@ export default function ViewBlockChainAccount(props: any) {
         //
         
         for (let i = 0; i < buildingsTokens.length; i++) {
-            const x = buildingsTokens[i];
+            const x = parseInt(buildingsTokens[i].toString());
             const building: BCBuilding = await buildingsContract.getBuilding(x,accountData.address as string);
             if (building.name!="") {
-                building.tokenId = x;
+                building.tokenId = BigInt(x);
             
                 buildingsObjetos.push(building);
             }
         }
-        setBuildingsOnSale(buildingsObjetos);
+        setBuildingsOnSale([...buildingsObjetos]);
     }
 
     async function setSendContractMethod (contract:any,value:number) {
@@ -126,30 +129,18 @@ export default function ViewBlockChainAccount(props: any) {
     const buildingsMap = buildings.map(x => {
         if (!x.onSale) {
             return <House
-                key={x.tokenId}
+                key={parseInt(x.tokenId?.toString() as string)}
                 color="green"
-                name={x.name}
-                level={x.level}
-                timeFromSpend={x.timeFromSpend}
-                owner={x.owner}
-                onSale={x.onSale}
-                value={x.value}
-                tokenId={x.tokenId}
-                buildsContract={buildingsContract}
+                building={x}
+                onClickMethod={(contractMethod,value)=>{setSendContractMethod(contractMethod,value)}}
             >
             </House>
         } else {
             return <House
-                key={x.tokenId}
+                key={parseInt(x.tokenId?.toString() as string)}
                 color="red"
-                name={x.name}
-                level={x.level}
-                timeFromSpend={x.timeFromSpend}
-                owner={x.owner}
-                onSale={x.onSale}
-                value={x.value}
-                tokenId={x.tokenId}
-                buildsContract={buildingsContract}
+                building={x}
+                onClickMethod={(contractMethod,value)=>{setSendContractMethod(contractMethod,value)}}
             >
             </House>
         }
@@ -157,8 +148,9 @@ export default function ViewBlockChainAccount(props: any) {
 
     const buildingsOnSaleMap = buildingsOnSale.map(x => {
         return <HouseOnSale
-            key={x.tokenId}
+            key={parseInt(x.tokenId?.toString() as string)}
             building={x}
+            onBuyClick={(contract,value)=>setSendContractMethod(contract,value)}
         >
         </HouseOnSale>
 
@@ -174,6 +166,8 @@ export default function ViewBlockChainAccount(props: any) {
                 onCreateBuilding={(contract,value)=>setSendContractMethod(contract,value)}
                 blockchainAccountData={accountData}
             ></Account>
+            {buildingsMap}
+            {buildingsOnSaleMap}
             <AcceptBlockchainSendModal acceptSend={(privateKey)=>{acceptSignAndSendContractTransaction(privateKey)}} amountToSend={contractMethodValueSendToSign} estimateGas={contractMethodEstimateGasSendToSign} blockChainAccount={blockChainAccount as BlockchainAccounts} />
         </div>
     );

@@ -7,6 +7,6 @@ export class BlockchainAccountData {
     symbolCoin?:string;
     coinBalance?:string;
     coinContractBalance?:string;
-    buildingsTokens?:number[];
-    buildingsOnSaleTokens?:number[];
+    buildingsTokens?:BigInt[];
+    buildingsOnSaleTokens?:BigInt[];
 }

@@ -1,9 +1,9 @@
 export class BCBuilding {
-    tokenId?: number;
+    tokenId?: BigInt;
     name?:string;
-    level?:number;
-    timeFromSpend?:number;
+    level?:BigInt;
+    timeFromSpend?:BigInt;
     owner?:string;
     onSale?:boolean;
-    value?:number;
+    value?:BigInt;
 }

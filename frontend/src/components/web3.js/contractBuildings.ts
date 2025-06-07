@@ -54,6 +54,12 @@ static async symbolCoin(address:string) {
 
 
 
+// TRANSFER TOKEN
+static async transferTo(to:string,value:number) {
+    return this.contractBuildings.methods.transfer(to,value);
+}
+
+
 
 
 // FUNCTIONS TO ACCESS CONTRACT

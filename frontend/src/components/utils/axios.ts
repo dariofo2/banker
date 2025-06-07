@@ -25,6 +25,7 @@ import { UpdateBlockchainAccountDTO } from "../classes/dto/blockchainAccounts/up
 import { CreateBlockchainAccountDTO } from "../classes/dto/blockchainAccounts/createBlockchainAccount.dto";
 import { UpdateAccountDTO } from "../classes/dto/accounts/updateAccount.dto";
 import { DepositFromBlockChainDTO } from "../classes/dto/blockchainAccounts/depositFromBlockchain.dto";
+import { DepositToBlockChainDTO } from "../classes/dto/blockchainAccounts/depositToBlockchain.dto";
 
 export class RequestObject {
     headers: AxiosHeaders = new AxiosHeaders;
@@ -480,11 +481,65 @@ export class axiosFetchs {
         }
     }
 
-    static async depositFromBlockChainAccount (depositFromBlockchainDTO:DepositFromBlockChainDTO) : Promise<void> {
+    static async depositFromEthBlockChainAccount (depositFromBlockchainDTO:DepositFromBlockChainDTO) : Promise<void> {
         try {
             let response = await axios.post(
-                `${this.URL}/blockchainAccounts/deposit`,
+                `${this.URL}/blockchainAccounts/depositFromEth`,
                 depositFromBlockchainDTO,
+                {
+                    withCredentials: true
+                }
+            );
+            toast.success("Deposito Ingresado con Éxito", {
+                containerId: "axios"
+            });
+        } catch (error) {
+            this.handleAxiosError(<AxiosError>error);
+            throw error;
+        }
+    }
+
+    static async depositFromBCBlockChainAccount (depositFromBlockchainDTO:DepositFromBlockChainDTO) : Promise<void> {
+        try {
+            let response = await axios.post(
+                `${this.URL}/blockchainAccounts/depositFromBC`,
+                depositFromBlockchainDTO,
+                {
+                    withCredentials: true
+                }
+            );
+            toast.success("Deposito Ingresado con Éxito", {
+                containerId: "axios"
+            });
+        } catch (error) {
+            this.handleAxiosError(<AxiosError>error);
+            throw error;
+        }
+    }
+
+    static async depositToEthBlockChainAccount (depositToBlockchainDTO:DepositToBlockChainDTO) : Promise<void> {
+        try {
+            let response = await axios.post(
+                `${this.URL}/blockchainAccounts/depositToEth`,
+                depositToBlockchainDTO,
+                {
+                    withCredentials: true
+                }
+            );
+            toast.success("Deposito Ingresado con Éxito", {
+                containerId: "axios"
+            });
+        } catch (error) {
+            this.handleAxiosError(<AxiosError>error);
+            throw error;
+        }
+    }
+
+    static async depositToBCBlockChainAccount (depositToBlockchainDTO:DepositToBlockChainDTO) : Promise<void> {
+        try {
+            let response = await axios.post(
+                `${this.URL}/blockchainAccounts/depositToBC`,
+                depositToBlockchainDTO,
                 {
                     withCredentials: true
                 }

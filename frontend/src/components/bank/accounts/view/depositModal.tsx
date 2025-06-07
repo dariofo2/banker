@@ -8,6 +8,7 @@ import { Modal } from "bootstrap";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Select, { SingleValue } from "react-select";
 import AcceptDepositModal from "./acceptDepositModal";
+import { buildingsContract } from "@/components/web3.js/contractBuildings";
 
 class Props {
     account?:Accounts
@@ -77,7 +78,31 @@ export default function DepositModal(props:Props) {
         depositDTO.signedTransaction=signedTransaction;
         depositDTO.toAccountId=account?.id;
 
-        await axiosFetchs.depositFromBlockChainAccount(depositDTO);
+        await axiosFetchs.depositFromEthBlockChainAccount(depositDTO);
+
+
+        hideModal();
+
+        formElem.current?.reset();
+        setSelectedBlockchainAccount(null);
+    }
+
+    async function submitSendBC (privateKey:string) {
+        const method= await buildingsContract.transferTo(selectedBlockchainAccount?.address as string,amountToSend);
+        const signedTransaction=await Web3Service.node.eth.accounts.signTransaction({
+            from:selectedBlockchainAccount?.address,
+            to: Web3Service.bankerAddress,
+            value: 0,
+            data: method.encodeABI(),
+            gasPrice: await Web3Service.node.eth.getGasPrice()
+        },privateKey);
+
+        //console.log(signedTransaction);
+        const depositDTO= new DepositFromBlockChainDTO;
+        depositDTO.signedTransaction=signedTransaction;
+        depositDTO.toAccountId=account?.id;
+
+        await axiosFetchs.depositFromBCBlockChainAccount(depositDTO);
 
 
         hideModal();
@@ -114,7 +139,7 @@ export default function DepositModal(props:Props) {
                             </form>
                                 {selectedBlockchainAccount ? <h6>Estimated Gas: {estimatedGas}</h6> : <></>}
                                 <button className="btn btn-success" onClick={openAcceptModal} disabled={selectedBlockchainAccount && amountToSend>0 ? false : true}>Deposit Eth</button>
-                                <button className="btn btn-success" onClick={openAcceptModal} disabled={selectedBlockchainAccount && amountToSend>0 ? false : true}>Deposit BC</button>
+                                
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" onClick={hideModal}>Close</button>
@@ -123,7 +148,7 @@ export default function DepositModal(props:Props) {
                     </div>
                 </div>
             </div>
-            <AcceptDepositModal blockChainAccount={selectedBlockchainAccount as BlockchainAccounts} amountToSend={amountToSend} acceptDeposit={(privateKey)=>{submitSendEth(privateKey)}}/>
+            <AcceptDepositModal blockChainAccount={selectedBlockchainAccount as BlockchainAccounts} amountToSend={amountToSend} acceptDepositEth={(privateKey)=>{submitSendEth(privateKey)}} acceptDepositBC={(privateKey)=>{submitSendBC(privateKey)}}/>
         </div>
     );
 }

@@ -9,6 +9,7 @@ import { GetBlockchainAccountDTO } from 'src/database/dto/blockchainAccounts/get
 import { UpdateBlockchainAccountDTO } from 'src/database/dto/blockchainAccounts/updateBlockchainAccount.dto';
 import { DeleteBlockchainAccountDTO } from 'src/database/dto/blockchainAccounts/deleteBlockchainAccount.dto';
 import { DepositFromBlockChainDTO } from 'src/database/dto/blockchainAccounts/depositFromBlockchain.dto';
+import { DepositToBlockChainDTO } from 'src/database/dto/blockchainAccounts/depositToBlockchain.dto';
 @UseGuards(MainAuthGuard)
 @UsePipes(new ValidationPipe({transform:true}))
 @UseInterceptors(ClassSerializerInterceptor)
@@ -77,20 +78,40 @@ export class BlockchainAccountsController {
     }
   }
 
-  @Post('deposit')
-  async deposit (@Req() req:any,@Body() depositFromBlockChainDTO: DepositFromBlockChainDTO) {
+  @Post('depositFromEth')
+  async depositFromEth (@Req() req:any,@Body() depositFromBlockChainDTO: DepositFromBlockChainDTO) {
     try {
-      await this.blockchainAccountsService.deposit(depositFromBlockChainDTO,req.user);
+      await this.blockchainAccountsService.depositFromEth(depositFromBlockChainDTO,req.user);
     } catch (error) {
       console.error(error);
       throw new BadRequestException("Transaction Failed"); 
     }
   }
 
-  @Post('depositBC')
-  async depositBC (@Req() req:any,@Body() depositFromBlockChainDTO: DepositFromBlockChainDTO) {
+  @Post('depositFromBC')
+  async depositFromBC (@Req() req:any,@Body() depositFromBlockChainDTO: DepositFromBlockChainDTO) {
     try {
-      await this.blockchainAccountsService.deposit(depositFromBlockChainDTO,req.user);
+      await this.blockchainAccountsService.depositFromBC(depositFromBlockChainDTO,req.user);
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException("Transaction Failed"); 
+    }
+  }
+
+  @Post('depositToEth')
+  async depositToEth (@Req() req:any,@Body() depositToBlockchainDTO: DepositToBlockChainDTO) {
+    try {
+      await this.blockchainAccountsService.depositToEth(depositToBlockchainDTO,req.user);
+    } catch (error) {
+      console.error(error);
+      throw new BadRequestException("Transaction Failed"); 
+    }
+  }
+
+  @Post('depositToBC')
+  async depositToBC (@Req() req:any,@Body() DepositToBlockChainDTO: DepositToBlockChainDTO) {
+    try {
+      await this.blockchainAccountsService.depositToBC();
     } catch (error) {
       console.error(error);
       throw new BadRequestException("Transaction Failed"); 

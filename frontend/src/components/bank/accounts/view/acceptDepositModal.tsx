@@ -7,7 +7,8 @@ import { ChangeEvent, useState } from "react";
 class Props {
     blockChainAccount?: BlockchainAccounts
     amountToSend?: number;
-    acceptDeposit=(privateKey:string)=>{}
+    acceptDepositEth=(privateKey:string)=>{}
+    acceptDepositBC=(privateKey:string)=>{}
 }
 export default function AcceptDepositModal(props:Props) {
     const blockChainAccount=props.blockChainAccount;
@@ -27,9 +28,15 @@ export default function AcceptDepositModal(props:Props) {
         return CryptoUtils.decryptAES2Factor(blockChainAccount?.privatekey as string,passwords?.password1 as string,passwords?.password2 as string);
     }
 
-    function submitForm () {
+    function submitFormforDepositEth () {
         const privateKey=getDecryptPrivateKeyToSign()
-        props.acceptDeposit(privateKey);
+        props.acceptDepositEth(privateKey);
+        hideModal();
+    }
+
+    function submitFormForDepositBC () {
+        const privateKey=getDecryptPrivateKeyToSign()
+        props.acceptDepositBC(privateKey);
         hideModal();
     }
 
@@ -56,7 +63,8 @@ export default function AcceptDepositModal(props:Props) {
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" onClick={hideModal}>Cerrar</button>
-                            <button type="button" className="btn btn-primary" onClick={submitForm}>Ingresar</button>
+                            <button type="button" className="btn btn-primary" onClick={submitFormforDepositEth}>Deposit Eth</button>
+                            <button className="btn btn-success" onClick={submitFormForDepositBC}>Deposit BC</button>
                         </div>
                     </div>
                 </div>

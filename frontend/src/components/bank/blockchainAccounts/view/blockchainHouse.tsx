@@ -2,7 +2,7 @@
 
 import { BCBuilding } from "@/components/classes/objects/BCBuilding";
 import { buildingsContract } from "@/components/web3.js/contractBuildings";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 class Props {
     building: BCBuilding = {}
@@ -12,30 +12,38 @@ class Props {
 }
 
 export default function House(props:Props) {
-    const [timeFromSpend,setTimeFromSpend]=useState(props.building.timeFromSpend)
     const [coinWin, setCoinWin] = useState(0 as number);
     const [valorVenta, setValorVenta] = useState(0 as number);
-    
-    
+    const [intervalUpdateCoinWin, setIntervalUpdateCoinWin]= useState(null as number|null);
+    const doOnce=useRef(false);
+
     const fee = 10;
     const building=props.building;
 
     useEffect(() => {
         updateCoinWin();
-        setInterval(updateCoinWin, 1000);
-    }, []);
-
-    useEffect(()=>{
-        setTimeFromSpend(props.building.timeFromSpend);
-    },[props.building])
+        if (!doOnce.current && !intervalUpdateCoinWin) {
+            doOnce.current=true;
+            const intval=setInterval(updateCoinWin, 1000) as any;
+            setIntervalUpdateCoinWin(intval);
+        } else {
+            if (intervalUpdateCoinWin) {
+                clearInterval(intervalUpdateCoinWin);
+                const intval=setInterval(updateCoinWin, 1000) as any;
+                setIntervalUpdateCoinWin(intval);
+            }
+        }
+        
+        
+    }, [building]);
 
     function updateCoinWin() {
         const dateNow = new Date();
         const secondsNow = dateNow.getTime() / 1000 as number;
-        
+        console.log(building.timeFromSpend);
         const level = parseInt(building.level?.toString() as string);
 
-        const time = secondsNow - parseInt(timeFromSpend?.toString() as string);
+        const time = secondsNow - parseInt(building.timeFromSpend?.toString() as string);
         setCoinWin(time * fee * level);
     }
 

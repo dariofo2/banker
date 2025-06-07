@@ -8,13 +8,14 @@ import { DepositToBlockChainDTO } from 'src/database/dto/blockchainAccounts/depo
 import { BlockchainAccounts } from 'src/database/entity/blockchainAccounts.entity';
 import { Movements } from 'src/database/entity/movements.entity';
 import { Users } from 'src/database/entity/users.entity';
+import { BuildingsContractService } from 'src/web3/buildingsContract.service';
 import { Web3Service } from 'src/web3/web3.service';
-//import * as json "src/web3/Buildings.json";
 @Injectable()
 export class BlockchainAccountsService {
   constructor(
     private readonly databaseRepository: DatabaseRepository,
-    private readonly web3Service: Web3Service
+    private readonly web3Service: Web3Service,
+    private readonly buildingsContractService: BuildingsContractService
   ) { }
 
 
@@ -41,7 +42,7 @@ export class BlockchainAccountsService {
     return "Delete Done";
   }
 
-  async depositFromEth(depositFromBlockChainDTO: DepositFromBlockChainDTO,user:Users) {
+  async depositFromEth(depositFromBlockChainDTO: DepositFromBlockChainDTO, user: Users) {
     const transactionDone = await this.web3Service.sendSignedTransaction(depositFromBlockChainDTO.signedTransaction);
     const getTransaction = await this.web3Service.getTransaction(transactionDone.transactionHash);
     if (getTransaction.to.toLowerCase() == this.web3Service.bankerAddress.toLowerCase()) {
@@ -50,11 +51,11 @@ export class BlockchainAccountsService {
         concept: getTransaction.from,
         originAccount: {
           id: depositFromBlockChainDTO.toAccountId,
-          user:user
+          user: user
         },
         destinationAccount: {
           id: depositFromBlockChainDTO.toAccountId,
-          user:user
+          user: user
         },
         money: parseInt(getTransaction.value.toString()),
         date: parseInt(moment().format("X"))
@@ -69,24 +70,26 @@ export class BlockchainAccountsService {
     return
   }
 
-  async depositFromBC(depositFromBlockChainDTO: DepositFromBlockChainDTO,user:Users) {
+  async depositFromBC(depositFromBlockChainDTO: DepositFromBlockChainDTO, user: Users) {
     const transactionDone = await this.web3Service.sendSignedTransaction(depositFromBlockChainDTO.signedTransaction);
     const getTransaction = await this.web3Service.getTransaction(transactionDone.transactionHash);
     
-    //console.log(this.web3Service.node.eth.abi.decodeParameters());
-    if (getTransaction.to.toLowerCase() == this.web3Service.bankerAddress.toLowerCase()) {
+    const methodInfo=(await this.buildingsContractService.decodeMethodAndParametersOfSend(getTransaction));
+    //console.log(methodInfo);
+    if (methodInfo.__method__.split("(")[0] != "transfer") throw new BadRequestException("El Metodo no es Transfer, es " + methodInfo.__method__);
+    if ((methodInfo.to as string).toLowerCase() == this.web3Service.bankerAddress.toLowerCase()) {
       const createMovement = {
         type: "deposit",
         concept: getTransaction.from,
         originAccount: {
           id: depositFromBlockChainDTO.toAccountId,
-          user:user
+          user: user
         },
         destinationAccount: {
           id: depositFromBlockChainDTO.toAccountId,
-          user:user
+          user: user
         },
-        money: parseInt(getTransaction.value.toString()),
+        money: parseInt(methodInfo.amount as string),
         date: parseInt(moment().format("X"))
       }
 
@@ -99,13 +102,64 @@ export class BlockchainAccountsService {
     return
   }
 
-  async depositToEth (depositToBlockChainDTO:DepositToBlockChainDTO,user:Users) {
-    await this.databaseRepository.selectAccountByIdAndUserId(depositToBlockChainDTO.fromNormalAccountId,user.id);
+  async depositToEth(depositToBlockChainDTO: DepositToBlockChainDTO, user: Users) {
+    await this.databaseRepository.selectAccountByIdAndUserId(depositToBlockChainDTO.fromNormalAccountId, user.id);
 
-    const signedTransaction=await this.web3Service.signBankerTransaction(depositToBlockChainDTO.toBlockChainAccountAddress,depositToBlockChainDTO.amount);
+    const signedTransaction = await this.web3Service.signBankerTransaction(depositToBlockChainDTO.toBlockChainAccountAddress, depositToBlockChainDTO.amount);
     await this.web3Service.sendSignedTransaction(signedTransaction);
+
+    const createMovement = {
+      type: "depositToBlockchain",
+      concept: depositToBlockChainDTO.toBlockChainAccountAddress,
+      originAccount: {
+        id: depositToBlockChainDTO.fromNormalAccountId,
+        user: user
+      },
+      destinationAccount: {
+        id: depositToBlockChainDTO.fromNormalAccountId,
+        user: user
+      },
+      money: depositToBlockChainDTO.amount,
+      date: parseInt(moment().format("X"))
+    }
+
+    const movement = plainToClass(Movements, createMovement);
+
+    this.databaseRepository.createMovement(movement);
+
   }
-  async depositToBC () {
+  async depositToBC(depositToBlockChainDTO: DepositToBlockChainDTO, user: Users) {
+    await this.databaseRepository.selectAccountByIdAndUserId(depositToBlockChainDTO.fromNormalAccountId, user.id);
+
+    const transferBC=await this.buildingsContractService.transfer(depositToBlockChainDTO.toBlockChainAccountAddress, depositToBlockChainDTO.amount);
+    const signedTransaction=await this.web3Service.bankerAccount.signTransaction({
+      from: this.web3Service.bankerAccount.address,
+      to: this.buildingsContractService.contractAddress,
+      value: 0,
+      data:transferBC.encodeABI(),
+      gasPrice:await this.web3Service.node.eth.getGasPrice()
+    });
+
+    await this.web3Service.sendSignedTransaction(signedTransaction);
+
+    const createMovement = {
+      type: "depositToBlockchain",
+      concept: depositToBlockChainDTO.toBlockChainAccountAddress,
+      originAccount: {
+        id: depositToBlockChainDTO.fromNormalAccountId,
+        user: user
+      },
+      destinationAccount: {
+        id: depositToBlockChainDTO.fromNormalAccountId,
+        user: user
+      },
+      money: depositToBlockChainDTO.amount,
+      date: parseInt(moment().format("X"))
+    }
+
+    const movement = plainToClass(Movements, createMovement);
+
+    this.databaseRepository.createMovement(movement);
 
   }
 }

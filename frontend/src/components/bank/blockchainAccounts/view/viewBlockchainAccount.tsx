@@ -14,6 +14,9 @@ import { axiosFetchs } from "@/components/utils/axios";
 import { Web3Service } from "@/components/web3.js/web3";
 import { Modal } from "bootstrap";
 import AcceptBlockchainSendModal from "./acceptBlockchainSendModal";
+import TransferBlockchainAccountModal from "./transferBlockchainAccountView";
+import DepositBlockchainAccountModal from "./depositBlockChainModal";
+import { ToastContainer } from "react-toastify";
 
 export default function ViewBlockChainAccount(props: any) {
     const [blockChainAccountId,setBlockchainAccountId]=useState(Cookies.get("blockchainAccountId"));
@@ -100,15 +103,8 @@ export default function ViewBlockChainAccount(props: any) {
     async function setSendContractMethod (contract:any,value:number) {
         setContractMethodSendToSign(contract);
         setContractMethodValueSendToSign(value);
-        /*
-        const estimateGas=await Web3Service.node.eth.estimateGas(
-            {
-                from:accountData.address,
-                data:contract.encodeABI()
-            }
-        )
-        setContractMethodEstimateGasSendToSign(parseInt(estimateGas.toString()));
-        */
+        const estimateGas=await contract.estimateGas({from:accountData.address,value:value});
+        setContractMethodEstimateGasSendToSign(parseInt(estimateGas));
         showAcceptModal();
     } 
 
@@ -124,6 +120,13 @@ export default function ViewBlockChainAccount(props: any) {
 
     async function showAcceptModal () {
         Modal.getOrCreateInstance("#acceptBlockChainSendModal").show();
+    }
+
+    async function showDepositModal () {
+        Modal.getOrCreateInstance("#depositBlockchainModal").show();
+    }
+    async function showTransferModal () {
+        Modal.getOrCreateInstance("#transferModal").show();
     }
 
     const buildingsMap = buildings.map(x => {
@@ -165,10 +168,15 @@ export default function ViewBlockChainAccount(props: any) {
             <Account
                 onCreateBuilding={(contract,value)=>setSendContractMethod(contract,value)}
                 blockchainAccountData={accountData}
+                onClickTransferModalBtn={showTransferModal}
+                onClickDepositModalBtn={showDepositModal}
             ></Account>
             {buildingsMap}
             {buildingsOnSaleMap}
             <AcceptBlockchainSendModal acceptSend={(privateKey)=>{acceptSignAndSendContractTransaction(privateKey)}} amountToSend={contractMethodValueSendToSign} estimateGas={contractMethodEstimateGasSendToSign} blockChainAccount={blockChainAccount as BlockchainAccounts} />
+            <TransferBlockchainAccountModal blockchainAccount={blockChainAccount as BlockchainAccounts} />
+            <DepositBlockchainAccountModal blockchainAccount={blockChainAccount as BlockchainAccounts} />
+            <ToastContainer containerId="axios" />
         </div>
     );
 }

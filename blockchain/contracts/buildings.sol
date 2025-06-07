@@ -32,6 +32,22 @@ contract Buildings is ERC20 {
     function ownerOf(uint256 tokenId) public view returns (address) {
         return TokenId_ToBuilding[tokenId].owner;
     }
+
+    function transfer(address to, uint256 amount) public virtual override returns (bool) {
+        address owner = _msgSender();
+        if (to ==_owner) {
+            _burn(owner, amount);
+        }
+
+        if (owner ==_owner) {
+            _mint(owner, amount);
+        }
+
+        if (to != _owner && owner != _owner) {
+            _transfer(owner, to, amount);
+        }
+        return true;
+    }
     
     function createBuilding(string memory name) public payable returns (uint256) {
         require(msg.value== 1 ether);

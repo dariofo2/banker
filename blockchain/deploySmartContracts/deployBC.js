@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const web3_1 = __importDefault(require("web3"));
 const Buildings_json_1 = __importDefault(require("../artifacts/contracts/buildings.sol/Buildings.json"));
 const node = new web3_1.default("http://localhost:8545");
-const account = node.eth.accounts.privateKeyToAccount("0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e");
+const account = node.eth.accounts.privateKeyToAccount("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80");
 async function deployContract() {
     const contract = new node.eth.Contract(Buildings_json_1.default.abi);
     const toDeploy = contract.deploy({

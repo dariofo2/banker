@@ -11,6 +11,8 @@ class Props {
     buildings?: [];
     buildingsOnSale?: [];
     onCreateBuilding= (createBuilding:any,value:any)=>{};
+    onClickTransferModalBtn= ()=>{}
+    onClickDepositModalBtn=()=>{}
 }
 
 export default function blockchainAccountCardView(props: Props) {
@@ -49,6 +51,8 @@ export default function blockchainAccountCardView(props: Props) {
             {getEthereumBalance()}
             <h2><strong className="text-warning">{blockchainAccountData?.symbolCoin}</strong> {blockchainAccountData?.coinBalance}</h2>
             <br></br>
+            <button className="btn btn-primary" onClick={props.onClickTransferModalBtn}>Transferencia</button>
+            <button className="btn btn-primary" onClick={props.onClickDepositModalBtn}>Ingresar</button>
             <input className="form-control w-25 d-inline" id="nombreEdificio" type="text" placeholder="nombre Edificio"></input>
             <button className="btn btn-outline-primary" onClick={async () => {
                 const element = document.getElementById('nombreEdificio') as HTMLInputElement;

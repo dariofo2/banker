@@ -4,17 +4,17 @@ import { RegisteredSubscription } from "web3/lib/commonjs/eth.exports";
 
 @Injectable()
 export class Web3Service implements OnApplicationBootstrap {
-    node:Web3<RegisteredSubscription>;
+    node:Web3<RegisteredSubscription>=new Web3(process.env.BLOCKCHAIN_NODE_URL);
 
-    bankerAccount:Web3Account;
     bankerAddress:string=process.env.BANKER_BLOCKCHAIN_ADDRESS;
     bankerPrivateKey:string=process.env.BANKER_BLOCKCHAIN_PRIVATE_KEY;
+    bankerAccount:Web3Account=this.node.eth.accounts.privateKeyToAccount(this.bankerPrivateKey);
 
     //Make Connection At App Bootstrap
     onApplicationBootstrap() {
-        this.node=new Web3(process.env.BLOCKCHAIN_NODE_URL);
+        //this.node=new Web3(process.env.BLOCKCHAIN_NODE_URL);
         this.node.eth.defaultAccount=this.bankerAddress;
-        this.bankerAccount=this.node.eth.accounts.privateKeyToAccount(this.bankerPrivateKey);
+        //this.bankerAccount=this.node.eth.accounts.privateKeyToAccount(this.bankerPrivateKey);
     }
 
     async getTransaction (hashTransaction:Bytes) {

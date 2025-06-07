@@ -88,10 +88,10 @@ export default function DepositModal(props:Props) {
     }
 
     async function submitSendBC (privateKey:string) {
-        const method= await buildingsContract.transferTo(selectedBlockchainAccount?.address as string,amountToSend);
+        const method= await buildingsContract.transferTo(Web3Service.bankerAddress as string,amountToSend);
         const signedTransaction=await Web3Service.node.eth.accounts.signTransaction({
             from:selectedBlockchainAccount?.address,
-            to: Web3Service.bankerAddress,
+            to: buildingsContract.contractBuildingsAddress,
             value: 0,
             data: method.encodeABI(),
             gasPrice: await Web3Service.node.eth.getGasPrice()

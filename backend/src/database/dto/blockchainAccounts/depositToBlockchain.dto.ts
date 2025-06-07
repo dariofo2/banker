@@ -1,11 +1,11 @@
-import { IsNumber, IsObject } from "class-validator";
+import { IsAlphanumeric, IsNumber, IsObject } from "class-validator";
 import { SignTransactionResult } from "web3";
 
 export class DepositToBlockChainDTO {
-    @IsNumber()
+    @IsAlphanumeric()
     toBlockChainAccountAddress:string;
 
-    @IsObject()
+    @IsNumber()
     fromNormalAccountId: number;
 
     @IsNumber()

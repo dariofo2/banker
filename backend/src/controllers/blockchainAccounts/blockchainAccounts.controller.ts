@@ -109,9 +109,9 @@ export class BlockchainAccountsController {
   }
 
   @Post('depositToBC')
-  async depositToBC (@Req() req:any,@Body() DepositToBlockChainDTO: DepositToBlockChainDTO) {
+  async depositToBC (@Req() req:any,@Body() depositToBlockChainDTO: DepositToBlockChainDTO) {
     try {
-      await this.blockchainAccountsService.depositToBC();
+      await this.blockchainAccountsService.depositToBC(depositToBlockChainDTO,req.user);
     } catch (error) {
       console.error(error);
       throw new BadRequestException("Transaction Failed"); 

@@ -22,4 +22,8 @@ export class BuildingsContractService {
         return this.contract.decodeMethodData(transaction.data.toString())
         
     }
+
+    async getTotalSuply () {
+        return await this.contract.methods.totalSupply().call()
+    }
 }

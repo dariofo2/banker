@@ -40,7 +40,7 @@ contract Buildings is ERC20 {
         }
 
         if (owner ==_owner) {
-            _mint(owner, amount);
+            _mint(to, amount);
         }
 
         if (to != _owner && owner != _owner) {

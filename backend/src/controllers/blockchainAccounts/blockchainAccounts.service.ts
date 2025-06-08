@@ -104,10 +104,8 @@ export class BlockchainAccountsService {
 
   async depositToEth(depositToBlockChainDTO: DepositToBlockChainDTO, user: Users) {
     await this.databaseRepository.selectAccountByIdAndUserId(depositToBlockChainDTO.fromNormalAccountId, user.id);
-
-    const signedTransaction = await this.web3Service.signBankerTransaction(depositToBlockChainDTO.toBlockChainAccountAddress, depositToBlockChainDTO.amount);
-    await this.web3Service.sendSignedTransaction(signedTransaction);
-
+    
+    //Make Movement of Account, if Doesnt work (insufficient Balance), throw error
     const createMovement = {
       type: "depositToBlockchain",
       concept: depositToBlockChainDTO.toBlockChainAccountAddress,
@@ -127,10 +125,38 @@ export class BlockchainAccountsService {
 
     this.databaseRepository.createMovement(movement);
 
+    //Sign Transaction and Send From Banker Account To Normal User Account
+    const signedTransaction = await this.web3Service.signBankerTransaction(depositToBlockChainDTO.toBlockChainAccountAddress, depositToBlockChainDTO.amount);
+    await this.web3Service.sendSignedTransaction(signedTransaction);
+
+    
+
   }
   async depositToBC(depositToBlockChainDTO: DepositToBlockChainDTO, user: Users) {
     await this.databaseRepository.selectAccountByIdAndUserId(depositToBlockChainDTO.fromNormalAccountId, user.id);
+    
+    //Make Movement of Account, if Doesnt work (insufficient Balance), throw error
+    const createMovement = {
+      type: "depositToBlockchain",
+      concept: depositToBlockChainDTO.toBlockChainAccountAddress,
+      originAccount: {
+        id: depositToBlockChainDTO.fromNormalAccountId,
+        user: user
+      },
+      destinationAccount: {
+        id: depositToBlockChainDTO.fromNormalAccountId,
+        user: user
+      },
+      money: depositToBlockChainDTO.amount,
+      date: parseInt(moment().format("X"))
+    }
 
+    const movement = plainToClass(Movements, createMovement);
+
+    this.databaseRepository.createMovement(movement);
+
+
+    //Sign Transaction and Send From Banker Account To Normal User Account
     const transferBC=await this.buildingsContractService.transfer(depositToBlockChainDTO.toBlockChainAccountAddress, depositToBlockChainDTO.amount);
     const signedTransaction=await this.web3Service.bankerAccount.signTransaction({
       from: this.web3Service.bankerAccount.address,
@@ -140,26 +166,10 @@ export class BlockchainAccountsService {
       gasPrice:await this.web3Service.node.eth.getGasPrice()
     });
 
-    await this.web3Service.sendSignedTransaction(signedTransaction);
+    const signed=await this.web3Service.sendSignedTransaction(signedTransaction);
 
-    const createMovement = {
-      type: "depositToBlockchain",
-      concept: depositToBlockChainDTO.toBlockChainAccountAddress,
-      originAccount: {
-        id: depositToBlockChainDTO.fromNormalAccountId,
-        user: user
-      },
-      destinationAccount: {
-        id: depositToBlockChainDTO.fromNormalAccountId,
-        user: user
-      },
-      money: depositToBlockChainDTO.amount,
-      date: parseInt(moment().format("X"))
-    }
-
-    const movement = plainToClass(Movements, createMovement);
-
-    this.databaseRepository.createMovement(movement);
+    console.log(await this.buildingsContractService.getTotalSuply());
+    
 
   }
 }

@@ -68,7 +68,7 @@ export default function DepositBlockchainAccountModal(props:Props) {
         formElem?.classList.add("was-validated");
 
         if (formElem?.checkValidity()) {
-            await axiosFetchs.depositToBCBlockChainAccount(depositToBlockchainAccountDTO as DepositToBlockChainDTO);
+            await axiosFetchs.depositToEthBlockChainAccount(depositToBlockchainAccountDTO as DepositToBlockChainDTO);
             hideModal();
         }
     }

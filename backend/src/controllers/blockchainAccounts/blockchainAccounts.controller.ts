@@ -21,10 +21,7 @@ export class BlockchainAccountsController {
   @UsePipes(new ValidationPipe())
   async create(@Req() req: any, @Body() createBlockchainAccountDTO: CreateBlockchainAccountDTO) {
     try {
-      const blockChainAccount: BlockchainAccounts = plainToInstance(BlockchainAccounts, createBlockchainAccountDTO);
-      blockChainAccount.user = req.user;
-
-      return await this.blockchainAccountsService.create(blockChainAccount);
+      return await this.blockchainAccountsService.create(createBlockchainAccountDTO,req.user);
     } catch (error) {
       console.error(error);
       throw new BadRequestException;

@@ -34,10 +34,6 @@ export default function ViewBlockChainAccount(props: any) {
         actualizarCuenta();
     }, []);
 
-    useEffect(()=>{
-        console.log("hola");
-    },[buildings])
-
     async function actualizarCuenta() {
         const responseBlockChainAccount=await axiosFetchs.getBlockChainAccount({id:parseInt(blockChainAccountId as string)});
         
@@ -47,7 +43,7 @@ export default function ViewBlockChainAccount(props: any) {
         accData.address=responseBlockChainAccount.address;
         accData.buildingsTokens = await buildingsContract.getBuildings(responseBlockChainAccount.address as string);
         accData.buildingsOnSaleTokens = await buildingsContract.getBuildingsOnSale(responseBlockChainAccount.address as string);
-        accData.coinBalance = await buildingsContract.getBalanceBS(responseBlockChainAccount.address as string);
+        accData.coinBalance = (parseInt(await buildingsContract.getBalanceBS(responseBlockChainAccount.address as string))/100).toFixed(2);
         
         accData.coinContractBalance = await buildingsContract.getBalanceBsOfContract(responseBlockChainAccount.address as string);
         accData.etherBalance = await Web3Service.getBalanceEther(responseBlockChainAccount.address as string);
@@ -174,8 +170,8 @@ export default function ViewBlockChainAccount(props: any) {
             {buildingsMap}
             {buildingsOnSaleMap}
             <AcceptBlockchainSendModal acceptSend={(privateKey)=>{acceptSignAndSendContractTransaction(privateKey)}} amountToSend={contractMethodValueSendToSign} estimateGas={contractMethodEstimateGasSendToSign} blockChainAccount={blockChainAccount as BlockchainAccounts} />
-            <TransferBlockchainAccountModal blockchainAccount={blockChainAccount as BlockchainAccounts} />
-            <DepositBlockchainAccountModal blockchainAccount={blockChainAccount as BlockchainAccounts} />
+            <TransferBlockchainAccountModal blockchainAccount={blockChainAccount as BlockchainAccounts} onSubmitModal={actualizarCuenta} />
+            <DepositBlockchainAccountModal blockchainAccount={blockChainAccount as BlockchainAccounts} onSubmitModal={actualizarCuenta} />
             <ToastContainer containerId="axios" />
         </div>
     );

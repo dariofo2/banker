@@ -153,7 +153,7 @@ export default function ViewAccount () {
             <CreateMovementModal account={account} onSubmit={()=>{setListRequestMovementsDTO({...listRequestMovementsDTO,page:1})}}/>
             <ViewAccountUpdateModal account={account} onSubmit={()=>{getAccount()}} />
             <DeleteMovementModal message="¿Está seguro de que desea borrar la Transferencia?" onDeleteConfirm={()=>confirmDelete()} />
-            <DepositModal account={account} />
+            <DepositModal account={account} onSubmitModal={()=>setListRequestMovementsDTO({...listRequestMovementsDTO,page:1})} />
             <ToastContainer containerId="axios" />
         </div>
     )

@@ -9,10 +9,12 @@ import { Accounts } from "@/components/classes/entity/accounts.entity";
 import { DepositToBlockChainDTO } from "@/components/classes/dto/blockchainAccounts/depositToBlockchain.dto";
 import { axiosFetchs } from "@/components/utils/axios";
 import Select, { SingleValue } from "react-select";
+import { AutoNumericInput } from "react-autonumeric";
+import AutoNumeric from "autonumeric";
 
 class Props {
     blockchainAccount?: BlockchainAccounts;
-
+    onSubmitModal= ()=>{};
 }
 
 export default function DepositBlockchainAccountModal(props:Props) {
@@ -51,8 +53,9 @@ export default function DepositBlockchainAccountModal(props:Props) {
         const inputElem=e.target as HTMLInputElement;
         setDepositToBlockchainAccountDTO({
             ...depositToBlockchainAccountDTO,
-            [inputElem.name]:parseInt(inputElem.value) 
-        })
+            [inputElem.name]:parseFloat(AutoNumeric.unformat(inputElem.value,AutoNumeric.getPredefinedOptions().Spanish).toString()) 
+        });
+        
     }
 
     async function onChangeSelect (newValue:SingleValue<{value:Accounts,label:string}>) {
@@ -69,6 +72,7 @@ export default function DepositBlockchainAccountModal(props:Props) {
 
         if (formElem?.checkValidity()) {
             await axiosFetchs.depositToEthBlockChainAccount(depositToBlockchainAccountDTO as DepositToBlockChainDTO);
+            props.onSubmitModal();
             hideModal();
         }
     }
@@ -79,6 +83,7 @@ export default function DepositBlockchainAccountModal(props:Props) {
 
         if (formElem?.checkValidity()) {
             await axiosFetchs.depositToBCBlockChainAccount(depositToBlockchainAccountDTO as DepositToBlockChainDTO);
+            props.onSubmitModal();
             hideModal();
         }
         
@@ -99,7 +104,8 @@ export default function DepositBlockchainAccountModal(props:Props) {
     */
     async function hideModal () {
         form.current?.reset();
-        setSelectedAccount(null);
+        
+        setSelectedAccount({...{}});
         Modal.getOrCreateInstance("#depositBlockchainModal").hide();
     }
 
@@ -118,9 +124,10 @@ export default function DepositBlockchainAccountModal(props:Props) {
                         </div>
                         <div className="modal-body">
 
-                            <form ref={form} >
-                                <Select options={selectAccountsItems} onChange={onChangeSelect} value={selectAccountsItems?.find(x=>x.label==selectedAccount?.number)} />
-                                <input className="form-control" name="amount" placeholder="amount" onChange={onChange} required></input>
+                            <form ref={form}>
+                                <Select options={selectAccountsItems} onChange={onChangeSelect} value={selectAccountsItems?.find(x=>x.label==selectedAccount?.number) ?? null} />
+                                {/*<input className="form-control" name="amounttt" placeholder="amount" onChange={onChange} required></input>*/}
+                                <AutoNumericInput inputProps={{id:"amount", name:"amount", required:true,defaultValue:"0,00", onChange:onChange}} autoNumericOptions={AutoNumeric.getPredefinedOptions().Spanish} />
                             </form>
                                 <button className="btn btn-primary" onClick={submitEthTransfer}>Deposit Eth</button>
                                 <button className="btn btn-primary" onClick={submitBCTransfer}>Deposit BC</button>

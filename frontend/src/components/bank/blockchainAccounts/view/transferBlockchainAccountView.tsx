@@ -5,10 +5,13 @@ import { buildingsContract } from "@/components/web3.js/contractBuildings";
 import { Web3Service } from "@/components/web3.js/web3";
 import { BlockchainAccounts } from "@/components/classes/entity/blockchainAccounts.entity";
 import { Transaction } from "web3";
+import { AutoNumericInput } from "react-autonumeric";
+import AutoNumeric from "autonumeric";
+import { toast } from "react-toastify";
 
 class Props {
     blockchainAccount: BlockchainAccounts = {}
-
+    onSubmitModal= ()=>{}
 }
 
 export default function TransferBlockchainAccountModal(props:Props) {
@@ -20,12 +23,24 @@ export default function TransferBlockchainAccountModal(props:Props) {
     const [transactionToSend,setTransactionToSend]=useState(null as Transaction|null);
     const [estimatedGas,setEstimatedGas]=useState(0);
 
+
     async function onChange (e:ChangeEvent) {
         const inputElem=e.target as HTMLInputElement;
-        setTransfer({
-            ...transfer,
-            [inputElem.name]:inputElem.value
-        })
+        switch (inputElem.name) {
+            case "amount" :
+                setTransfer({
+                    ...transfer,
+                    [inputElem.name]:parseFloat(AutoNumeric.unformat(inputElem.value,{currencySymbol:" Eth/BC"}).toString())
+                })
+            break;
+            default:
+                setTransfer({
+                    ...transfer,
+                    [inputElem.name]:inputElem.value
+                })
+            break;
+        }
+        
     }
 
     async function submitEthTransfer () {
@@ -33,10 +48,11 @@ export default function TransferBlockchainAccountModal(props:Props) {
         formElem?.classList.add("was-validated");
 
         if (formElem?.checkValidity()) {
+            const ethToWeiTransfer=Web3Service.node.utils.toWei(transfer.amount.toFixed(21),"ether");
             const transaction:Transaction={
                 from:blockchainAccount.address,
                 to: transfer.address,
-                value: transfer.amount,
+                value: ethToWeiTransfer,
                 gasPrice:await Web3Service.node.eth.getGasPrice()
             }
             
@@ -52,7 +68,8 @@ export default function TransferBlockchainAccountModal(props:Props) {
         formElem?.classList.add("was-validated");
 
         if (formElem?.checkValidity()) {
-            const data=await buildingsContract.transferTo(transfer.address,transfer.amount);
+            const eurToBC=transfer.amount*100;
+            const data=await buildingsContract.transferTo(transfer.address,eurToBC);
             const transaction:Transaction={
                 from:blockchainAccount.address,
                 to: buildingsContract.contractBuildingsAddress,
@@ -72,6 +89,8 @@ export default function TransferBlockchainAccountModal(props:Props) {
         const signedTransaction=await Web3Service.node.eth.accounts.signTransaction(transactionToSend as Transaction,privateKey);
         await Web3Service.node.eth.sendSignedTransaction(signedTransaction.rawTransaction);
         
+        toast.success("Transferencia Enviada con Éxito",{containerId:"axios"})
+        props.onSubmitModal();
         hideModal()
     }
     
@@ -96,7 +115,8 @@ export default function TransferBlockchainAccountModal(props:Props) {
 
                             <form className="" ref={form}>
                                 <input className="form-control" name="address" placeholder="address" onChange={onChange} required></input>
-                                <input className="form-control" name="amount" placeholder="amount" onChange={onChange} required></input>
+                                {/*<input className="form-control" name="amount" placeholder="amount" onChange={onChange} required></input>*/}
+                                <AutoNumericInput inputProps={{className:"form-control",name:"amount", required:true,onChange:onChange} } autoNumericOptions={{ currencySymbol:" Eth/BC"}} />
                             </form>
                                 <button className="btn btn-primary" onClick={submitEthTransfer}>Send Eth</button>
                                 <button className="btn btn-primary" onClick={submitBCTransfer}>Send BC</button>

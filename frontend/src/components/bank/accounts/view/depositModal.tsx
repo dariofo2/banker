@@ -11,10 +11,12 @@ import AcceptDepositModal from "./acceptDepositModal";
 import { buildingsContract } from "@/components/web3.js/contractBuildings";
 import { AutoNumericInput } from "react-autonumeric";
 import { Transaction } from "web3";
+import AutoNumeric from "autonumeric";
 
 class Props {
     account?: Accounts
     blockchainAccounts?: BlockchainAccounts[]
+    onSubmitModal = ()=>{}
 }
 
 export default function DepositModal(props: Props) {
@@ -25,20 +27,21 @@ export default function DepositModal(props: Props) {
     const [blockchainAccounts, setBlockchainAccounts] = useState(null as BlockchainAccounts[] | null);
     const [selectedBlockchainAccount, setSelectedBlockchainAccount] = useState(null as BlockchainAccounts | null);
     const [balanceSelectedAccount, setBalanceSelectedAccount] = useState(null as string | null);
-    const [balanceBCselectedBlockchainAccount,setBalanceBCSelectedBlockchainAccount]=useState(null as string|null);
+    const [balanceBCselectedBlockchainAccount, setBalanceBCSelectedBlockchainAccount] = useState(null as string | null);
 
     const [transactionToSend, setTransactionToSend] = useState(null as Transaction | null);
     const [mode, setMode] = useState(0);
 
     const [depositFromBlockchainAccountDTO, setDepositFromBlockchainaccountDTO] = useState({ toAccountId: account?.id } as DepositFromBlockChainDTO);
-   
-    const [amountToSend, setAmountToSend] = useState(0.00 as number);
+
+    const [amountToSendNumber, setAmountToSendNumber] = useState(0);
+    
+
     const [estimatedGas, setEstimatedGas] = useState("" as string);
 
     useEffect(() => {
         getBlockChainAccounts()
     }, [])
-
 
     async function getBlockChainAccounts() {
         const response = await axiosFetchs.listBlockChainAccounts();
@@ -48,15 +51,32 @@ export default function DepositModal(props: Props) {
     //function onChange
     async function onChangeSelect(newValue: SingleValue<{ value: BlockchainAccounts, label: string }>) {
         setSelectedBlockchainAccount({ ...newValue?.value });
-        
-        setBalanceSelectedAccount((await Web3Service.node.eth.getBalance(newValue?.label as string)).toString());
-        setBalanceBCSelectedBlockchainAccount((await buildingsContract.getBalanceBS(newValue?.label as string)).toString());
+
+        const balanceEthWei=(await Web3Service.node.eth.getBalance(newValue?.label as string)).toString();
+        const balanceEth=Web3Service.node.utils.fromWei(balanceEthWei,"ether");
+        setBalanceSelectedAccount(balanceEth);
+
+        const balanceBC=(await buildingsContract.getBalanceBS(newValue?.label as string)).toString();
+        const balanceBCFormated=(parseFloat(balanceBC)/100).toFixed(2);
+        setBalanceBCSelectedBlockchainAccount(balanceBCFormated);
     }
 
+    async function onChangeAmount(e: ChangeEvent) {
+        const inputElem = e.target as HTMLInputElement;
+        console.log(inputElem.value);
+
+        const amountValueDecimal = parseFloat(AutoNumeric.unformat(inputElem.value, AutoNumeric.getPredefinedOptions().Spanish).toString());
+
+        setAmountToSendNumber(amountValueDecimal);
+
+
+    }
+    /*
     async function changeInputs(e: ChangeEvent) {
         const inputElem = e.target as HTMLInputElement;
         setAmountToSend(parseInt(inputElem.value));
     }
+        */
 
 
     async function estimateGas(transaction: Transaction) {
@@ -65,12 +85,19 @@ export default function DepositModal(props: Props) {
     }
 
     async function submitSendEth() {
+        const euroToEth = parseInt(process.env.NEXT_PUBLIC_EURO_TO_ETH as string);
+        const ethToSend = amountToSendNumber / euroToEth;
+
+        const ethConverted = Web3Service.node.utils.toWei(ethToSend.toString(), "ether");
+
         const transaction = {
             from: selectedBlockchainAccount?.address,
             to: Web3Service.bankerAddress,
-            value: amountToSend,
+            value: ethConverted,
             gasPrice: await Web3Service.node.eth.getGasPrice()
         };
+
+
 
         setMode(0);
         setTransactionToSend(transaction);
@@ -79,7 +106,7 @@ export default function DepositModal(props: Props) {
     }
 
     async function submitSendBC() {
-        const method = await buildingsContract.transferTo(Web3Service.bankerAddress as string, amountToSend);
+        const method = await buildingsContract.transferTo(Web3Service.bankerAddress as string, amountToSendNumber * 100);
         const transaction = {
             from: selectedBlockchainAccount?.address,
             to: buildingsContract.contractBuildingsAddress,
@@ -113,6 +140,7 @@ export default function DepositModal(props: Props) {
         }
 
         setSelectedBlockchainAccount(null);
+        props.onSubmitModal();
         hideModal();
     }
 
@@ -125,7 +153,8 @@ export default function DepositModal(props: Props) {
         setBalanceSelectedAccount(null);
         setBalanceBCSelectedBlockchainAccount(null);
         setSelectedBlockchainAccount(null);
-        
+        setAmountToSendNumber(0.00);
+
         Modal.getOrCreateInstance("#depositModal").hide();
     }
 
@@ -145,13 +174,12 @@ export default function DepositModal(props: Props) {
                         <div className="modal-body">
                             {balanceSelectedAccount ? <h5>Eth: {balanceSelectedAccount} </h5> : <></>}
                             {balanceBCselectedBlockchainAccount ? <h5>BC: {balanceBCselectedBlockchainAccount}</h5> : <></>}
-                            <form className="" ref={formElem}>
+                            <form ref={formElem}>
                                 <Select options={blockChainAccountsSelect} onChange={onChangeSelect} value={selectedBlockchainAccount ? blockChainAccountsSelect?.find(x => x.label == selectedBlockchainAccount?.address) : null} />
-                                <input className="form-control" type="text" name="amount" placeholder="Eth" onChange={changeInputs} disabled={selectedBlockchainAccount ? false : true} required />
-                                {/*}<AutoNumericInput valueState={} autoNumericOptions={{suffixText:"€"}}/>{*/}
+                                <AutoNumericInput inputProps={{className:"form-control", required: true, name: "amount", defaultValue:"0,00", onChange: onChangeAmount }} autoNumericOptions={AutoNumeric.getPredefinedOptions().Spanish} />
                             </form>
-                            <button className="btn btn-success" onClick={submitSendEth} disabled={selectedBlockchainAccount && amountToSend > 0 ? false : true}>Deposit Eth</button>
-                            <button className="btn btn-success" onClick={submitSendBC} disabled={selectedBlockchainAccount && amountToSend > 0 ? false : true}>Deposit BC</button>
+                            <button className="btn btn-success" onClick={submitSendEth} disabled={selectedBlockchainAccount && amountToSendNumber > 0 ? false : true}>Deposit Eth</button>
+                            <button className="btn btn-success" onClick={submitSendBC} disabled={selectedBlockchainAccount && amountToSendNumber > 0 ? false : true}>Deposit BC</button>
 
                         </div>
                         <div className="modal-footer">
@@ -161,7 +189,7 @@ export default function DepositModal(props: Props) {
                     </div>
                 </div>
             </div>
-            <AcceptDepositModal blockChainAccount={selectedBlockchainAccount as BlockchainAccounts} estimateGas={estimatedGas} amountToSend={amountToSend} acceptDeposit={(privateKey) => { sendDepositTransaction(privateKey) }} />
+            <AcceptDepositModal blockChainAccount={selectedBlockchainAccount as BlockchainAccounts} estimateGas={estimatedGas} amountToSend={amountToSendNumber} acceptDeposit={(privateKey) => { sendDepositTransaction(privateKey) }} />
         </div>
     );
 }

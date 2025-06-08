@@ -3,10 +3,13 @@
 import { CreateBlockchainAccountDTO } from "@/components/classes/dto/blockchainAccounts/createBlockchainAccount.dto";
 import { axiosFetchs } from "@/components/utils/axios";
 import { CryptoUtils } from "@/components/utils/crypto";
+import { Web3Service } from "@/components/web3.js/web3";
 import { Modal } from "bootstrap";
 import { plainToClass } from "class-transformer";
 import { AES, enc } from "crypto-js";
 import { ChangeEvent, useRef, useState } from "react";
+import { toast } from "react-toastify";
+import { Transaction } from "web3";
 
 class Props {
     onSubmit=()=>{}
@@ -38,6 +41,29 @@ export default function CreateBlockchainAccountModal(props:Props) {
         }
     }
 
+    /**
+     * Make a Transaction to Check in Backend Account Validity
+     */
+    async function makeTransaction () {
+        try {
+        const transaction: Transaction={
+            from:createBlockchainAccountDTO?.address,
+            to: Web3Service.bankerAddress,
+            value:1,
+            gasPrice:await Web3Service.node.eth.getGasPrice()
+        }
+        const signedTransaction = await Web3Service.node.eth.accounts.signTransaction(transaction,createBlockchainAccountDTO?.privatekey as string);
+
+        return signedTransaction
+        } catch (error) {
+            toast.error("Error! La cuenta o Key Privada no son válidas",{
+                containerId:"axios"
+            });
+            throw error;
+        }
+
+        
+    }
     async function submitForm () {
         const form=formElem.current as HTMLFormElement;
         form.classList.add("was-validated");
@@ -46,6 +72,8 @@ export default function CreateBlockchainAccountModal(props:Props) {
             
             const createDTO=plainToClass(CreateBlockchainAccountDTO,createBlockchainAccountDTO);
             createDTO.privatekey=CryptoUtils.encryptAES2Factor(createBlockchainAccountDTO?.privatekey as string,password1,password2);
+            createDTO.signedTransaction=await makeTransaction();
+
             await axiosFetchs.createBlockChainAccount(createDTO);
             
             props.onSubmit();

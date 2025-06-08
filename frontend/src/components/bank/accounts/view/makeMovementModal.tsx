@@ -5,6 +5,8 @@ import { ChangeEvent, useRef, useState } from "react";
 import Cookies from "js-cookie";
 import { GetAccountDTO } from "@/components/classes/dto/accounts/getAccount.dto";
 import { Accounts } from "@/components/classes/entity/accounts.entity";
+import AutoNumeric from "autonumeric";
+import { AutoNumericInput } from "react-autonumeric";
 
 class Props {
     account?: Accounts;
@@ -13,6 +15,10 @@ class Props {
 export default function CreateMovementModal(props:Props) {
     const account=props.account;
     const [createMovementDTO,setCreateMovementDTO]=useState({originAccount:{number:account?.number}} as CreateMovementDTO);
+    
+    const [keyRefresh,setKeyRefresh]=useState(0);
+    const [amount,setAmount]=useState("0");
+
     const formElem=useRef(null as HTMLFormElement|null);
     
 
@@ -30,9 +36,10 @@ export default function CreateMovementModal(props:Props) {
                 
             break;
             case "money":
+                setAmount(elem.value);
                 setCreateMovementDTO({
                     ...createMovementDTO ?? {},
-                    money:parseInt(elem.value)
+                    money:parseFloat(AutoNumeric.unformat(elem.value, AutoNumeric.getPredefinedOptions().Spanish).toString())
                 });
             break;
             case "concept":
@@ -52,7 +59,7 @@ export default function CreateMovementModal(props:Props) {
                 //Create Movement Fetch
                 await axiosFetchs.createMovement(createMovementDTO as CreateMovementDTO);
                 hideModal();
-                props.onSubmit();       
+                props.onSubmit();
             } catch (error) {
                 form.classList.remove("was-validated"); 
             }
@@ -63,6 +70,7 @@ export default function CreateMovementModal(props:Props) {
     function hideModal () {
         formElem.current?.reset();
         formElem.current?.classList.remove("was-validated"); 
+        
         Modal.getOrCreateInstance("#createMovementModal").hide();
     }
     return (
@@ -77,7 +85,7 @@ export default function CreateMovementModal(props:Props) {
                         <div className="modal-body">
                             <form className="" ref={formElem}>
                                 <input className="form-control" type="text" name="number" placeholder="Numero de Cuenta" onChange={changeInput} required />
-                                <input className="form-control" type="text"  name="money" placeholder="Dinero" onChange={changeInput} required />
+                                <AutoNumericInput inputProps={{className:"form-control", defaultValue:"0,00" , name:"money",required:true,onChange:changeInput}} autoNumericOptions={AutoNumeric.getPredefinedOptions().Spanish} />
                                 <input className="form-control" type="text"  name="concept" placeholder="Concepto" onChange={changeInput} required />
                             </form>
                         </div>

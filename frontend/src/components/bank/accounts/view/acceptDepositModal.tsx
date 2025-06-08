@@ -5,10 +5,10 @@ import { Modal } from "bootstrap";
 import { ChangeEvent, useState } from "react";
 
 class Props {
-    blockChainAccount?: BlockchainAccounts
+    blockChainAccount?: BlockchainAccounts;
     amountToSend?: number;
-    acceptDepositEth=(privateKey:string)=>{}
-    acceptDepositBC=(privateKey:string)=>{}
+    estimateGas="";
+    acceptDeposit=(privateKey:string)=>{}
 }
 export default function AcceptDepositModal(props:Props) {
     const blockChainAccount=props.blockChainAccount;
@@ -28,15 +28,9 @@ export default function AcceptDepositModal(props:Props) {
         return CryptoUtils.decryptAES2Factor(blockChainAccount?.privatekey as string,passwords?.password1 as string,passwords?.password2 as string);
     }
 
-    function submitFormforDepositEth () {
+    function submitFormforDeposit () {
         const privateKey=getDecryptPrivateKeyToSign()
-        props.acceptDepositEth(privateKey);
-        hideModal();
-    }
-
-    function submitFormForDepositBC () {
-        const privateKey=getDecryptPrivateKeyToSign()
-        props.acceptDepositBC(privateKey);
+        props.acceptDeposit(privateKey);
         hideModal();
     }
 
@@ -55,7 +49,7 @@ export default function AcceptDepositModal(props:Props) {
                             <button type="button" className="btn-close" onClick={hideModal} aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
-                            
+                            <h6>Gas Estimado: {props.estimateGas}</h6>
                             <form id="passwordForm">
                                 <input className="form-control" type="text" onChange={onChangeInputs} name="password1" placeholder="Key 1" />
                                 <input className="form-control" type="text" onChange={onChangeInputs} name="password2"  placeholder="Key 2"/>
@@ -63,8 +57,7 @@ export default function AcceptDepositModal(props:Props) {
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" onClick={hideModal}>Cerrar</button>
-                            <button type="button" className="btn btn-primary" onClick={submitFormforDepositEth}>Deposit Eth</button>
-                            <button className="btn btn-success" onClick={submitFormForDepositBC}>Deposit BC</button>
+                            <button type="button" className="btn btn-primary" onClick={submitFormforDeposit}>Deposit</button>
                         </div>
                     </div>
                 </div>

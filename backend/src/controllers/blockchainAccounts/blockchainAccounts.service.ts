@@ -140,7 +140,7 @@ export class BlockchainAccountsService {
 
     const movement = plainToClass(Movements, createMovement);
 
-    this.databaseRepository.createMovement(movement);
+    await this.databaseRepository.createMovement(movement);
 
     //Convert to Wei From Euros
     const euroToEth = parseInt(process.env.EURO_TO_ETH as string);
@@ -159,7 +159,7 @@ export class BlockchainAccountsService {
     await this.databaseRepository.selectAccountByIdAndUserId(depositToBlockChainDTO.fromNormalAccountId, user.id);
 
     //Make Movement of Account, if Doesnt work (insufficient Balance), throw error
-
+    console.log(depositToBlockChainDTO);
     const createMovement = {
       type: "depositToBlockchain",
       concept: depositToBlockChainDTO.toBlockChainAccountAddress,
@@ -177,7 +177,7 @@ export class BlockchainAccountsService {
 
     const movement = plainToClass(Movements, createMovement);
 
-    this.databaseRepository.createMovement(movement);
+    await this.databaseRepository.createMovement(movement);
 
 
     //Convert Euros to BC (*100)

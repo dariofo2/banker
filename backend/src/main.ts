@@ -11,7 +11,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin:process.env.FRONTEND_URL,
+    origin:[process.env.FRONTEND_URL,"http://localhost"],
     credentials:true
   });
   app.use(cookieParser());

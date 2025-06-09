@@ -5,7 +5,7 @@ import { io, Socket, WebSocket } from "socket.io-client"
 import { Movements } from "../classes/entity/movements.entity";
 export default function SocketIOClient () {
     useEffect(()=>{
-        const socket=io("ws://localhost:3000",{
+        const socket=io("localhost/backend",{
             withCredentials:true,
             transports:["websocket","webtransport"]
         });

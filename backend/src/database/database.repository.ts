@@ -43,7 +43,10 @@ export class DatabaseRepository {
     }
 
     async createMovement(movement: Movements): Promise<Movements> {
-        let insertResult = await this.movementsRepository.insert(movement);
+        let insertResult:Movements;
+        await this.movementsRepository.manager.transaction(async (x) => {
+            insertResult = await x.save(movement);
+        })
 
         //await this.datasource.queryResultCache.remove([`movements${movement.originAccount.id}`]);
         //await this.datasource.queryResultCache.remove([`movements${movement.destinationAccount.id}`]);
@@ -55,9 +58,8 @@ export class DatabaseRepository {
         await this.datasource.queryResultCache.remove([`accounts${movement.originAccount.user.id}`]);
         await this.datasource.queryResultCache.remove([`accounts${movement.destinationAccount.user.id}`]);
 
-        if (insertResult.generatedMaps[0]) return <Movements>insertResult.generatedMaps[0];
-        else throw "Couldnt Create Movement";
-
+        if (insertResult) return insertResult;
+        else throw new BadRequestException("No se pudo insertar el movimiento");
     }
 
     async createBlockchainAccount(blockchainAccount: BlockchainAccounts) {

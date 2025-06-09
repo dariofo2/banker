@@ -17,7 +17,7 @@ export class Accounts {
     @IsEnum(accountType)
     type: accountType;
 
-    @Column()
+    @Column("decimal")
     balance: number;
 
     @ManyToOne(() => Users,(user)=>user.id)

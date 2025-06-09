@@ -1,4 +1,4 @@
-import { Injectable, Move, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Injectable, Move, UnauthorizedException } from "@nestjs/common";
 import * as moment from "moment";
 import { DatabaseRepository } from "src/database/database.repository";
 import { ListRequestDTO } from "src/database/dto/listRequestDTO";
@@ -50,6 +50,7 @@ export class MovementsService {
     async deleteMovement(movement: Movements) {
         //Check if origin Account is from the user
         movement = await this.database.selectMovementsFullAccountsUsersFromMovementId(movement);
+        if (movement.type!="movement") throw new BadRequestException("No se puede borrar el movimiento");
         return await this.database.deleteMovementById(movement);
     }
 }

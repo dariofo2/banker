@@ -17,7 +17,7 @@ export class Movements {
     @IsAlphanumeric()
     concept: string;
 
-    @Column()
+    @Column("decimal")
     @IsNumber()
     money: number;
 

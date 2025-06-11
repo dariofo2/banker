@@ -10,6 +10,7 @@ import { Modal } from "bootstrap";
 import { axiosFetchs } from "@/components/utils/axios";
 import { AxiosError } from "axios";
 import { ToastContainer } from "react-toastify";
+import UpdateUserPhotoModal from "./updatePhotoModal";
 
 class Props {
     user?: Users;
@@ -34,6 +35,10 @@ export default function UserView () {
         Modal.getOrCreateInstance("#updateUserModal")?.show();
     }
 
+    async function openPhotoModal () {
+        Modal.getOrCreateInstance("#updateUserPhotoModal").show();
+    }
+
     if (!user) return (<div style={{margin:500}}>Loading...</div>)
     return (
         <div style={{margin:80}}>
@@ -43,9 +48,11 @@ export default function UserView () {
             </h2>
             <h2> Email Usuario {user.email}</h2>
             <button className="btn btn-primary" onClick={openUpdateForm}>Editar Usuario</button>
+            <button className="btn btn-warning" onClick={openPhotoModal}>Actualizar Foto</button>
             <button className="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#updateUserPasswordModal">Cambiar Contraseña</button>
             <UserUpdateModal onSubmited={()=>getUser()} user={user} />
             <UserUpdatePasswordModal />
+            <UpdateUserPhotoModal />
             
             <ToastContainer containerId="axios" position="top-center"/>
         </div>

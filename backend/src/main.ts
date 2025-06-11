@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { json } from 'express';
 
 /**
  * @author Alejandro Darío Fuentefría Oróns
@@ -14,7 +15,9 @@ async function bootstrap() {
     origin:[process.env.FRONTEND_URL,"http://localhost"],
     credentials:true
   });
+  
   app.use(cookieParser());
+  app.use(json({limit:"50mb"}));
   //app.useGlobalPipes(new ValidationPipe());
   //  SWAGGER
   

@@ -11,6 +11,7 @@ import { DeleteUserDTO } from "src/database/dto/users/deleteUser.dto";
 import { instanceToPlain, plainToInstance } from "class-transformer";
 import { UpdateUserPasswordDTO } from "src/database/dto/users/updateUserPassword.dto";
 import { UpdateUserDto } from "src/database/dto/users/updateUser.dto";
+import { UpdateUserPhotoDTO } from "src/database/dto/users/updateUserPhoto.dto";
 @Controller('user')
 @UsePipes(new ValidationPipe({transform:true}))
 @UseInterceptors(ClassSerializerInterceptor)
@@ -68,6 +69,20 @@ export class UsersController {
         } catch (error) {
             console.error(error);
             throw new BadRequestException("Invalid Password");
+        }
+    }
+
+    @UseGuards(MainAuthGuard)
+        // ExcludeExtraneousValues takes @expose() only, the others cancel. 
+    @Post('updatePhoto')
+    async updateUserPhoto(@Req() req: any, @Body() updateUserPhotoDTO: UpdateUserPhotoDTO) {
+        try {
+        const user:Users= plainToInstance(Users,req.user);
+        
+         await this.usersService.updateUserPhoto(user,updateUserPhotoDTO);
+        } catch (error) {
+            console.error(error);
+            throw new BadRequestException("Invalid Photo or Format");
         }
     }
 

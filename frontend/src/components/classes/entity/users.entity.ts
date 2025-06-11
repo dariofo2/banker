@@ -1,5 +1,5 @@
 import { Accounts } from "./accounts.entity";
-import { IsAlpha, IsEmail, MinLength } from "class-validator";
+import { IsAlpha, IsEmail, IsNumber, IsString, MinLength } from "class-validator";
 import { Exclude } from "class-transformer";
 
 export class Users {
@@ -14,6 +14,12 @@ export class Users {
 
     @IsEmail()
     email?: string;
+
+    @IsString()
+    photo?: string;
+
+    @IsNumber()
+    role?: number;
 
     accounts?: Accounts[];
 }

@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Accounts } from "./accounts.entity";
-import { IsAlpha, IsEmail, MinLength } from "class-validator";
+import { IsAlpha, IsEmail, IsString, MinLength } from "class-validator";
 import { Exclude } from "class-transformer";
 
 @Entity()
@@ -20,6 +20,10 @@ export class Users {
     @Column()
     @IsEmail()
     email: string;
+
+    @Column()
+    @IsString()
+    photo: string;
 
     @OneToMany(type => Accounts, acc => acc.id)
     accounts: Accounts[];

@@ -26,6 +26,7 @@ import { CreateBlockchainAccountDTO } from "../classes/dto/blockchainAccounts/cr
 import { UpdateAccountDTO } from "../classes/dto/accounts/updateAccount.dto";
 import { DepositFromBlockChainDTO } from "../classes/dto/blockchainAccounts/depositFromBlockchain.dto";
 import { DepositToBlockChainDTO } from "../classes/dto/blockchainAccounts/depositToBlockchain.dto";
+import { UpdateUserPhotoDTO } from "../classes/dto/users/updateUserPhoto.dto";
 
 export class RequestObject {
     headers: AxiosHeaders = new AxiosHeaders;
@@ -201,6 +202,27 @@ export class axiosFetchs {
             )
 
             toast.success("Usuario Actualizado Correctamente", {
+                containerId: "axios"
+            });
+        } catch (error) {
+            this.handleAxiosError(<AxiosError>error);
+            throw error;
+        }
+
+    }
+
+    static async updateUserPhoto(updateUserPhotoDTO: UpdateUserPhotoDTO): Promise<void> {
+        let reqObject = new RequestObject(Cookies.get("access_token"));
+        try {
+            const response = await axios.post(
+                "http://localhost:3000/user/updatePhoto",
+                updateUserPhotoDTO,
+                {
+                    withCredentials: true
+                }
+            )
+
+            toast.success("Foto Actualizada Correctamente", {
                 containerId: "axios"
             });
         } catch (error) {

@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(256) NOT NULL,
     email VARCHAR(256) NOT NULL UNIQUE,
     photo VARCHAR(256),
-    role INT DEFAULT 0,
+    role INT DEFAULT 1,
     PRIMARY KEY (id)
 );
 

@@ -22,7 +22,7 @@ export class AuthService {
         const isValidPasswords = await compare(user.password, loginResp.password);
         if (!isValidPasswords) throw "Bad Login Email or Password";
         
-        const payload = { id: loginResp.id, name: loginResp.name, email: loginResp.email };
+        const payload = { id: loginResp.id, name: loginResp.name, email: loginResp.email, photo: loginResp.photo,role: loginResp.role };
         const jwtToken = await this.jwtService.signAsync(payload);
 
         const userRespTransformed=instanceToPlain(loginResp);
@@ -37,6 +37,7 @@ export class AuthService {
         const hashedPassword=await hash(user.password,parseInt(process.env.BCRYPT_ROUNDS));
         
         user.password=hashedPassword;
+        user.role=1;
         
         return await this.databaseRepository.createUser(user);
     }

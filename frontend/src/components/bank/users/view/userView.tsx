@@ -17,6 +17,7 @@ class Props {
 }
 export default function UserView () {
     const [user,setUser]=useState(null as Users|null);
+    const [key,setKey]=useState(0);
 
     useEffect(()=>{
         getUser();
@@ -24,10 +25,10 @@ export default function UserView () {
 
     async function getUser () {
         const response=await axiosFetchs.getUser();
-        console.log(response)
         setUser({
             ...response
         });
+        setKey(key+1);
     }
 
     async function openUpdateForm () {
@@ -42,17 +43,21 @@ export default function UserView () {
     if (!user) return (<div style={{margin:500}}>Loading...</div>)
     return (
         <div style={{margin:80}}>
+            <div className="m-auto" style={{maxWidth:250}}>
+                <img key={key} className="img-thumbnail" src={process.env.NEXT_PUBLIC_BACKEND_URL + "/" + user.photo}></img>
+            </div>
             <h2>
                 {}
                 Nombre Usuario {user.name}
             </h2>
             <h2> Email Usuario {user.email}</h2>
+            
             <button className="btn btn-primary" onClick={openUpdateForm}>Editar Usuario</button>
             <button className="btn btn-warning" onClick={openPhotoModal}>Actualizar Foto</button>
             <button className="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#updateUserPasswordModal">Cambiar Contraseña</button>
-            <UserUpdateModal onSubmited={()=>getUser()} user={user} />
+            <UserUpdateModal onSubmited={async ()=>{await getUser(); window.location.reload()}} user={user} />
             <UserUpdatePasswordModal />
-            <UpdateUserPhotoModal />
+            <UpdateUserPhotoModal onSubmitModal={async ()=>{await getUser(); window.location.reload()}} />
             
             <ToastContainer containerId="axios" position="top-center"/>
         </div>

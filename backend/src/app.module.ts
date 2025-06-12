@@ -13,11 +13,15 @@ import { BullMQModule } from './bullMQ/bullMQ.module';
 import { CeleryModule } from './celery/celery.module';
 import { BlockchainAccountsModule } from './controllers/blockchainAccounts/blockchainAccounts.module';
 import { Web3Module } from './web3/web3.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal:true
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: `${__dirname}/../public`
     }),
     DatabaseModule,
     UsersModule,

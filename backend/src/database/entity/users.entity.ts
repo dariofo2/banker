@@ -22,8 +22,10 @@ export class Users {
     email: string;
 
     @Column()
-    @IsString()
     photo: string;
+
+    @Column()
+    role: number;
 
     @OneToMany(type => Accounts, acc => acc.id)
     accounts: Accounts[];

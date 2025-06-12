@@ -181,6 +181,16 @@ export class axiosFetchs {
                     withCredentials: true
                 }
             )
+            const userResp=response.data;
+            await this.SetcookiesAtLogin(
+                {
+                    id:userResp.id,
+                    name:userResp.name,
+                    email:userResp.email,
+                    photo:userResp.photo,
+                    role:userResp.role
+                }
+            )
             return response.data;
         } catch (error) {
             this.handleAxiosError(<AxiosError>error);

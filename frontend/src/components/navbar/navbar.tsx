@@ -46,7 +46,7 @@ useEffect(()=>{
         <motion.div className="fixed-top w-100 montserrat" style={{backgroundColor:colorsFade}}>
             <nav className="navbar navbar-expand-lg navbar-dark sticky-top">
                 <div className="container-fluid">
-                    <a className="navbar-brand ms-5" href="#">
+                    <a className="navbar-brand ms-5" href="/">
                         <div style={{width:200}}>
                             <img className="img-fluid" src="/BankerLogo.svg" />
                         </div>
@@ -57,15 +57,15 @@ useEffect(()=>{
                     <div className="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
                         <ul className="navbar-nav me-5">
                             <li className="nav-item">
-                                <a className="nav-link fw-medium text-white" aria-current="page" href="#">BlockChain</a>
+                                <a className="nav-link fw-medium text-white" aria-current="page" href="/statics/blockchain">BlockChain</a>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link fw-medium text-white" href="#">Manual</a>
+                                <a className="nav-link fw-medium text-white" href="/statics/manual">Manual</a>
                             </li>
                         </ul>
                         <div className="d-flex" role="search">
-                            <button className="btn btn-primary">Log-In</button>
-                            <button className="btn btn-warning" type="submit">Register</button>
+                            <a href="/"><button className="btn btn-primary">Log-In</button></a>
+                            <a href="/bank/users/register"><button className="btn btn-warning" type="submit">Register</button></a>
                         </div>
                     </div>
                 </div>

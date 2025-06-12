@@ -21,7 +21,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
       isGlobal:true
     }),
     ServeStaticModule.forRoot({
-      rootPath: `${__dirname}/../public`
+      rootPath: `${__dirname}/../public`,
+      //serveRoot: '/public',
     }),
     DatabaseModule,
     UsersModule,

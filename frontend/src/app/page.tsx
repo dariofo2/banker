@@ -1,12 +1,12 @@
 import FooterComponent from "@/components/footer/footer";
-import HeaderComponent from "@/components/navbar/navbar";
 import HomeComponent from "@/components/home/home";
 import Image from "next/image";
+import NavBar from "@/components/navbar/navbar";
 
 export default function Home() {
   return (
   <div>
-    <HeaderComponent />
+    <NavBar />
     <HomeComponent />
     <FooterComponent />
   </div>

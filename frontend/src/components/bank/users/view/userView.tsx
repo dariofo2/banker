@@ -2,7 +2,7 @@
 import { Users } from "@/components/classes/entity/users.entity";
 import FooterComponent from "@/components/footer/footer";
 import NavBar from "@/components/navbar/navbar";
-import { ChangeEvent, useContext, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
 import UserUpdateModal from "./updateUserModal";
 import UserUpdatePasswordModal from "./updatePasswordModal";
 import { UpdateUserContext } from "./userViewContext";
@@ -11,13 +11,14 @@ import { axiosFetchs } from "@/components/utils/axios";
 import { AxiosError } from "axios";
 import { ToastContainer } from "react-toastify";
 import UpdateUserPhotoModal from "./updatePhotoModal";
+import Loading from "@/components/loading/loading";
 
 class Props {
     user?: Users;
 }
 export default function UserView () {
+    const imgRef=useRef(null as HTMLImageElement|null);
     const [user,setUser]=useState(null as Users|null);
-    const [key,setKey]=useState(0);
 
     useEffect(()=>{
         getUser();
@@ -28,7 +29,7 @@ export default function UserView () {
         setUser({
             ...response
         });
-        setKey(key+1);
+        (imgRef.current as HTMLImageElement).src=response.photo as string;
     }
 
     async function openUpdateForm () {
@@ -40,17 +41,17 @@ export default function UserView () {
         Modal.getOrCreateInstance("#updateUserPhotoModal").show();
     }
 
-    if (!user) return (<div style={{margin:500}}>Loading...</div>)
+    if (!user) return (<Loading />)
+        
     return (
         <div style={{margin:80}}>
             <div className="m-auto" style={{maxWidth:250}}>
-                <img key={key} className="img-thumbnail" src={process.env.NEXT_PUBLIC_BACKEND_URL + "/" + user.photo}></img>
+                <img ref={imgRef} className="img-thumbnail" src={process.env.NEXT_PUBLIC_BACKEND_URL + "/" + user.photo}></img>
             </div>
             <h2>
-                {}
-                Nombre Usuario {user.name}
+                Nombre: {user.name}
             </h2>
-            <h2> Email Usuario {user.email}</h2>
+            <h2> Email: {user.email}</h2>
             
             <button className="btn btn-primary" onClick={openUpdateForm}>Editar Usuario</button>
             <button className="btn btn-warning" onClick={openPhotoModal}>Actualizar Foto</button>

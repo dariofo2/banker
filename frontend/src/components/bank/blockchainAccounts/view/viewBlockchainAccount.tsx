@@ -17,6 +17,7 @@ import AcceptBlockchainSendModal from "./acceptBlockchainSendModal";
 import TransferBlockchainAccountModal from "./transferBlockchainAccountView";
 import DepositBlockchainAccountModal from "./depositBlockChainModal";
 import { ToastContainer } from "react-toastify";
+import Loading from "@/components/loading/loading";
 
 export default function ViewBlockChainAccount(props: any) {
     const [blockChainAccountId,setBlockchainAccountId]=useState(Cookies.get("blockchainAccountId"));
@@ -125,6 +126,8 @@ export default function ViewBlockChainAccount(props: any) {
         Modal.getOrCreateInstance("#transferModal").show();
     }
 
+    if (!blockChainAccount) return (<Loading />)
+        
     const buildingsMap = buildings.map(x => {
         if (!x.onSale) {
             return <House
@@ -154,9 +157,6 @@ export default function ViewBlockChainAccount(props: any) {
         </HouseOnSale>
 
     })
-
-
-
 
     return (
         <div style={{backgroundColor:"whitesmoke"}}>

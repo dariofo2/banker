@@ -2,9 +2,20 @@
 import Cookies from "js-cookie";
 import { axiosFetchs } from "../utils/axios";
 import { motion, useScroll, useSpring, useTransform } from "motion/react";
+import { useEffect } from "react";
+import { Users } from "../classes/entity/users.entity";
+class Props {
+    user:Users={}
+}
+export default function NavBar(props: Props) {
+    const user=props.user;
 
-const axios = new axiosFetchs();
-export default function NavBar(props: any) {
+    useEffect(()=>{
+        if (Cookies.get("user")) {
+            axiosFetchs.getUser();
+        }
+    },[]);
+    
     const {scrollYProgress} = useScroll();
     //const scrollSpring=useSpring(scrollYProgress);
 
@@ -12,37 +23,21 @@ export default function NavBar(props: any) {
         [0,0.01],
         ["rgba(0, 0, 0,0)","rgba(0, 0, 0, 1)"]
     )
-    
-    /*
-//When second parameter is [] it runs only on Mount Creation of Component 1 time
-//If I want to use it on unmount Use Return, which is called in return is what execute on end of component
-//If i want to reload it on change of variables or props, add to second parameter [var1,var2]
-    /*
-useEffect(()=>{
-},[])
-*/
-    /*
-     async function logout () {
-         await axios.logoutRemoveCookies();
-         location.href="http://localhost:5000/main";
-     }
-     if (props.isLogged) {
-         return (
-             <div>
-                 {props.username}
-                 <button onClick={()=>{logout()}}>Logout</button>
-             </div>
-         );
-     } else {
-         return (
-             <div>
-                 <a href="../auth/login">Login</a> | <a href="../auth/login">Register</a> | <a href="../auth/login">Menu</a>
-             </div>
-         )
-     }
-     */
 
-    return (
+    async function myAccounts () {
+        window.location.href="/bank/accounts/list";
+    }
+
+    async function myProfile () {
+        window.location.href="/bank/users/view"
+    }
+
+    async function logout () {
+        await axiosFetchs.logout();
+        window.location.href="/";
+    }
+
+    if (!user) return (
         <motion.div className="fixed-top w-100 montserrat" style={{backgroundColor:colorsFade}}>
             <nav className="navbar navbar-expand-lg navbar-dark sticky-top">
                 <div className="container-fluid">
@@ -73,11 +68,12 @@ useEffect(()=>{
         </motion.div>
     );
 
-    return (
+    //Normal User
+    if (user.role==1 || user.role==0) return (
         <motion.div className="fixed-top w-100 montserrat" style={{backgroundColor:colorsFade}}>
             <nav className="navbar navbar-expand-lg sticky-top">
                 <div className="container-fluid">
-                    <a className="navbar-brand" href="#">
+                    <a className="navbar-brand" href="/">
                         <div style={{width:200}}>
                             <img className="img-fluid" src="/BankerLogo.svg" />
                         </div>
@@ -88,12 +84,45 @@ useEffect(()=>{
                     <div className="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
                         <ul className="navbar-nav">
                             <li className="nav-item">
-                                <a className="nav-link" aria-current="page" href="#">Mis Cuentas</a>
+                                <a className="nav-link" aria-current="page" href="/bank/accounts/list">Mis Cuentas</a>
                             </li>
                         </ul>
                         <div className="d-flex" role="search">
-                            <button className="btn btn-primary">NombreUsuario</button>
-                            <button className="btn btn-warning" type="submit">Logout</button>
+                            {user.photo ? <img style={{width:50}} src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${user.photo}`}></img> : ""} 
+                            <h6>{user.name}</h6>
+                            <button className="btn btn-primary" onClick={myProfile}>Mi perfil</button>
+                            <button className="btn btn-warning" type="submit" onClick={logout}>Logout</button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </motion.div>
+    );
+
+    //Admin User
+    if (user.role==2) return (
+        <motion.div className="fixed-top w-100 montserrat" style={{backgroundColor:colorsFade}}>
+            <nav className="navbar navbar-expand-lg sticky-top">
+                <div className="container-fluid">
+                    <a className="navbar-brand" href="/">
+                        <div style={{width:200}}>
+                            <img className="img-fluid" src="/BankerLogo.svg" />
+                        </div>
+                    </a>
+                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span className="navbar-toggler-icon"></span>
+                    </button>
+                    <div className="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
+                        <ul className="navbar-nav">
+                            <li className="nav-item">
+                                <a className="nav-link" aria-current="page" href="#">Usuarios</a>
+                            </li>
+                        </ul>
+                        <div className="d-flex" role="search">
+                            {user.photo ? <img style={{width:50}} src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${user.photo}`}></img> : ""} 
+                            <h6>{user.name}</h6>
+                            <button className="btn btn-primary" onClick={myProfile}>Mi perfil</button>
+                            <button className="btn btn-warning" type="submit" onClick={logout}>Logout</button>
                         </div>
                     </div>
                 </div>

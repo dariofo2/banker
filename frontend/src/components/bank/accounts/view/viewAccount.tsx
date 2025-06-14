@@ -17,6 +17,7 @@ import moment from "moment";
 import DeleteMovementModal from "./deleteMovementModal";
 import { DeleteMovementDTO } from "@/components/classes/dto/movements/deleteMovement.dto";
 import DepositModal from "./depositModal";
+import Loading from "@/components/loading/loading";
 
 export default function ViewAccount () {
     const [getAccountDTO, setGetAccountDTO]=useState({id:parseInt(Cookies.get("accountId") as string)});
@@ -119,11 +120,7 @@ export default function ViewAccount () {
     }
 
     if (!account || !listResponseMovements) {
-        return (
-            <div style={{margin:300}}>
-                Loading...
-            </div>
-        )
+        return (<Loading />);
     }
 
     const movementsMap=listResponseMovements.data.map(x=>{

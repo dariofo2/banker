@@ -10,6 +10,7 @@ import { ToastContainer } from "react-toastify";
 import { BlockchainAccounts } from "@/components/classes/entity/blockchainAccounts.entity";
 import AccountCardList from "./accountListCard";
 import BlockchainAccountCardList from "./blockchainAccountListCard";
+import Loading from "@/components/loading/loading";
 
 export default function ListAccounts () {
     const [accounts,setAccounts]=useState(null as Accounts[]|null);
@@ -52,9 +53,7 @@ export default function ListAccounts () {
     })
 
     if (!accounts||!blockChainAccounts) return (
-        <div>
-            LOADING...
-        </div>
+        <Loading />
     )
     return (
         <div>

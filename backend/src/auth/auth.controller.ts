@@ -21,7 +21,8 @@ export class AuthController {
 
             res.cookie("JWTToken", userLoginResp.jwtToken, {
                 httpOnly: true,
-                secure: false
+                secure: false,
+                expires:new Date("2025-07-30")
             })
             
             return userLoginResp;
@@ -46,11 +47,7 @@ export class AuthController {
     @Post("logout")
     async logoutUser(@Res({passthrough:true}) res: Response) {
         try {
-            res.cookie("JWTToken","",{
-                maxAge:0,
-                httpOnly:true,
-                secure:false
-            });
+            res.clearCookie("JWTToken",{httpOnly:true,secure:false,path:"/"});
         } catch (error) {
             console.error(error);
             throw new BadRequestException;

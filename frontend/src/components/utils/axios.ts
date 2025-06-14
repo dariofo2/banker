@@ -77,15 +77,17 @@ export class axiosFetchs {
      */
     static async logout(): Promise<void> {
         try {
-            let response = await axios.post<UserLoginResp>(
+            let response = await axios.post(
                 `${this.URL}/auth/logout`,
+                {},
                 {
                     withCredentials: true,
                 }
             );
-            this.logoutRemoveCookies();
+            await this.logoutRemoveCookies();
+            
         } catch (error) {
-            this.logoutRemoveCookies();
+            await this.logoutRemoveCookies();
             throw error;
         }
     }
@@ -100,6 +102,8 @@ export class axiosFetchs {
 
     static async logoutRemoveCookies() {
         Cookies.remove("user");
+        Cookies.remove("accountId");
+        Cookies.remove("blockchainAccountId");
     }
 
     static async setAccountIdCookie(accountId: number) {
@@ -114,7 +118,8 @@ export class axiosFetchs {
     static async handleAxiosError(error: AxiosError): Promise<any> {
         if (error.status == 401) {
             await this.logoutRemoveCookies();
-            //window.location.replace(`${this.frontendURL}`);
+            await this.logout();
+            window.location.replace("/");
         } else {
 
         }

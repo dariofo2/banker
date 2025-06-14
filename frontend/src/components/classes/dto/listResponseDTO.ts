@@ -1,7 +1,7 @@
 export class ListResponseDTO<T> {
-    data: T[];
-    page: number;
-    limit: number;
-    filteredRecords: number;
-    totalRecords: number;
+    data?: T;
+    page?: number;
+    limit?: number;
+    filteredRecords?: number;
+    totalRecords?: number;
 }

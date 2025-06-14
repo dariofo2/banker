@@ -398,9 +398,9 @@ export class axiosFetchs {
 
     }
 
-    static async listMovementsByAccount(listMovementsDTO: ListRequestDTO<ListMovementsDTO>): Promise<ListResponseDTO<Movements>> {
+    static async listMovementsByAccount(listMovementsDTO: ListRequestDTO<ListMovementsDTO>): Promise<ListResponseDTO<Movements[]>> {
         try {
-            let response = await axios.post<ListResponseDTO<Movements>>(
+            let response = await axios.post<ListResponseDTO<Movements[]>>(
                 `${this.URL}/movements/list`,
                 listMovementsDTO,
                 {

@@ -22,10 +22,11 @@ import Loading from "@/components/loading/loading";
 export default function ViewAccount () {
     const [getAccountDTO, setGetAccountDTO]=useState({id:parseInt(Cookies.get("accountId") as string)});
     const [account,setAccount]=useState(null as Accounts|null);
-    //const [movements,setMovements]=useState(null as Movements[]|null);
 
     const [listRequestMovementsDTO,setListRequestMovementsDTO]=useState(new ListRequestDTO<ListMovementsDTO> (new ListMovementsDTO(getAccountDTO.id,undefined,undefined),1,25));
-    const [listResponseMovements,setListResponseMovements]=useState(null as ListResponseDTO<Movements>|null);
+    const [listResponseMovements,setListResponseMovements]=useState(null as ListResponseDTO<Movements[]>|null);
+    
+    const [movementsGroupedByDate,setMovementsGroupedByDate]=useState(null as Map<string,Movements[]>|null);
     
     const [movementToDelete,setMovementToDelete]=useState(null as Movements|null);
 
@@ -34,6 +35,7 @@ export default function ViewAccount () {
     useEffect(()=>{
         getAccount();
         if (listRequestMovementsDTO.page==1) {
+            getAccount();
             getMovements();
         } else {
             addMovements();
@@ -42,20 +44,51 @@ export default function ViewAccount () {
 
 
 
+
     async function getAccount () {    
         const response=await axiosFetchs.getAccount(getAccountDTO);
         setAccount({...response});
     }
     async function getMovements () {
-        const response=await axiosFetchs.listMovementsByAccount(listRequestMovementsDTO)
+        const response=await axiosFetchs.listMovementsByAccount(listRequestMovementsDTO);
+        
         setListResponseMovements({...response});
+        refreshMovementsGroupByDate(response.data as Movements[]);
+    }
+
+    async function refreshMovementsGroupByDate (movements:Movements[]) {
+        const movementsGroupedByDate = await groupMovementsByYearMonth(movements);
+        console.log(Array.from(movementsGroupedByDate));
+        setMovementsGroupedByDate(movementsGroupedByDate);
+    }
+
+    async function groupMovementsByYearMonth (movements:Movements[]) {
+        console.log(movements)
+        const groupMovementByDate:Map<string,Movements[]> = movements.reduce((movs:Map<string,Movements[]>,x:Movements)=>{
+            
+            const movementYDM=moment.unix(x.date as number).format("DD - MMM - YY");
+            console.log(movementYDM);
+            if (movs.has(movementYDM)) {
+                movs.get(movementYDM)?.push(x);
+            } else {
+                movs.set(movementYDM,[x]);
+            }
+            
+            return movs;
+        }, new Map<string,Movements[]>);
+        console.log(groupMovementByDate);
+        return groupMovementByDate;
     }
 
     async function addMovements () {
         const response=await axiosFetchs.listMovementsByAccount(listRequestMovementsDTO)
+        
+        const movementsTotal= (listResponseMovements?.data as Movements[]).concat(response.data as Movements[]);
+        
+        refreshMovementsGroupByDate(movementsTotal);
         setListResponseMovements(
             {...response,
-                data:(listResponseMovements?.data as Movements[]).concat(response.data)
+                data: movementsTotal
             }
         )
     }
@@ -65,7 +98,7 @@ export default function ViewAccount () {
         e.preventDefault();
         const dateStart=moment((document.getElementById("dateStart") as HTMLInputElement).value).format("X");
         const dateEnd=moment((document.getElementById("dateEnd") as HTMLInputElement).value).format("X");
-
+        
         setListRequestMovementsDTO({
             ...listRequestMovementsDTO,
             data: {
@@ -97,10 +130,14 @@ export default function ViewAccount () {
 
         await axiosFetchs.deleteMovement(deleteDTO);
 
+        const movementsNew= (listResponseMovements?.data?.filter(x=>x.id!=movementToDelete?.id)) as Movements[];
+        
         setListResponseMovements({
-            ...listResponseMovements as ListResponseDTO<ListMovementsDTO>,
-            data:(listResponseMovements?.data.filter(x=>x.id!=movementToDelete?.id)) as Movements[]
-        })
+            ...listResponseMovements,
+            data: movementsNew
+        });
+
+        refreshMovementsGroupByDate(movementsNew);
     }
 
     function showCreateMovementModal () {
@@ -122,9 +159,24 @@ export default function ViewAccount () {
     if (!account || !listResponseMovements) {
         return (<Loading />);
     }
+    listResponseMovements
 
-    const movementsMap=listResponseMovements.data.map(x=>{
-        return <ViewAccountMovementCard key={x.id} onClickDelete={(movement)=>deleteMovement(movement)} movement={x} />
+    let money= account.balance as number;
+
+    const movementsMap=Array.from((movementsGroupedByDate as Map<string,Movements[]>).entries()).map(x=>{
+        
+        return (
+        <div>
+            <h6 className="text-bg-info">{x[0]}</h6>
+            {x[1].map((x)=>{
+                const moneyNew=money;
+                if (x.type=="movement") money +=x.money as number;
+                if (x.type=="deposit") money -= x.money as number;
+                if (x.type=="depositToBlockchain") money-= x.money as number;
+                return <ViewAccountMovementCard key={x.id} onClickDelete={(movement)=>deleteMovement(movement)} account={account} movement={x} money={{moneyOld: money, moneyNew:moneyNew }} />
+            })}
+        </div>
+        )
     });
 
     return (

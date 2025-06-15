@@ -4,14 +4,25 @@ import DT from "datatables.net-bs5";
 import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
 import "datatables.net-select-dt";
 import "datatables.net-responsive-dt";
+import "datatables.net-responsive-dt/css/responsive.dataTables.min.css";
+import Responsive from "datatables.net-responsive";
 import FrontStaticComponent from "@/components/static/front/frontStatic";
 import { ListRequestDatatablesDTO } from "@/components/classes/dto/dataTables/listRequestDatatables.dto";
 import { axiosFetchs } from "@/components/utils/axios";
 import { Users } from "@/components/classes/entity/users.entity";
-import { redirect } from "next/navigation";
+import { redirect, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import Loading from "@/components/loading/loading";
+import { Accounts } from "@/components/classes/entity/accounts.entity";
 
 DataTable.use(DT);
 export default function AccountsListAdmin () {
+    const [searchParams,setSearchParams]=useState(useSearchParams())
+    const [userId,setUserId]=useState(searchParams.get("id"));
+
+    useEffect(()=>{
+    })
+        
     const data=[{
         id: "1",
         name: "hola",
@@ -32,31 +43,44 @@ export default function AccountsListAdmin () {
     }]
     const columns= [
         {data: "id", name:"id"},
-        {data: "name", name: "name"},
-        {data: "email", name: "email"},
-        {data: "role", name: "role"},
-        {name:"Accounts", data: null, defaultContent:""}
+        {data: "number", name: "number"},
+        {data: "type", name: "type"},
+        {data: "balance", name: "balance"},
+        {name:"account", data: null, defaultContent:""},
+        {name:"block",data:null, defaultContent:""}
     ];
 
-    async function sendToAccounts (id:number) {
-        await axiosFetchs.setAccountIdCookie(id);
-        redirect("/admin/accounts/list");
+    async function sendToAccount (id:number) {
+        window.location.href=`/admin/accounts/view?id=${id}`;
     }
+    
+    async function blockAccount (id:number) {
+
+    }
+    
+    if (!userId) return (<Loading />)
     
     return (
         <div>
-        <FrontStaticComponent title="Panel de Administrador - Usuarios" subtitle="Usuarios" jsx={<div></div>} />
+        <FrontStaticComponent title="Panel de Administrador - Cuentas" subtitle="Cuentas" jsx={<div></div>} />
         <DataTable 
             columns={columns}
             slots= {{
-                4: (data:any,row:Users) => {
-                    return <button onClick={()=>sendToAccounts(row.id as number)}>Go</button>
-                
+                4: (data:any,row:Accounts) => {
+                    return <button className="btn btn-primary" onClick={()=>sendToAccount(row.id as number)}>Go</button>
+                },
+                5: (data:any,row:Accounts) => {
+                    return <button className="btn btn-danger" onClick={()=>blockAccount(row.id as number)}>Block</button>
                 }
             }}
+            
             options={{
                 serverSide:true, 
-                responsive:true,
+                responsive: {
+                    details: {
+                        renderer: Responsive.Responsive.renderer.listHiddenNodes() as any
+                    }
+                },
                 paging:true,
                 ajax: async function (data, callback, settings) {
                     const dataProcess=data as any;
@@ -67,11 +91,11 @@ export default function AccountsListAdmin () {
                         limit:dataProcess.length,
                         offset:dataProcess.start,
                         draw: dataProcess.draw,
-                        data:{}
+                        data:{id: userId}
                         
                     }
                     console.log(listRequestDatatablesDTO)
-                    const response= await axiosFetchs.adminListUsers(listRequestDatatablesDTO);
+                    const response= await axiosFetchs.adminListAccounts(listRequestDatatablesDTO);
                     console.log(response);
                     callback(response);
                 },
@@ -79,19 +103,20 @@ export default function AccountsListAdmin () {
                 order:[[1,"asc"]], 
                 ordering:true, 
                 columnDefs: [
-                    {targets:[1,2,3], orderable:true},
-                    
-                ]
+                    {targets:[0,1,2,3], orderable:true, orderSequence:["asc","desc"]},
+                    {targets: [4,5], orderable:false}
+                ],
             }} 
                 className="display table table-hover"
             >
             <thead>
                 <tr>
-                    <th>Id</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Accounts</th>
+                    <th>ID</th>
+                    <th>NUMBER</th>
+                    <th>TYPE</th>
+                    <th>BALANCE</th>
+                    <th>MOVEMENTS</th>
+                    <th>BLOCK</th>
                 </tr>
             </thead>
         </DataTable>

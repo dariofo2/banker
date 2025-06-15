@@ -543,33 +543,37 @@ export class DatabaseRepository {
         .orderBy(ListRequestDatatablesDTO.orderName,ListRequestDatatablesDTO.orderDirection as "ASC"|"DESC")
         .getManyAndCount()
 
-        const totalUsersDb=await this.usersRepository.count();
+        const totalAccountsDb=await this.accountsRepository.count();
         const ListResponseDatatablesDTO:ListResponseDatatablesDTO<Accounts> ={
             draw: ListRequestDatatablesDTO.draw,
             recordsFiltered: accounts[1],
-            recordsTotal: totalUsersDb,
+            recordsTotal: totalAccountsDb,
             data: accounts[0]
         };
 
         return ListResponseDatatablesDTO;
     } 
 
-    async listAdminMovementsByAccount (ListRequestDatatablesDTO: ListRequestDatatablesDTO) : Promise<ListResponseDatatablesDTO<Users>> {
-        const users=await this.datasource
-        .getRepository(Users)
-        .createQueryBuilder("users")
-        .where("(movements.originAccountId = :id OR movements.destinationAccountId = :id) AND  (users.name like :searchName OR users.email like :searchName)", {searchName:ListRequestDatatablesDTO.searchValue, id:(ListRequestDatatablesDTO.data as any).id})
+    async listAdminMovementsByAccount (ListRequestDatatablesDTO: ListRequestDatatablesDTO) : Promise<ListResponseDatatablesDTO<Movements>> {
+        const movements=await this.datasource
+        .getRepository(Movements)
+        .createQueryBuilder("movements")
+        .leftJoinAndSelect("movements.originAccount","accounts_oa")
+        .leftJoinAndSelect("accounts_oa.user","users_ou")
+        .leftJoinAndSelect("movements.destinationAccount","accounts_da")
+        .leftJoinAndSelect("accounts_da.user","users_du")
+        .where("(movements.originAccountId = :id OR movements.destinationAccountId = :id) AND  (movements.money like :searchName OR movements.type like :searchName)", {searchName:ListRequestDatatablesDTO.searchValue, id:(ListRequestDatatablesDTO.data as any).id})
         .limit(ListRequestDatatablesDTO.limit)
         .offset(ListRequestDatatablesDTO.offset)
         .orderBy(ListRequestDatatablesDTO.orderName,ListRequestDatatablesDTO.orderDirection as "ASC"|"DESC")
         .getManyAndCount()
 
-        const totalUsersDb=await this.usersRepository.count();
-        const ListResponseDatatablesDTO:ListResponseDatatablesDTO<Users> ={
+        const totalMovementsDb=await this.movementsRepository.count();
+        const ListResponseDatatablesDTO:ListResponseDatatablesDTO<Movements> ={
             draw: ListRequestDatatablesDTO.draw,
-            recordsFiltered: users[1],
-            recordsTotal: totalUsersDb,
-            data: users[0]
+            recordsFiltered: movements[1],
+            recordsTotal: totalMovementsDb,
+            data: movements[0]
         };
 
         return ListResponseDatatablesDTO;

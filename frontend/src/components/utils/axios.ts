@@ -603,6 +603,41 @@ export class axiosFetchs {
                     withCredentials: true
                 }
             );
+            return response.data;
+        } catch (error) {
+            this.handleAxiosError(<AxiosError>error);
+            throw error;
+        }
+    }
+
+    static async adminListAccounts (depositToBlockchainDTO:ListRequestDatatablesDTO) : Promise<ListResponseDatatablesDTO<Users>> {
+        try {
+            let response = await axios.post<ListResponseDatatablesDTO<Users>>(
+                `${this.URL}/accounts/adminList`,
+                depositToBlockchainDTO,
+                {
+                    withCredentials: true
+                }
+            );
+            toast.success("Deposito Ingresado con Éxito", {
+                containerId: "axios"
+            });
+            return response.data;
+        } catch (error) {
+            this.handleAxiosError(<AxiosError>error);
+            throw error;
+        }
+    }
+
+    static async adminListMovements (depositToBlockchainDTO:ListRequestDatatablesDTO) : Promise<ListResponseDatatablesDTO<Users>> {
+        try {
+            let response = await axios.post<ListResponseDatatablesDTO<Users>>(
+                `${this.URL}/movements/adminList`,
+                depositToBlockchainDTO,
+                {
+                    withCredentials: true
+                }
+            );
             toast.success("Deposito Ingresado con Éxito", {
                 containerId: "axios"
             });

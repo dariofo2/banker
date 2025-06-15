@@ -7,7 +7,7 @@ import NavBar from "@/components/navbar/navbar";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-export default async function AdminUsersList () {
+export default async function AdminUsersListPage () {
     const cookie=await cookies();
     const user:Users=cookie.has("user") ? JSON.parse(cookie.get("user")?.value as string) : undefined;
     

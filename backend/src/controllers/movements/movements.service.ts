@@ -58,6 +58,6 @@ export class MovementsService {
 
     //      A D M I N       S E R V I C E S
     async adminList (ListRequestDatatablesDTO:ListRequestDatatablesDTO) {
-        return await this.database.listAdminAccountsByUser(ListRequestDatatablesDTO);
+        return await this.database.listAdminMovementsByAccount(ListRequestDatatablesDTO);
     }  
 }

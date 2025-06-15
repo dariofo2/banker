@@ -10,34 +10,49 @@ import FrontStaticComponent from "@/components/static/front/frontStatic";
 import { ListRequestDatatablesDTO } from "@/components/classes/dto/dataTables/listRequestDatatables.dto";
 import { axiosFetchs } from "@/components/utils/axios";
 import { Users } from "@/components/classes/entity/users.entity";
-import { redirect } from "next/navigation";
+import { redirect, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import Loading from "@/components/loading/loading";
+import moment from "moment";
+import { Movements } from "@/components/classes/entity/movements.entity";
 
 DataTable.use(DT);
-export default function UsersListAdmin () {
+export default function AccountsViewAdmin () {
+    const [searchParams, setSearchParams]=useState(useSearchParams());
+    const [accountId,setAccountId]=useState(searchParams.get("id"));
+
     const columns= [
-        {data: "id", name:"id"},
-        {data: "name", name: "name"},
-        {data: "email", name: "email"},
-        {data: "role", name: "role"},
-        {name:"Accounts", data: null, defaultContent:""}
+        {data: "id", name:"movements.id"},
+        {data: "originAccount.number", name: "accounts_oa_number"},
+        {data: "destinationAccount.number", name: "accounts_da_number"},
+        //{data: "originAccount.user.name", name: "users_ou_name"},
+        {data: "concept", name: "concept"},
+        {data: "type", name: "movements.type"},
+        {data: "money", name: "money"},
+        {data: "date", name: "date", render: (data:any,type:any,row:any)=>{
+            return moment.unix(data).format("DD/MM/Y");
+        }},
+        {name:"Delete", data: null, defaultContent:""}
     ];
 
-    async function sendToAccounts (id:number) {
-        console.log("hola");
-        window.location.href=(`/admin/accounts/list?id=${id}`);
+    async function deleteMovement (id:number) {
+        console.log(id);
     }
+    
+    if (!accountId) return (<Loading />)
 
     return (
         <div>
-        <FrontStaticComponent title="Panel de Administrador - Usuarios" subtitle="Usuarios" jsx={<div></div>} />
+        <FrontStaticComponent title="Panel de Administrador - Movimientos" subtitle="Movimientos" jsx={<div></div>} />
         <DataTable 
             columns={columns}
             slots= {{
-                4: (data:any,row:Users) => {
-                    return <button onClick={()=>sendToAccounts(row.id as number)}>Go</button>
-                
+                7: (data:any,row:Movements) => {
+                    if (row.type=="movement") return <button onClick={()=>deleteMovement(row.id as number)}>Delete</button>
+                    else return <> - </>;
                 }
             }}
+                
             options={{
                 serverSide:true, 
                 responsive: {
@@ -45,6 +60,7 @@ export default function UsersListAdmin () {
                         renderer: Responsive.Responsive.renderer.listHiddenNodes() as any
                     }
                 },
+                paging:true,
                 ajax: async function (data, callback, settings) {
                     const dataProcess=data as any;
                     const listRequestDatatablesDTO: ListRequestDatatablesDTO = {
@@ -54,11 +70,11 @@ export default function UsersListAdmin () {
                         limit:dataProcess.length,
                         offset:dataProcess.start,
                         draw: dataProcess.draw,
-                        data:{}
+                        data:{id:accountId}
                         
                     }
                     console.log(listRequestDatatablesDTO)
-                    const response= await axiosFetchs.adminListUsers(listRequestDatatablesDTO);
+                    const response= await axiosFetchs.adminListMovements(listRequestDatatablesDTO);
                     console.log(response);
                     callback(response);
                 },
@@ -66,19 +82,22 @@ export default function UsersListAdmin () {
                 order:[[1,"asc"]], 
                 ordering:true, 
                 columnDefs: [
-                    {targets:[0,1,2,3], orderable:true, orderSequence:["asc","desc"]},
-                    {targets: [4], orderable:false}
+                    {targets:[0,1,2,3,4,5,6], orderable:true, orderSequence:["asc","desc"]},
+                    {targets: [7], orderable:false}
                 ]
             }} 
                 className="display table table-hover"
             >
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>NOMBRE</th>
-                    <th>EMAIL</th>
-                    <th>ROLE</th>
-                    <th>Accounts</th>
+                    <th>Id</th>
+                    <th>ORIGIN NUMBER</th>
+                    <th>DESTINATION NUMBER</th>
+                    <th>CONCEPT</th>
+                    <th>TYPE</th>
+                    <th>MONEY</th>
+                    <th>DATE</th>
+                    <th>DELETE</th>
                 </tr>
             </thead>
         </DataTable>

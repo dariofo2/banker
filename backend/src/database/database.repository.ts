@@ -562,7 +562,7 @@ export class DatabaseRepository {
         .leftJoinAndSelect("accounts_oa.user","users_ou")
         .leftJoinAndSelect("movements.destinationAccount","accounts_da")
         .leftJoinAndSelect("accounts_da.user","users_du")
-        .where("(movements.originAccountId = :id OR movements.destinationAccountId = :id) AND  (movements.money like :searchName OR movements.type like :searchName)", {searchName:ListRequestDatatablesDTO.searchValue, id:(ListRequestDatatablesDTO.data as any).id})
+        .where("(movements.originAccountId = :id OR movements.destinationAccountId = :id) AND  (movements.money like :searchName OR movements.type like :searchName OR accounts_oa.number like :searchName OR accounts_da.number like :searchName)", {searchName:ListRequestDatatablesDTO.searchValue, id:(ListRequestDatatablesDTO.data as any).id})
         .limit(ListRequestDatatablesDTO.limit)
         .offset(ListRequestDatatablesDTO.offset)
         .orderBy(ListRequestDatatablesDTO.orderName,ListRequestDatatablesDTO.orderDirection as "ASC"|"DESC")

@@ -23,8 +23,8 @@ export default function AccountsViewAdmin () {
 
     const columns= [
         {data: "id", name:"movements.id"},
-        {data: "originAccount.number", name: "accounts_oa_number"},
-        {data: "destinationAccount.number", name: "accounts_da_number"},
+        {data: "originAccount.number", name: "accounts_oa.number"},
+        {data: "destinationAccount.number", name: "accounts_da.number"},
         //{data: "originAccount.user.name", name: "users_ou_name"},
         {data: "concept", name: "concept"},
         {data: "type", name: "movements.type"},

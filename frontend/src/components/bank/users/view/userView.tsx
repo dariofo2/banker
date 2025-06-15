@@ -12,6 +12,7 @@ import { AxiosError } from "axios";
 import { ToastContainer } from "react-toastify";
 import UpdateUserPhotoModal from "./updatePhotoModal";
 import Loading from "@/components/loading/loading";
+import SocketIOClient from "@/components/socket.io/socket.io";
 
 class Props {
     user?: Users;
@@ -60,6 +61,7 @@ export default function UserView () {
             <UserUpdatePasswordModal />
             <UpdateUserPhotoModal onSubmitModal={async ()=>{await getUser(); window.location.reload()}} />
             
+            <SocketIOClient />
             <ToastContainer containerId="axios" position="top-center"/>
         </div>
     )

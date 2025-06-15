@@ -13,6 +13,7 @@ import BlockchainAccountCardList from "./blockchainAccountListCard";
 import Loading from "@/components/loading/loading";
 import { Users } from "@/components/classes/entity/users.entity";
 import FrontStaticComponent from "@/components/static/front/frontStatic";
+import SocketIOClient from "@/components/socket.io/socket.io";
 
 export default function ListAccounts () {
     const [user,setUser]=useState(null as Users|null);
@@ -95,6 +96,7 @@ export default function ListAccounts () {
             <CreateAccountModal onSubmit={()=>{getAccounts()}}/>
             <CreateBlockchainAccountModal onSubmit={()=>{getBlockChainAccounts()}} />
 
+            <SocketIOClient />
             <ToastContainer containerId="axios" />
         </div>
     )

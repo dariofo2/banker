@@ -18,6 +18,7 @@ import TransferBlockchainAccountModal from "./transferBlockchainAccountView";
 import DepositBlockchainAccountModal from "./depositBlockChainModal";
 import { ToastContainer } from "react-toastify";
 import Loading from "@/components/loading/loading";
+import SocketIOClient from "@/components/socket.io/socket.io";
 
 export default function ViewBlockChainAccount(props: any) {
     const [blockChainAccountId,setBlockchainAccountId]=useState(Cookies.get("blockchainAccountId"));
@@ -172,6 +173,8 @@ export default function ViewBlockChainAccount(props: any) {
             <AcceptBlockchainSendModal acceptSend={(privateKey)=>{acceptSignAndSendContractTransaction(privateKey)}} amountToSend={contractMethodValueSendToSign} estimateGas={contractMethodEstimateGasSendToSign} blockChainAccount={blockChainAccount as BlockchainAccounts} />
             <TransferBlockchainAccountModal blockchainAccount={blockChainAccount as BlockchainAccounts} onSubmitModal={actualizarCuenta} />
             <DepositBlockchainAccountModal blockchainAccount={blockChainAccount as BlockchainAccounts} onSubmitModal={actualizarCuenta} />
+
+            <SocketIOClient />
             <ToastContainer containerId="axios" />
         </div>
     );

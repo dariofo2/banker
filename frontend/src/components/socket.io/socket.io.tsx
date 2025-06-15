@@ -1,11 +1,15 @@
 "use client"
-import { useEffect } from "react"
+import { useEffect, useRef, useState } from "react"
 import { toast, ToastContainer } from "react-toastify";
 import { io, Socket, WebSocket } from "socket.io-client"
 import { Movements } from "../classes/entity/movements.entity";
 export default function SocketIOClient () {
+    let doOnce=useRef(true);
     useEffect(()=>{
-        const socket=io("localhost/backend",{
+        if (doOnce.current) {
+        doOnce.current=false;
+        
+        const socket=io("http://localhost:3000",{
             withCredentials:true,
             transports:["websocket","webtransport"]
         });
@@ -13,16 +17,18 @@ export default function SocketIOClient () {
             console.log("conectado");
         })
         socket.on("message",(x)=>{
+            console.log("Mensajee");
             const RabbitMQMovementEvent=JSON.parse(x) as Movements;
                 console.log(RabbitMQMovementEvent);
                 toast.info(`Transferencia Recibida de: ${RabbitMQMovementEvent.originAccount?.user?.name} : ${RabbitMQMovementEvent.money} €`,{
                     containerId:"websockets"
                 })
         })
-    })
+    }
+    },[]);
     return (
         <div>
-            <ToastContainer containerId="websockets" />
+            <ToastContainer containerId="websockets" position="top-center" />
         </div>
     )
 }

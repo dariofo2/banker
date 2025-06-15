@@ -19,6 +19,7 @@ import { DeleteMovementDTO } from "@/components/classes/dto/movements/deleteMove
 import DepositModal from "./depositModal";
 import Loading from "@/components/loading/loading";
 import FrontStaticComponent from "@/components/static/front/frontStatic";
+import SocketIOClient from "@/components/socket.io/socket.io";
 
 export default function ViewAccount() {
     const [getAccountDTO, setGetAccountDTO] = useState({ id: parseInt(Cookies.get("accountId") as string) });
@@ -227,6 +228,8 @@ export default function ViewAccount() {
             <ViewAccountUpdateModal account={account} onSubmit={() => { getAccount() }} />
             <DeleteMovementModal message="¿Está seguro de que desea borrar la Transferencia?" onDeleteConfirm={() => confirmDelete()} />
             <DepositModal account={account} onSubmitModal={() => setListRequestMovementsDTO({ ...listRequestMovementsDTO, page: 1 })} />
+
+            <SocketIOClient />
             <ToastContainer containerId="axios" />
         </div>
     )

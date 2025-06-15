@@ -33,16 +33,7 @@ export default function CreateUserForm() {
             
             const response = await axiosFetchs.createUser(createUserDto);
 
-            if (response instanceof AxiosError) {
-                const errorMessages = (response.response?.data as any).message as string[];
-
-                errorMessages.forEach(x => {
-                    toast['error'](x);
-                });
-
-            } else {
-                toast['success']("Usuario Creado con Éxito")
-            }
+            window.location.href="/";
         }
     }
 

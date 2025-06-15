@@ -19,7 +19,6 @@ export default async function BlockChainAccountsViewPage () {
         <NavBar user={user}/>
         <ViewBlockChainAccount />
         <FooterComponent />
-        <SocketIOClient />
         </div>
     )
 }

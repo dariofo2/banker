@@ -29,6 +29,7 @@ export default function Login() {
 
         userLoginDTO.password=await CryptoUtils.hashPasswordToSha256(userLoginDTO.password as string);
         const response=await axiosFetchs.fetchLogin(userLoginDTO);
+        window.location.href="/bank/accounts/list";
         /*
         if (response instanceof AxiosError) {
             const messageErrors=(response.response?.data as any).message as string[];

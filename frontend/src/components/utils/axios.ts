@@ -27,6 +27,8 @@ import { UpdateAccountDTO } from "../classes/dto/accounts/updateAccount.dto";
 import { DepositFromBlockChainDTO } from "../classes/dto/blockchainAccounts/depositFromBlockchain.dto";
 import { DepositToBlockChainDTO } from "../classes/dto/blockchainAccounts/depositToBlockchain.dto";
 import { UpdateUserPhotoDTO } from "../classes/dto/users/updateUserPhoto.dto";
+import { ListRequestDatatablesDTO } from "../classes/dto/dataTables/listRequestDatatables.dto";
+import { ListResponseDatatablesDTO } from "../classes/dto/dataTables/listResponseDatatables.dto";
 
 export class RequestObject {
     headers: AxiosHeaders = new AxiosHeaders;
@@ -584,6 +586,27 @@ export class axiosFetchs {
             toast.success("Deposito Ingresado con Éxito", {
                 containerId: "axios"
             });
+        } catch (error) {
+            this.handleAxiosError(<AxiosError>error);
+            throw error;
+        }
+    }
+
+
+    //      A D M I N       A X I O S
+    static async adminListUsers (depositToBlockchainDTO:ListRequestDatatablesDTO) : Promise<ListResponseDatatablesDTO<Users>> {
+        try {
+            let response = await axios.post<ListResponseDatatablesDTO<Users>>(
+                `${this.URL}/user/adminList`,
+                depositToBlockchainDTO,
+                {
+                    withCredentials: true
+                }
+            );
+            toast.success("Deposito Ingresado con Éxito", {
+                containerId: "axios"
+            });
+            return response.data;
         } catch (error) {
             this.handleAxiosError(<AxiosError>error);
             throw error;

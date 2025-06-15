@@ -8,9 +8,10 @@ import { plainToClass, plainToInstance, TransformPlainToInstance } from "class-t
 import { DeleteAccountDTO } from "src/database/dto/accounts/deleteAccount.dto";
 import { GetAccountDTO } from "src/database/dto/accounts/getAccount.dto";
 import { UpdateAccountDTO } from "src/database/dto/accounts/updateAccount.dto";
+import { ListRequestDatatablesDTO } from "src/database/dto/dataTables/listRequestDatatables.dto";
 
 @UseGuards(MainAuthGuard)
-@UsePipes(new ValidationPipe({transform:true}))
+@UsePipes(new ValidationPipe({ transform: true }))
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('accounts')
 export class AccountsController {
@@ -71,6 +72,18 @@ export class AccountsController {
         } catch (error) {
             console.error(error);
             throw new BadRequestException;
+        }
+    }
+
+
+    //      A D M I N      C O N T R O L L E R S
+    @Post('adminList')
+    async adminList(@Body() ListRequestDatatablesDTO: ListRequestDatatablesDTO) {
+        try {
+            return await this.accountsService.adminList(ListRequestDatatablesDTO);
+        } catch (error) {
+            console.error(error);
+            throw new BadRequestException("Invalid Data");
         }
     }
 }

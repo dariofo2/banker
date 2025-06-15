@@ -10,9 +10,10 @@ import { DeleteMovementDTO } from "src/database/dto/movements/deleteMovement.dto
 import { ListMovementsDTO } from "src/database/dto/movements/listMovementsDTO";
 import { ListRequestDTO } from "src/database/dto/listRequestDTO";
 import { ListResponseDTO } from "src/database/dto/listResponseDTO";
+import { ListRequestDatatablesDTO } from "src/database/dto/dataTables/listRequestDatatables.dto";
 
 @UseGuards(MainAuthGuard)
-@UsePipes(new ValidationPipe({transform:true}))
+@UsePipes(new ValidationPipe({ transform: true }))
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('movements')
 export class MovementsController {
@@ -23,9 +24,9 @@ export class MovementsController {
     @Post('create')
     async createMovement(@Req() req, @Body() createMovementDTO: CreateMovementDTO) {
         try {
-            const movement = plainToInstance(Movements,createMovementDTO);
-            movement.originAccount.user=req.user;
-            
+            const movement = plainToInstance(Movements, createMovementDTO);
+            movement.originAccount.user = req.user;
+
             await this.movementsService.createMovement(movement);
         } catch (error) {
             console.error(error);
@@ -36,10 +37,10 @@ export class MovementsController {
     @Post('delete')
     async deleteMovement(@Req() req, @Body() deleteMovementDTO: DeleteMovementDTO) {
         try {
-            const movement= plainToInstance(Movements,deleteMovementDTO)
-            movement.originAccount=new Accounts;
+            const movement = plainToInstance(Movements, deleteMovementDTO)
+            movement.originAccount = new Accounts;
             movement.originAccount.user = req.user;
-            
+
             await this.movementsService.deleteMovement(movement);
         } catch (error) {
             console.error(error);
@@ -50,10 +51,22 @@ export class MovementsController {
     @Post('list')
     async listMovements(@Req() req, @Body() listRequestDTO: ListRequestDTO<ListMovementsDTO>): Promise<ListResponseDTO<Movements>> {
         console.log(listRequestDTO);
-        listRequestDTO.data.originAccount.user=req.user;
+        listRequestDTO.data.originAccount.user = req.user;
 
         let selectResult = await this.movementsService.listMovements(listRequestDTO);
 
         return selectResult;
+    }
+
+
+    //      A D M I N      C O N T R O L L E R S
+    @Post('adminList')
+    async adminList(@Body() ListRequestDatatablesDTO: ListRequestDatatablesDTO) {
+        try {
+            return await this.movementsService.adminList(ListRequestDatatablesDTO);
+        } catch (error) {
+            console.error(error);
+            throw new BadRequestException("Invalid Data");
+        }
     }
 }

@@ -5,6 +5,7 @@ import { plainToClass } from "class-transformer";
 import { writeFile } from "fs";
 import { mkdir } from "fs/promises";
 import { DatabaseRepository } from "src/database/database.repository";
+import { ListRequestDatatablesDTO } from "src/database/dto/dataTables/listRequestDatatables.dto";
 import { UpdateUserPasswordDTO } from "src/database/dto/users/updateUserPassword.dto";
 import { UpdateUserPhotoDTO } from "src/database/dto/users/updateUserPhoto.dto";
 import { Users } from "src/database/entity/users.entity";
@@ -72,5 +73,12 @@ export class UsersService {
     async getUser (user: Users) {
         return this.databaseRepository.getUserById(user);
     }
+
+
+
+    //      A D M I N       S E R V I C E S
+    async adminList (ListRequestDatatablesDTO:ListRequestDatatablesDTO) {
+        return await this.databaseRepository.listUsers(ListRequestDatatablesDTO);
+    }  
 
 }

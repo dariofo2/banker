@@ -4,6 +4,7 @@ import { MainAuthGuard } from "./mainauth.guard";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { JwtModule, JwtService } from "@nestjs/jwt";
+import { AdminAuthGuard } from "./authRoles/adminAuth.guard";
 
 @Module({
     imports: [DatabaseModule, JwtModule.registerAsync({
@@ -15,7 +16,7 @@ import { JwtModule, JwtService } from "@nestjs/jwt";
             }
         })
     })],
-    providers: [MainAuthGuard, AuthService],
+    providers: [MainAuthGuard, AuthService,AdminAuthGuard],
     controllers: [AuthController],
     exports: [MainAuthGuard, JwtModule],
 })

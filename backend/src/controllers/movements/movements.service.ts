@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, Move, UnauthorizedException } from "@nestjs/common";
 import * as moment from "moment";
 import { DatabaseRepository } from "src/database/database.repository";
+import { ListRequestDatatablesDTO } from "src/database/dto/dataTables/listRequestDatatables.dto";
 import { ListRequestDTO } from "src/database/dto/listRequestDTO";
 import { ListResponseDTO } from "src/database/dto/listResponseDTO";
 import CreateMovementDTO from "src/database/dto/movements/createMovement.dto";
@@ -53,4 +54,10 @@ export class MovementsService {
         if (movement.type!="movement") throw new BadRequestException("No se puede borrar el movimiento");
         return await this.database.deleteMovementById(movement);
     }
+
+
+    //      A D M I N       S E R V I C E S
+    async adminList (ListRequestDatatablesDTO:ListRequestDatatablesDTO) {
+        return await this.database.listAdminAccountsByUser(ListRequestDatatablesDTO);
+    }  
 }

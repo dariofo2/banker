@@ -12,6 +12,7 @@ import { instanceToPlain, plainToInstance } from "class-transformer";
 import { UpdateUserPasswordDTO } from "src/database/dto/users/updateUserPassword.dto";
 import { UpdateUserDto } from "src/database/dto/users/updateUser.dto";
 import { UpdateUserPhotoDTO } from "src/database/dto/users/updateUserPhoto.dto";
+import { ListRequestDatatablesDTO } from "src/database/dto/dataTables/listRequestDatatables.dto";
 @Controller('user')
 @UsePipes(new ValidationPipe({transform:true}))
 @UseInterceptors(ClassSerializerInterceptor)
@@ -86,6 +87,28 @@ export class UsersController {
         }
     }
 
+
+    //      A D M I N       C O N T R O L L E R S
+    @Post('adminList')
+    async adminList (@Body() ListRequestDatatablesDTO: ListRequestDatatablesDTO) {
+        try {
+            return await this.usersService.adminList(ListRequestDatatablesDTO);
+        } catch (error) {
+            console.error(error);
+            throw new BadRequestException("Invalid Data");
+        }
+    }
+
+    @Post('adminUpdate')
+    async adminUpdate (@Body() updateUserDto: UpdateUserDto) {
+        try {
+            
+        } catch (error) {
+            console.error(error);
+            throw new BadRequestException("Invalid Data");
+        }
+    }
+    /*
     @Post('rabbitmqsend')
     async sendConsumeMessage() {
 
@@ -117,5 +140,6 @@ export class UsersController {
         this.eventEmitter.emit("Hola", { data: "hola" });
         return;
     }
+        */
 
 }

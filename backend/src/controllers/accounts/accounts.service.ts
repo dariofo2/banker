@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { BullMQClientService } from "src/bullMQ/bullMQClient.service";
 import { DatabaseRepository } from "src/database/database.repository";
 import { CreateAccountDTO } from "src/database/dto/accounts/createAccount.dto";
+import { ListRequestDatatablesDTO } from "src/database/dto/dataTables/listRequestDatatables.dto";
 import { Accounts } from "src/database/entity/accounts.entity";
 import { Users } from "src/database/entity/users.entity";
 
@@ -38,5 +39,10 @@ export class AccountsService {
         
     }
 
+    //      A D M I N       S E R V I C E S
+
+    async adminList (ListRequestDatatablesDTO:ListRequestDatatablesDTO) {
+        return await this.databaseRepository.listAdminAccountsByUser(ListRequestDatatablesDTO);
+    }  
     
 }

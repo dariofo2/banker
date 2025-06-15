@@ -6,6 +6,8 @@ import { Accounts } from "./entity/accounts.entity";
 import { Movements } from "./entity/movements.entity";
 import { BlockchainAccounts } from "./entity/blockchainAccounts.entity";
 import { ListResponseDTO } from "./dto/listResponseDTO";
+import { ListRequestDatatablesDTO } from "./dto/dataTables/listRequestDatatables.dto";
+import { ListResponseDatatablesDTO } from "./dto/dataTables/listResponseDatatables.dto";
 /**
  * @author Alejandro Darío Fuentefría Oróns
  */
@@ -506,4 +508,70 @@ export class DatabaseRepository {
 
         }
     }
+
+
+
+    //  D A T A T A B L E S     L I S T
+    async listUsers (ListRequestDatatablesDTO: ListRequestDatatablesDTO) : Promise<ListResponseDatatablesDTO<Users>> {
+        const users=await this.datasource
+        .getRepository(Users)
+        .createQueryBuilder("users")
+        .where("users.name like :searchName OR users.email like :searchName", {searchName:ListRequestDatatablesDTO.searchValue})
+        .limit(ListRequestDatatablesDTO.limit)
+        .offset(ListRequestDatatablesDTO.offset)
+        .orderBy(ListRequestDatatablesDTO.orderName,ListRequestDatatablesDTO.orderDirection as "ASC"|"DESC")
+        .getManyAndCount()
+
+        const totalUsersDb=await this.usersRepository.count();
+        const ListResponseDatatablesDTO:ListResponseDatatablesDTO<Users> ={
+            draw: ListRequestDatatablesDTO.draw,
+            recordsFiltered: users[1],
+            recordsTotal: totalUsersDb,
+            data: users[0]
+        };
+
+        return ListResponseDatatablesDTO;
+    } 
+
+    async listAdminAccountsByUser (ListRequestDatatablesDTO: ListRequestDatatablesDTO) : Promise<ListResponseDatatablesDTO<Accounts>> {
+        const accounts=await this.datasource
+        .getRepository(Accounts)
+        .createQueryBuilder("accounts")
+        .where("accounts.userId = :id AND (accounts.number like :searchName OR accounts.type like :searchName)", {searchName:ListRequestDatatablesDTO.searchValue, id: (ListRequestDatatablesDTO.data as any).id})
+        .limit(ListRequestDatatablesDTO.limit)
+        .offset(ListRequestDatatablesDTO.offset)
+        .orderBy(ListRequestDatatablesDTO.orderName,ListRequestDatatablesDTO.orderDirection as "ASC"|"DESC")
+        .getManyAndCount()
+
+        const totalUsersDb=await this.usersRepository.count();
+        const ListResponseDatatablesDTO:ListResponseDatatablesDTO<Accounts> ={
+            draw: ListRequestDatatablesDTO.draw,
+            recordsFiltered: accounts[1],
+            recordsTotal: totalUsersDb,
+            data: accounts[0]
+        };
+
+        return ListResponseDatatablesDTO;
+    } 
+
+    async listAdminMovementsByAccount (ListRequestDatatablesDTO: ListRequestDatatablesDTO) : Promise<ListResponseDatatablesDTO<Users>> {
+        const users=await this.datasource
+        .getRepository(Users)
+        .createQueryBuilder("users")
+        .where("(movements.originAccountId = :id OR movements.destinationAccountId = :id) AND  (users.name like :searchName OR users.email like :searchName)", {searchName:ListRequestDatatablesDTO.searchValue, id:(ListRequestDatatablesDTO.data as any).id})
+        .limit(ListRequestDatatablesDTO.limit)
+        .offset(ListRequestDatatablesDTO.offset)
+        .orderBy(ListRequestDatatablesDTO.orderName,ListRequestDatatablesDTO.orderDirection as "ASC"|"DESC")
+        .getManyAndCount()
+
+        const totalUsersDb=await this.usersRepository.count();
+        const ListResponseDatatablesDTO:ListResponseDatatablesDTO<Users> ={
+            draw: ListRequestDatatablesDTO.draw,
+            recordsFiltered: users[1],
+            recordsTotal: totalUsersDb,
+            data: users[0]
+        };
+
+        return ListResponseDatatablesDTO;
+    } 
 }

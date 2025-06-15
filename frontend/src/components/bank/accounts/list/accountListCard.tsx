@@ -13,13 +13,13 @@ export default function AccountCardList(props: Props) {
         window.location.href = `/bank/accounts/view`
     }
     return (
-        <div onClick={sendToAccountView} className="m-auto mt-3 border border-2 border-black px-5 py-2 shadow shadow-5" style={{maxWidth: 500, backgroundColor: "whitesmoke" }}>
-            <div className="row justify-content-between overflow-hidden">
-                <div className="col-6">
-                    <h6 className="text-primary fs-5">Cuenta {account.type} Banker</h6>
+        <div onClick={sendToAccountView} className="m-auto mt-3 border border-2 border-black px-5 py-4 shadow shadow-5" style={{maxWidth: 700, backgroundColor: "whitesmoke" }}>
+            <div className="d-flex flex-wrap flex-sm-wrap justify-content-between overflow-hidden">
+                <div className="">
+                    <h6 className="fs-5" style={{color:"blueviolet"}}>Cuenta {account.type} Banker</h6>
                     <h6 className="fs-5">{account.number}</h6>
                 </div>
-                <div className="col-5">
+                <div className="">
                     <div className="text-end mt-2">
                         <h5 className="text-warning fw-bolder">{account.balance} €</h5>
                     </div>

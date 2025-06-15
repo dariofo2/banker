@@ -57,7 +57,7 @@
 }
 
 .gradientePurpleBlack {
-
+  background: linear-gradient(120deg,black 0%, #BC57FF 50%, #4E0062 100%);
 }
 
 

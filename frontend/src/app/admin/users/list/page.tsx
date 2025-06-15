@@ -1,5 +1,6 @@
 "use server"
 
+import UsersListAdmin from "@/components/admin/users/list/usersListAdmin";
 import { Users } from "@/components/classes/entity/users.entity";
 import FooterComponent from "@/components/footer/footer";
 import NavBar from "@/components/navbar/navbar";
@@ -16,7 +17,7 @@ export default async function AdminUsersList () {
     return (
         <div>
             <NavBar user={user} />
-
+            <UsersListAdmin />
             <FooterComponent />
         </div>
     )

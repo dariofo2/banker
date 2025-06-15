@@ -14,15 +14,17 @@ export default function BlockchainAccountCardList (props:Props) {
     const [BC,setBC]=useState(null as string|null)
 
     useEffect(()=>{
-
+        getBalances();
     })
 
     async function getBalances () {
         const blockchainEther=await Web3Service.getBalanceEther(blockchainAccount.address as string);
+        const etherFormatted=parseFloat(blockchainEther).toFixed(2);
         const blockchainBC=await buildingsContract.getBalanceBS(blockchainAccount.address as string);
+        const BCFormatted=(parseInt(blockchainBC)/100).toFixed(2);
         
-        setEther(blockchainEther);
-        setBC(blockchainBC);
+        setEther(etherFormatted);
+        setBC(BCFormatted);
     }
     
 
@@ -31,16 +33,16 @@ export default function BlockchainAccountCardList (props:Props) {
         window.location.href=`/bank/blockchainAccounts/view`;
     }
     return (
-        <div onClick={goToBlockChainAccountView} className="m-auto mt-3 border border-2 border-black px-5 py-2 shadow shadow-5" style={{maxWidth: 500, backgroundColor: "whitesmoke" }}>
-            <div className="row justify-content-between overflow-hidden">
-                <div className="col-6">
-                    <h6 className="text-primary fs-5">Cuenta BlockChain Banker</h6>
-                    <h6 className="fs-5">{blockchainAccount.address}</h6>
+        <div onClick={goToBlockChainAccountView} className="m-auto mt-3 bg-black px-5 py-4" style={{maxWidth: 700, backgroundColor: "whitesmoke", border:"2px solid blueviolet", boxShadow:"0 6px 15px 0 blueviolet" }}>
+            <div className="d-flex flex-wrap flex-sm-nowrap justify-content-between overflow-hidden">
+                <div className="overflow-hidden">
+                    <h6 className="fs-5 fw-bold text-pink-dark-lighter">Cuenta BlockChain Banker</h6>
+                    <h6 className="fs-6 text-white">{blockchainAccount.address}</h6>
                 </div>
-                <div className="col-5">
-                    <div className="text-end mt-2">
-                        <h5 className="text-warning fw-bolder">{ether} Eth</h5>
-                        <h5 className="text-warning fw-bolder">{BC} BC</h5>
+                <div className="">
+                    <div className="text-end mt-2" style={{whiteSpace:"nowrap"}}>
+                        <h6 className="text-warning fw-bolder fs-5">{ether} <span className="text-white">Eth</span></h6>
+                        <h6 className="fw-bolder fs-5" style={{color:"yellow"}}>{BC} <span className="text-white">BC</span></h6>
                     </div>
                 </div>
             </div>

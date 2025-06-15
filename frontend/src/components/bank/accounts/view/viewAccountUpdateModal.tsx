@@ -61,8 +61,8 @@ export default function ViewAccountUpdateModal(props: Props) {
                     </div>
                     <div className="modal-body">
                         <form ref={formElem}>
-                            <label>Hola</label>
-                            <Select options={configData} onChange={onChangeInput} value={configData.find(x=>x.value==updateAccountDTO.type)} required />
+                            <label>Tipo de Cuenta</label>
+                            <Select placeholder="Selecciona un tipo de Cuenta" options={configData} onChange={onChangeInput} value={configData.find(x=>x.value==updateAccountDTO.type)} required />
                         </form>
                     </div>
                     <div className="modal-footer">

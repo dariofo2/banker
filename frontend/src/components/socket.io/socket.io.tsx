@@ -9,7 +9,7 @@ export default function SocketIOClient () {
         if (doOnce.current) {
         doOnce.current=false;
         
-        const socket=io("http://localhost:3000",{
+        const socket=io(process.env.NEXT_PUBLIC_BACKEND_URL,{
             withCredentials:true,
             transports:["websocket","webtransport"]
         });

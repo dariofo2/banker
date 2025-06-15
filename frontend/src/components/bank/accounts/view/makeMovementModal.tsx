@@ -83,10 +83,30 @@ export default function CreateMovementModal(props:Props) {
                             <button type="button" className="btn-close" onClick={hideModal} aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
-                            <form className="" ref={formElem}>
-                                <input className="form-control" type="text" name="number" placeholder="Numero de Cuenta" onChange={changeInput} required />
-                                <AutoNumericInput inputProps={{className:"form-control", defaultValue:"0,00" , name:"money",required:true,onChange:changeInput}} autoNumericOptions={AutoNumeric.getPredefinedOptions().Spanish} />
-                                <input className="form-control" type="text"  name="concept" placeholder="Concepto" onChange={changeInput} required />
+                            <form ref={formElem}>
+                                <div className="input-group">
+                                    <span className="input-group-text bi bi-cash-stack"></span>
+                                    <div className="form-floating">
+                                        <input className="form-control" type="text" name="number" placeholder="Numero de Cuenta" onChange={changeInput} required />
+                                        <label>Numero de Cuenta</label>
+                                    </div>
+                                </div>
+                                <div className="input-group mt-3">
+                                    <span className="input-group-text bi bi-currency-euro"></span>
+                                    <div className="form-floating">
+                                    <AutoNumericInput inputProps={{className:"form-control", placeholder:"Dinero", defaultValue:"0,00" , name:"money",required:true,onChange:changeInput}} autoNumericOptions={AutoNumeric.getPredefinedOptions().Spanish} />
+                                    <label>Dinero</label>
+                                    </div>
+                                </div>
+                                <div className="input-group mt-3">
+                                    <span className="input-group-text bi bi-pen"></span>
+                                    <div className="form-floating">
+                                    <input className="form-control" type="text"  name="concept" placeholder="Concepto" onChange={changeInput} required />
+                                    <label>Concepto</label>
+                                    </div>
+                                </div>
+                                
+                                
                             </form>
                         </div>
                         <div className="modal-footer">

@@ -62,8 +62,8 @@ export default function CreateAccountModal(props:Props) {
                     </div>
                     <div className="modal-body">
                         <form ref={formElem}>
-                            <label className="form-label"></label>
-                            <Select options={optionsType} onChange={(newValue)=>onChangeInput(newValue)} value={selectValue} required/>
+                            <label className="form-label">Selecciona un Tipo de Cuenta</label>
+                            <Select options={optionsType} placeholder="Selecciona Tipo" onChange={(newValue)=>onChangeInput(newValue)} value={selectValue} required/>
                         </form>
                     </div>
                     <div className="modal-footer">

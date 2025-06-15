@@ -175,8 +175,16 @@ export default function DepositModal(props: Props) {
                             {balanceSelectedAccount ? <h5>Eth: {balanceSelectedAccount} </h5> : <></>}
                             {balanceBCselectedBlockchainAccount ? <h5>BC: {balanceBCselectedBlockchainAccount}</h5> : <></>}
                             <form ref={formElem}>
-                                <Select options={blockChainAccountsSelect} onChange={onChangeSelect} value={selectedBlockchainAccount ? blockChainAccountsSelect?.find(x => x.label == selectedBlockchainAccount?.address) : null} />
-                                <AutoNumericInput inputProps={{className:"form-control", required: true, name: "amount", defaultValue:"0,00", onChange: onChangeAmount }} autoNumericOptions={AutoNumeric.getPredefinedOptions().Spanish} />
+                                <label>Cuenta BlockChain</label>
+                                <Select options={blockChainAccountsSelect} placeholder="Selecciona una Cuenta" onChange={onChangeSelect} value={selectedBlockchainAccount ? blockChainAccountsSelect?.find(x => x.label == selectedBlockchainAccount?.address) : null} />
+                                <div className="input-group mt-3">
+                                    <span className="input-group-text bi bi-currency-euro"></span>
+                                    <div className="form-floating">
+                                        <AutoNumericInput inputProps={{className:"form-control", placeholder:"Euros", required: true, name: "amount", defaultValue:"0,00", onChange: onChangeAmount }} autoNumericOptions={AutoNumeric.getPredefinedOptions().Spanish} />
+                                        <label>Euros</label>
+                                    </div>
+                                </div>
+                                
                             </form>
                             <button className="btn btn-success" onClick={submitSendEth} disabled={selectedBlockchainAccount && amountToSendNumber > 0 ? false : true}>Deposit Eth</button>
                             <button className="btn btn-success" onClick={submitSendBC} disabled={selectedBlockchainAccount && amountToSendNumber > 0 ? false : true}>Deposit BC</button>

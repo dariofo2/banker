@@ -28,7 +28,11 @@ export class AccountsController {
             await this.accountsService.createAccount(account);
         } catch (error) {
             console.error(error);
-            throw new BadRequestException;
+            if (error instanceof BadRequestException) {
+                throw new BadRequestException(error.message)
+            } else {
+                throw new BadRequestException("Fatal Error");
+            }
         }
     }
 
@@ -39,8 +43,13 @@ export class AccountsController {
             account.user = req.user;
 
             await this.accountsService.deleteAccount(account);
-        } catch {
-            throw new BadRequestException;
+        } catch (error) {
+            console.error(error);
+            if (error instanceof BadRequestException) {
+                throw new BadRequestException(error.message)
+            } else {
+                throw new BadRequestException("Fatal Error");
+            }
         }
     }
 
@@ -53,7 +62,11 @@ export class AccountsController {
             return await this.accountsService.listAccount(account);
         } catch (error) {
             console.error(error);
-            throw new BadRequestException;
+            if (error instanceof BadRequestException) {
+                throw new BadRequestException(error.message)
+            } else {
+                throw new BadRequestException("Fatal Error");
+            }
         }
     }
 
@@ -71,7 +84,11 @@ export class AccountsController {
             await this.accountsService.updateAccount(account);
         } catch (error) {
             console.error(error);
-            throw new BadRequestException;
+            if (error instanceof BadRequestException) {
+                throw new BadRequestException(error.message)
+            } else {
+                throw new BadRequestException("Fatal Error");
+            }
         }
     }
 
@@ -83,7 +100,12 @@ export class AccountsController {
             return await this.accountsService.adminList(ListRequestDatatablesDTO);
         } catch (error) {
             console.error(error);
-            throw new BadRequestException("Invalid Data");
+            if (error instanceof BadRequestException) {
+                throw new BadRequestException(error.message)
+            } else {
+                throw new BadRequestException("Fatal Error");
+            }
+            
         }
     }
 }

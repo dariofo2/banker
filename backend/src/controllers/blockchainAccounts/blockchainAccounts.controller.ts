@@ -24,7 +24,11 @@ export class BlockchainAccountsController {
       return await this.blockchainAccountsService.create(createBlockchainAccountDTO,req.user);
     } catch (error) {
       console.error(error);
-      throw new BadRequestException;
+      if (error instanceof BadRequestException) {
+        throw new BadRequestException(error.message)
+    } else {
+        throw new BadRequestException("Fatal Error");
+    }
     }
 
   }
@@ -45,7 +49,11 @@ export class BlockchainAccountsController {
       return await this.blockchainAccountsService.findOne(blockchainAccount);
     } catch (error) {
       //console.error(error);
-      throw new BadRequestException;
+      if (error instanceof BadRequestException) {
+        throw new BadRequestException(error.message)
+    } else {
+        throw new BadRequestException("Fatal Error");
+    }
     }
   }
 
@@ -58,7 +66,11 @@ export class BlockchainAccountsController {
       return await this.blockchainAccountsService.update(blockchainAccount);
     } catch (error) {
       console.error(error);
-      throw new BadRequestException;
+      if (error instanceof BadRequestException) {
+        throw new BadRequestException(error.message)
+    } else {
+        throw new BadRequestException("Fatal Error");
+    }
     }
   }
 
@@ -71,7 +83,11 @@ export class BlockchainAccountsController {
       return await this.blockchainAccountsService.remove(blockchainAccount);
     } catch (error) {
       console.error(error);
-      throw new BadRequestException;
+      if (error instanceof BadRequestException) {
+        throw new BadRequestException(error.message)
+    } else {
+        throw new BadRequestException("Fatal Error");
+    }
     }
   }
 
@@ -81,7 +97,11 @@ export class BlockchainAccountsController {
       await this.blockchainAccountsService.depositFromEth(depositFromBlockChainDTO,req.user);
     } catch (error) {
       console.error(error);
-      throw new BadRequestException("Transaction Failed"); 
+      if (error instanceof BadRequestException) {
+        throw new BadRequestException(error.message)
+    } else {
+        throw new BadRequestException("Fatal Error");
+    } 
     }
   }
 
@@ -91,7 +111,11 @@ export class BlockchainAccountsController {
       await this.blockchainAccountsService.depositFromBC(depositFromBlockChainDTO,req.user);
     } catch (error) {
       console.error(error);
-      throw new BadRequestException("Transaction Failed"); 
+      if (error instanceof BadRequestException) {
+        throw new BadRequestException(error.message)
+    } else {
+        throw new BadRequestException("Fatal Error");
+    }
     }
   }
 
@@ -101,7 +125,11 @@ export class BlockchainAccountsController {
       await this.blockchainAccountsService.depositToEth(depositToBlockchainDTO,req.user);
     } catch (error) {
       console.error(error);
-      throw new BadRequestException("Transaction Failed"); 
+      if (error instanceof BadRequestException) {
+        throw new BadRequestException(error.message)
+    } else {
+        throw new BadRequestException("Fatal Error");
+    }
     }
   }
 
@@ -111,7 +139,11 @@ export class BlockchainAccountsController {
       await this.blockchainAccountsService.depositToBC(depositToBlockChainDTO,req.user);
     } catch (error) {
       console.error(error);
-      throw new BadRequestException("Transaction Failed"); 
+      if (error instanceof BadRequestException) {
+        throw new BadRequestException(error.message)
+    } else {
+        throw new BadRequestException("Fatal Error");
+    }
     }
   }
 }

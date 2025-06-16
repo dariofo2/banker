@@ -30,7 +30,11 @@ export class MovementsController {
             await this.movementsService.createMovement(movement);
         } catch (error) {
             console.error(error);
-            throw new BadRequestException;
+            if (error instanceof BadRequestException) {
+                throw new BadRequestException(error.message)
+            } else {
+                throw new BadRequestException("Fatal Error");
+            }
         }
     }
 
@@ -44,7 +48,11 @@ export class MovementsController {
             await this.movementsService.deleteMovement(movement);
         } catch (error) {
             console.error(error);
-            throw new BadRequestException;
+            if (error instanceof BadRequestException) {
+                throw new BadRequestException(error.message)
+            } else {
+                throw new BadRequestException("Fatal Error");
+            }
         }
     }
 
@@ -66,7 +74,11 @@ export class MovementsController {
             return await this.movementsService.adminList(ListRequestDatatablesDTO);
         } catch (error) {
             console.error(error);
-            throw new BadRequestException("Invalid Data");
+            if (error instanceof BadRequestException) {
+                throw new BadRequestException(error.message)
+            } else {
+                throw new BadRequestException("Fatal Error");
+            }
         }
     }
 }

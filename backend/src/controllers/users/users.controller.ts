@@ -37,16 +37,29 @@ export class UsersController {
             res.cookie("JWTToken","")
         } catch (error) {
             console.log(error);
-            throw new BadRequestException;
+            if (error instanceof BadRequestException) {
+                throw new BadRequestException(error.message)
+            } else {
+                throw new BadRequestException("Fatal Error");
+            }
         }
     }
 
     @UseGuards(MainAuthGuard)
     @Post('update')
     async updateUser(@Req() req: any, @Body() updateUserDTO: UpdateUserDto) {
+        try {
         const user: Users = plainToInstance(Users,updateUserDTO);
         user.id=req.user.id;
         return await this.usersService.updateUser(user);
+        } catch (error) {
+            console.error(error);
+            if (error instanceof BadRequestException) {
+                throw new BadRequestException(error.message)
+            } else {
+                throw new BadRequestException("Fatal Error");
+            }
+        }
     }
 
     @UseGuards(MainAuthGuard)
@@ -69,7 +82,11 @@ export class UsersController {
          await this.usersService.updateUserPassword(user,updateUserPasswordDTO);
         } catch (error) {
             console.error(error);
-            throw new BadRequestException("Invalid Password");
+            if (error instanceof BadRequestException) {
+                throw new BadRequestException(error.message)
+            } else {
+                throw new BadRequestException("Fatal Error");
+            }
         }
     }
 
@@ -83,7 +100,11 @@ export class UsersController {
          await this.usersService.updateUserPhoto(user,updateUserPhotoDTO);
         } catch (error) {
             console.error(error);
-            throw new BadRequestException("Invalid Photo or Format");
+            if (error instanceof BadRequestException) {
+                throw new BadRequestException(error.message)
+            } else {
+                throw new BadRequestException("Fatal Error");
+            }
         }
     }
 
@@ -95,7 +116,11 @@ export class UsersController {
             return await this.usersService.adminList(ListRequestDatatablesDTO);
         } catch (error) {
             console.error(error);
-            throw new BadRequestException("Invalid Data");
+            if (error instanceof BadRequestException) {
+                throw new BadRequestException(error.message)
+            } else {
+                throw new BadRequestException("Fatal Error");
+            }
         }
     }
 
@@ -105,7 +130,11 @@ export class UsersController {
             
         } catch (error) {
             console.error(error);
-            throw new BadRequestException("Invalid Data");
+            if (error instanceof BadRequestException) {
+                throw new BadRequestException(error.message)
+            } else {
+                throw new BadRequestException("Fatal Error");
+            }
         }
     }
     /*

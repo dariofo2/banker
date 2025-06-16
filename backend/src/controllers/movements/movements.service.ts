@@ -23,7 +23,8 @@ export class MovementsService {
         movement.originAccount = await this.database.selectAccountByNumberAndUserId(movement.originAccount.number, movement.originAccount.user.id);
         movement.destinationAccount = await this.database.selectAccountByNumber(movement.destinationAccount.number);
         movement.date = parseInt(moment().format("X"));
-        console.log(movement);
+        
+        movement.type="movement";
         const movementInserted = await this.database.createMovement(movement);
         movement.id = movementInserted.id;
 

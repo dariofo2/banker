@@ -160,7 +160,7 @@ export default function ViewBlockChainAccount(props: any) {
     })
 
     return (
-        <div style={{backgroundColor:"whitesmoke"}}>
+        <div className="container-fluid" style={{backgroundColor:"whitesmoke"}}>
             
             <Account
                 onCreateBuilding={(contract,value)=>setSendContractMethod(contract,value)}
@@ -168,8 +168,17 @@ export default function ViewBlockChainAccount(props: any) {
                 onClickTransferModalBtn={showTransferModal}
                 onClickDepositModalBtn={showDepositModal}
             ></Account>
-            {buildingsMap}
-            {buildingsOnSaleMap}
+            <div className="container">
+                <div className="row">
+                    {buildingsMap}
+                </div>
+            </div>
+
+            <div className="container">
+                <div className="row">
+                    {buildingsOnSaleMap}
+                </div>
+            </div>
             <AcceptBlockchainSendModal acceptSend={(privateKey)=>{acceptSignAndSendContractTransaction(privateKey)}} amountToSend={contractMethodValueSendToSign} estimateGas={contractMethodEstimateGasSendToSign} blockChainAccount={blockChainAccount as BlockchainAccounts} />
             <TransferBlockchainAccountModal blockchainAccount={blockChainAccount as BlockchainAccounts} onSubmitModal={actualizarCuenta} />
             <DepositBlockchainAccountModal blockchainAccount={blockChainAccount as BlockchainAccounts} onSubmitModal={actualizarCuenta} />

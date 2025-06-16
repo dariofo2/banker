@@ -59,7 +59,7 @@ export default function AcceptBlockchainSendModal(props: Props) {
                         <div className="modal-body">
                             <h6>Coste de Gas Estimado:{props.estimateGas}</h6>
                             <h6>Coste en Eth:{props.amountToSend}</h6>
-                            <form id="passwordForm">
+                            <form ref={formElement} id="passwordForm">
                                 <div className="input-group mt-3">
                                     <span className="input-group-text bi bi-key-fill text-warning"></span>
                                     <div className="form-floating">

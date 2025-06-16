@@ -30,7 +30,10 @@ export default function UserView () {
         setUser({
             ...response
         });
-        (imgRef.current as HTMLImageElement).src=response.photo as string;
+            
+        (imgRef.current as HTMLImageElement).src=process.env.NEXT_PUBLIC_BACKEND_URL + "/" + response.photo as string;    
+        
+        
     }
 
     async function openUpdateForm () {
@@ -45,21 +48,22 @@ export default function UserView () {
     if (!user) return (<Loading />)
         
     return (
-        <div style={{margin:80}}>
+        <div style={{margin:80}} className="text-center">
+            <h2>Mi Perfil</h2>
             <div className="m-auto" style={{maxWidth:250}}>
                 <img ref={imgRef} className="img-thumbnail" src={process.env.NEXT_PUBLIC_BACKEND_URL + "/" + user.photo}></img>
             </div>
-            <h2>
-                Nombre: {user.name}
-            </h2>
-            <h2> Email: {user.email}</h2>
+            <h4>
+                {user.name}
+            </h4>
+            <h4>{user.email}</h4>
             
             <button className="btn btn-primary" onClick={openUpdateForm}>Editar Usuario</button>
             <button className="btn btn-warning" onClick={openPhotoModal}>Actualizar Foto</button>
             <button className="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#updateUserPasswordModal">Cambiar Contraseña</button>
-            <UserUpdateModal onSubmited={async ()=>{await getUser(); window.location.reload()}} user={user} />
+            <UserUpdateModal onSubmited={async ()=>{await getUser();}} user={user} />
             <UserUpdatePasswordModal />
-            <UpdateUserPhotoModal onSubmitModal={async ()=>{await getUser(); window.location.reload()}} />
+            <UpdateUserPhotoModal onSubmitModal={async ()=>{await getUser(); window.location.reload();}} />
             
             <SocketIOClient />
             <ToastContainer containerId="axios" position="top-center"/>

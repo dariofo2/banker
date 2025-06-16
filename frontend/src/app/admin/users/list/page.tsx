@@ -12,7 +12,7 @@ export default async function AdminUsersListPage () {
     const user:Users=cookie.has("user") ? JSON.parse(cookie.get("user")?.value as string) : undefined;
     
     if (!user) redirect("/");
-    if (user.role!=2) redirect("/bank/users/view");
+    if (user.role!=2) redirect("/bank/accounts/list");
 
     return (
         <div>

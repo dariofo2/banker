@@ -12,7 +12,7 @@ export default async function BlockChainAccountsViewPage () {
     const user:Users=cookie.has("user") ? JSON.parse(cookie.get("user")?.value as string) : undefined;
     
     if (!user) redirect("/");
-    if (user.role!=0 && user.role!= 1) redirect("/bank/users/view");
+    if (user.role!=0 && user.role!= 1) redirect("/admin/users/list");
 
     return (
         <div>

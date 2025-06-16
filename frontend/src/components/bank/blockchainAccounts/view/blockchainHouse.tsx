@@ -73,7 +73,7 @@ export default function House(props:Props) {
     const styleDivMain = "position-relative border border-1 rounded rounded-3 text-center bg-white p-3"
     const colorBorder = building.onSale ? `${styleDivMain} border-danger` : `${styleDivMain} border-primary`;
     return (
-        <div className="">
+        <div className="col-md-6 col-xl-4">
             <div className={colorBorder}>
                 {onSale()}
                 <img className="img-fluid" src="/house1.jpg"></img>

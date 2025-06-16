@@ -84,13 +84,13 @@ export default function NavBar(props: Props) {
                     <div className="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
                         <ul className="navbar-nav">
                             <li className="nav-item">
-                                <a className="nav-link" aria-current="page" href="/bank/accounts/list">Mis Cuentas</a>
+                                <a className="nav-link fw-medium text-white" aria-current="page" href="/bank/accounts/list">Mis Cuentas</a>
                             </li>
                         </ul>
-                        <div className="d-flex" role="search">
-                            {user.photo ? <img style={{width:50}} src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${user.photo}`}></img> : ""} 
-                            <h6>{user.name}</h6>
-                            <button className="btn btn-primary" onClick={myProfile}>Mi perfil</button>
+                        <div className="d-flex align-items-center" role="search">
+                            {user.photo ? <img style={{width:50}} className="rounded rounded-5" src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${user.photo}`}></img> : ""} 
+                            <h6 className="m-0 mx-3"><a className="nav-link fw-medium text-white">{user.name}</a></h6>
+                            <button className="btn btn-primary me-3" onClick={myProfile}>Mi perfil</button>
                             <button className="btn btn-warning" type="submit" onClick={logout}>Logout</button>
                         </div>
                     </div>
@@ -115,13 +115,13 @@ export default function NavBar(props: Props) {
                     <div className="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
                         <ul className="navbar-nav">
                             <li className="nav-item">
-                                <a className="nav-link" aria-current="page" href="#">Usuarios</a>
+                                <a className="nav-link text-white" aria-current="page" href="#">Usuarios</a>
                             </li>
                         </ul>
-                        <div className="d-flex" role="search">
-                            {user.photo ? <img style={{width:50}} src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${user.photo}`}></img> : ""} 
-                            <h6>{user.name}</h6>
-                            <button className="btn btn-primary" onClick={myProfile}>Mi perfil</button>
+                        <div className="d-flex align-items-center" role="search">
+                            {user.photo ? <img style={{width:50}} className="rounded rounded-5" src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${user.photo}`}></img> : ""} 
+                            <h6 className="m-0 mx-3"><a className="nav-link fw-medium text-white">{user.name}</a></h6>
+                            <button className="btn btn-primary me-3" onClick={myProfile}>Mi perfil</button>
                             <button className="btn btn-warning" type="submit" onClick={logout}>Logout</button>
                         </div>
                     </div>

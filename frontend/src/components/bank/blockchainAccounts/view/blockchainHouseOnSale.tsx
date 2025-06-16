@@ -24,17 +24,14 @@ export default function HouseOnSale(props:Props) {
     }
 
     return (
-        <div>
+        <div className="col-md-6 col-xl-4">
             <div className="text-center position-relative bg-white border border-1 rounded rounded-3 border-danger p-3">
             {onSale()}
             <img className="img-fluid" src="/house1.jpg"></img>
             <h2>{building?.name}</h2>
             <h4>Level: {building?.level?.toString()}</h4>
             <h6>Precio de Venta: {building?.value?.toString()}</h6>
-            <button className="btn btn-primary" onClick={() => {
-                //buildingsContract.transferBuyBuilding(building?.tokenId as number);
-                location.reload();
-            }}>Comprar Casa</button>
+            <button className="btn btn-primary" onClick={transferBuyBuilding}>Comprar Casa</button>
             </div>
         </div>
     )

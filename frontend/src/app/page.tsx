@@ -10,7 +10,7 @@ export default async function Home() {
   const cookie=await cookies();
   const user:Users=cookie.has("user") ? JSON.parse(cookie.get("user")?.value as string) : undefined;
   
-  if (user) redirect("/bank/users/view");
+  if (user) redirect("/bank/accounts/list");
   return (
   <div>
     <NavBar user={user}/>

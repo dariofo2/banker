@@ -13,6 +13,8 @@ import { UpdateUserPasswordDTO } from "src/database/dto/users/updateUserPassword
 import { UpdateUserDto } from "src/database/dto/users/updateUser.dto";
 import { UpdateUserPhotoDTO } from "src/database/dto/users/updateUserPhoto.dto";
 import { ListRequestDatatablesDTO } from "src/database/dto/dataTables/listRequestDatatables.dto";
+import { UpdateUserAdminDTO } from "src/database/dto/users/updateUserAdmin.dto";
+import { AdminAuthGuard } from "src/auth/authRoles/adminAuth.guard";
 @Controller('user')
 @UsePipes(new ValidationPipe({transform:true}))
 @UseInterceptors(ClassSerializerInterceptor)
@@ -110,6 +112,7 @@ export class UsersController {
 
 
     //      A D M I N       C O N T R O L L E R S
+    @UseGuards(MainAuthGuard,AdminAuthGuard)
     @Post('adminList')
     async adminList (@Body() ListRequestDatatablesDTO: ListRequestDatatablesDTO) {
         try {
@@ -124,10 +127,22 @@ export class UsersController {
         }
     }
 
+    @UseGuards(MainAuthGuard,AdminAuthGuard)
     @Post('adminUpdate')
-    async adminUpdate (@Body() updateUserDto: UpdateUserDto) {
+    async adminUpdate (@Body() updateUserAdminDTO: UpdateUserAdminDTO) {
         try {
-            
+            return await this.usersService.adminUpdate(updateUserAdminDTO);
+        } catch (error) {
+            console.error(error);
+            throw new BadRequestException("Invalid Data");
+        }
+    }
+
+    @UseGuards(MainAuthGuard,AdminAuthGuard)
+    @Post('adminUpdatePassword')
+    async adminUpdatePassword (@Body() updateUserAdminDTO: UpdateUserAdminDTO) {
+        try {
+            return await this.usersService.adminUpdatePassword(updateUserAdminDTO);
         } catch (error) {
             console.error(error);
             if (error instanceof BadRequestException) {

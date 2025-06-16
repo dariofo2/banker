@@ -20,6 +20,7 @@ const geistMono = Geist_Mono({
 
 const montserrat = Montserrat({
   variable: '--montserrat', // Optional, used for Tailwind CSS
+  subsets:['latin']
 });
 
 export const metadata: Metadata = {

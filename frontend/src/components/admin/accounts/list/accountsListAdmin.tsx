@@ -1,5 +1,5 @@
 "use client"
-import DataTable from "datatables.net-react";
+import DataTable, { DataTableRef } from "datatables.net-react";
 import DT from "datatables.net-bs5";
 import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
 import "datatables.net-select-dt";
@@ -11,36 +11,25 @@ import { ListRequestDatatablesDTO } from "@/components/classes/dto/dataTables/li
 import { axiosFetchs } from "@/components/utils/axios";
 import { Users } from "@/components/classes/entity/users.entity";
 import { redirect, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Loading from "@/components/loading/loading";
 import { Accounts } from "@/components/classes/entity/accounts.entity";
+import ConfirmAccountsListAdmin from "./confirmAccountsListAdmin";
+import { Modal } from "bootstrap";
+import { plainToClass } from "class-transformer";
+import { UpdateAccountDTO } from "@/components/classes/dto/accounts/updateAccount.dto";
 
 DataTable.use(DT);
 export default function AccountsListAdmin () {
     const [searchParams,setSearchParams]=useState(useSearchParams())
     const [userId,setUserId]=useState(searchParams.get("id"));
-
+    
+    const dataTableElem= useRef(null as DataTableRef|null);
+    const [accountSelected,setAccountSelected]=useState(null as Accounts|null);
+    
     useEffect(()=>{
     })
         
-    const data=[{
-        id: "1",
-        name: "hola",
-        email: "quetaal",
-        role: "1"
-    },
-    {
-        id: "2",
-        name: "buenas",
-        email: "quetaal",
-        role: "1"
-    },
-    {
-        id: "3",
-        name: "tio",
-        email: "quetaal",
-        role: "1"
-    }]
     const columns= [
         {data: "id", name:"id"},
         {data: "number", name: "number"},
@@ -54,8 +43,30 @@ export default function AccountsListAdmin () {
         window.location.href=`/admin/accounts/view?id=${id}`;
     }
     
-    async function blockAccount (id:number) {
+    async function blockAccount (account:Accounts) {
+        setAccountSelected({
+            ...account,
+            type:"blocked"
+        });
+        showConfirmModal();
+    }
 
+    async function unlockAccount (account:Accounts) {
+        setAccountSelected({
+            ...account,
+            type:"corriente"
+        });
+        showConfirmModal();
+    }
+
+    async function showConfirmModal () {
+        Modal.getOrCreateInstance("#confirmAccountsListAdminModal").show();
+    }
+
+    async function onSubmitModal () {
+        const updateAccountDTO=plainToClass(UpdateAccountDTO, accountSelected);
+        await axiosFetchs.adminUpdateAccount(updateAccountDTO);
+        await dataTableElem.current?.dt()?.ajax.reload();
     }
     
     if (!userId) return (<Loading />)
@@ -64,13 +75,15 @@ export default function AccountsListAdmin () {
         <div>
         <FrontStaticComponent title="Panel de Administrador - Cuentas" subtitle="Cuentas" jsx={<div></div>} />
         <DataTable 
+            ref={dataTableElem}
             columns={columns}
             slots= {{
                 4: (data:any,row:Accounts) => {
-                    return <button className="btn btn-primary" onClick={()=>sendToAccount(row.id as number)}>Go</button>
+                    return <span className="bi bi-cash text-primary" style={{cursor:"pointer"}} onClick={()=>sendToAccount(row.id as number)}></span>
                 },
                 5: (data:any,row:Accounts) => {
-                    return <button className="btn btn-danger" onClick={()=>blockAccount(row.id as number)}>Block</button>
+                    if (row.type=="blocked") return <span className="bi bi-ban text-sucess cursor-pointer" onClick={()=>unlockAccount(row)}></span> 
+                    else return <span className="bi bi-ban text-danger" style={{cursor:"pointer"}} onClick={()=>blockAccount(row)}></span>
                 }
             }}
             
@@ -120,6 +133,8 @@ export default function AccountsListAdmin () {
                 </tr>
             </thead>
         </DataTable>
+
+        <ConfirmAccountsListAdmin onSubmit={onSubmitModal} />
         </div>
     );
 }

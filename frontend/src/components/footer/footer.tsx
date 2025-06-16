@@ -17,9 +17,9 @@ export default function FooterComponent() {
                         <div className="m-auto" style={{ width: "fit-content" }}>
                             <h5>Página</h5>
                             <ul className="list-unstyled">
-                                <li><a href="/">Home</a></li>
-                                <li><a href="/statics/blockchain">BlockChain</a></li>
-                                <li><a href="/statics/manual">Manual</a></li>
+                                <li><a className="nav-link" href="/">Home</a></li>
+                                <li><a className="nav-link" href="/statics/blockchain">BlockChain</a></li>
+                                <li><a className="nav-link" href="/statics/manual">Manual</a></li>
                             </ul>
                         </div>
                     </div>
@@ -27,9 +27,9 @@ export default function FooterComponent() {
                         <div className="m-auto" style={{ width: "fit-content" }}>
                             <h5>Legal</h5>
                             <ul className="list-unstyled">
-                                <li><a href="/statics/legalAdvert">Aviso Legal</a></li>
-                                <li><a href="/statics/cookiesPolicy">Política de Cookies</a></li>
-                                <li><a href="/statics/privacityPolicy">Política de Privacidad</a></li>
+                                <li><a className="nav-link" href="/statics/legalAdvert">Aviso Legal</a></li>
+                                <li><a className="nav-link" href="/statics/cookiesPolicy">Política de Cookies</a></li>
+                                <li><a className="nav-link" href="/statics/privacityPolicy">Política de Privacidad</a></li>
                             </ul>
                         </div>
                     </div>

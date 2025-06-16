@@ -9,6 +9,7 @@ import { DeleteAccountDTO } from "src/database/dto/accounts/deleteAccount.dto";
 import { GetAccountDTO } from "src/database/dto/accounts/getAccount.dto";
 import { UpdateAccountDTO } from "src/database/dto/accounts/updateAccount.dto";
 import { ListRequestDatatablesDTO } from "src/database/dto/dataTables/listRequestDatatables.dto";
+import { AdminAuthGuard } from "src/auth/authRoles/adminAuth.guard";
 
 @UseGuards(MainAuthGuard)
 @UsePipes(new ValidationPipe({ transform: true }))
@@ -94,6 +95,7 @@ export class AccountsController {
 
 
     //      A D M I N      C O N T R O L L E R S
+    @UseGuards(AdminAuthGuard)
     @Post('adminList')
     async adminList(@Body() ListRequestDatatablesDTO: ListRequestDatatablesDTO) {
         try {
@@ -106,6 +108,17 @@ export class AccountsController {
                 throw new BadRequestException("Fatal Error");
             }
             
+        }
+    }
+
+    @UseGuards(AdminAuthGuard)
+    @Post('adminUpdate')
+    async adminUpdate(@Body() updateAccountDTO: UpdateAccountDTO) {
+        try {
+            return await this.accountsService.adminUpdate(updateAccountDTO);
+        } catch (error) {
+            console.error(error);
+            throw new BadRequestException("Invalid Data");
         }
     }
 }

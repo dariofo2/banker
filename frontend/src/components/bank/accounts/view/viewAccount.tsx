@@ -170,10 +170,13 @@ export default function ViewAccount() {
         let isFirstMovement=true;
         return (
             <div>
-                <h6 className="text-center text-bg-info">{x[0]}</h6>
+                <hr />
+                <h6 className="text-center">{x[0]}</h6>
+                <hr />
                 {x[1].map((x) => {
                     const floatMoney= parseFloat(x.money as any);
                     
+                    /*-
                     const moneyNew = money;
                     if (!isFirstMovement) {
                         if (x.type == "movement") {
@@ -185,11 +188,13 @@ export default function ViewAccount() {
                     } else {
                         isFirstMovement=false;
                     }
+                        
                     
                     money=parseFloat(money.toFixed(2));
                     //money = Math.round(money);
                     //console.log(Math.round(money))
-                    return <ViewAccountMovementCard key={x.id} onClickDelete={(movement) => deleteMovement(movement)} account={account} movement={x} money={{ moneyOld: money, moneyNew: moneyNew }} />
+                    */
+                    return <ViewAccountMovementCard key={x.id} onClickDelete={(movement) => deleteMovement(movement)} account={account} movement={x} money={{ moneyOld: money, moneyNew: 0 }} />
                 })}
             </div>
         )
@@ -216,13 +221,32 @@ export default function ViewAccount() {
 
                 </div>
 
-                <form onSubmit={changeDates}>
-                    <input type="date" id="dateStart" name="startDate" placeholder="Fecha Inicial" required></input>
-                    <input type="date" id="dateEnd" name="endDate" placeholder="Fecha Final" required></input>
-                    <button className="btn btn-outline-light">Buscar</button>
+                <form className="container" onSubmit={changeDates}>
+                    <div className="text-center ms-auto" style={{maxWidth:230}}>
+                        <h6 className="fs-6">Filtro</h6>
+                        <div className="row align-items-center">
+                            <div className="col-3">
+                                <label>Desde</label>
+                            </div>
+                            <div className="col-9">
+                                <input type="date" className="form-control" id="dateStart" name="startDate" placeholder="Fecha Inicial" required></input>
+                            </div>
+                        </div>
+                        <div className="row align-items-center">
+                            <div className="col-3">
+                                <label>Hasta</label>
+                            </div>
+                            <div className="col-9">
+                                <input type="date" className="form-control" id="dateEnd" name="endDate" placeholder="Fecha Final" required></input>
+                            </div>
+                        </div>
+                        <button className="btn btn-outline-dark w-100">Buscar</button>
+                    </div>
                 </form>
                 {movementsMap}
-                <button className="btn btn-success" onClick={nextMovementsPage}>Next Page</button>
+                <div className="text-center mt-3 mb-3">
+                    <button className="btn btn-success" onClick={nextMovementsPage}>Cargar más...</button>
+                </div>
             </div>
             <CreateMovementModal account={account} onSubmit={() => { setListRequestMovementsDTO({ ...listRequestMovementsDTO, page: 1 }) }} />
             <ViewAccountUpdateModal account={account} onSubmit={() => { getAccount() }} />

@@ -115,7 +115,7 @@ export default function NavBar(props: Props) {
                     <div className="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
                         <ul className="navbar-nav">
                             <li className="nav-item">
-                                <a className="nav-link text-white" aria-current="page" href="#">Usuarios</a>
+                                <a className="nav-link text-white" aria-current="page" href="/admin/users/list">Usuarios</a>
                             </li>
                         </ul>
                         <div className="d-flex align-items-center" role="search">

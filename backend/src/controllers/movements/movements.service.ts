@@ -1,10 +1,12 @@
 import { BadRequestException, Injectable, Move, UnauthorizedException } from "@nestjs/common";
+import { plainToClass } from "class-transformer";
 import * as moment from "moment";
 import { DatabaseRepository } from "src/database/database.repository";
 import { ListRequestDatatablesDTO } from "src/database/dto/dataTables/listRequestDatatables.dto";
 import { ListRequestDTO } from "src/database/dto/listRequestDTO";
 import { ListResponseDTO } from "src/database/dto/listResponseDTO";
 import CreateMovementDTO from "src/database/dto/movements/createMovement.dto";
+import { DeleteMovementDTO } from "src/database/dto/movements/deleteMovement.dto";
 import { ListMovementsDTO } from "src/database/dto/movements/listMovementsDTO";
 import { Accounts } from "src/database/entity/accounts.entity";
 import { Movements } from "src/database/entity/movements.entity";
@@ -61,4 +63,8 @@ export class MovementsService {
     async adminList (ListRequestDatatablesDTO:ListRequestDatatablesDTO) {
         return await this.database.listAdminMovementsByAccount(ListRequestDatatablesDTO);
     }  
+    async adminDeleteMovement (deleteMovementDTO:DeleteMovementDTO) {
+        const movement= plainToClass(Movements,deleteMovementDTO);
+        return await this.database.deleteMovementById(movement)
+    }
 }

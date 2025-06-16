@@ -1,5 +1,5 @@
 "use client"
-import DataTable from "datatables.net-react";
+import DataTable, { DataTableRef } from "datatables.net-react";
 import DT from "datatables.net-bs5";
 import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
 import "datatables.net-select-dt";
@@ -11,15 +11,22 @@ import { ListRequestDatatablesDTO } from "@/components/classes/dto/dataTables/li
 import { axiosFetchs } from "@/components/utils/axios";
 import { Users } from "@/components/classes/entity/users.entity";
 import { redirect, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Loading from "@/components/loading/loading";
 import moment from "moment";
 import { Movements } from "@/components/classes/entity/movements.entity";
+import { Modal } from "bootstrap";
+import { plainToClass } from "class-transformer";
+import { DeleteMovementDTO } from "@/components/classes/dto/movements/deleteMovement.dto";
+import ConfirmMovementsDeleteListAdmin from "./confirmAccountsViewAdmin";
 
 DataTable.use(DT);
 export default function AccountsViewAdmin () {
     const [searchParams, setSearchParams]=useState(useSearchParams());
     const [accountId,setAccountId]=useState(searchParams.get("id"));
+
+    const [movementSelected, setMovementSelected]=useState(null as Movements|null);
+    const datatableRef= useRef(null as DataTableRef|null);
 
     const columns= [
         {data: "id", name:"movements.id"},
@@ -35,8 +42,23 @@ export default function AccountsViewAdmin () {
         {name:"Delete", data: null, defaultContent:""}
     ];
 
-    async function deleteMovement (id:number) {
-        console.log(id);
+    async function deleteMovement (movement:Movements) {
+        setMovementSelected(movement);
+        showConfirmDeleteMovementModal();
+    }
+
+    async function showConfirmDeleteMovementModal () {
+        Modal.getOrCreateInstance("#confirmMovementDeleteAdminModal").show();
+    }
+
+    async function onSubmitDelete () {
+        const deleteMovementDTO=plainToClass(DeleteMovementDTO,movementSelected);
+        await axiosFetchs.adminDeleteMovement(deleteMovementDTO);
+        reloadDatatable();
+    }
+
+    async function reloadDatatable () {
+        datatableRef.current?.dt()?.ajax.reload();
     }
     
     if (!accountId) return (<Loading />)
@@ -45,10 +67,11 @@ export default function AccountsViewAdmin () {
         <div>
         <FrontStaticComponent title="Panel de Administrador - Movimientos" subtitle="Movimientos" jsx={<div></div>} />
         <DataTable 
+            ref={datatableRef}
             columns={columns}
             slots= {{
                 7: (data:any,row:Movements) => {
-                    if (row.type=="movement") return <button onClick={()=>deleteMovement(row.id as number)}>Delete</button>
+                    if (row.type=="movement") return <span className="bi bi-trash text-danger" onClick={()=>deleteMovement(row)}></span>
                     else return <> - </>;
                 }
             }}
@@ -101,6 +124,7 @@ export default function AccountsViewAdmin () {
                 </tr>
             </thead>
         </DataTable>
+        <ConfirmMovementsDeleteListAdmin movement={movementSelected as Movements} onSubmit={onSubmitDelete}/>
         </div>
     );
 }

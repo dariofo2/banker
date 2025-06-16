@@ -14,8 +14,7 @@ export class Accounts {
     number: string;
 
     @Column()
-    @IsEnum(accountType)
-    type: accountType;
+    type: string;
 
     @Column("decimal")
     balance: number;

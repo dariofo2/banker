@@ -4,6 +4,7 @@ import { Users } from "@/components/classes/entity/users.entity";
 import { axiosFetchs } from "@/components/utils/axios";
 import { createContext, ReactNode, useState } from "react";
 
+/*
 class ContextUser {
     user?:Users;
     updateUser?:Users;
@@ -35,3 +36,4 @@ export default function UpdateUserProvider () {
         </UpdateUserContext.Provider>
     )
 }
+    */

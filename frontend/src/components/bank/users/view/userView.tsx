@@ -5,7 +5,6 @@ import NavBar from "@/components/navbar/navbar";
 import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
 import UserUpdateModal from "./updateUserModal";
 import UserUpdatePasswordModal from "./updatePasswordModal";
-import { UpdateUserContext } from "./userViewContext";
 import { Modal } from "bootstrap";
 import { axiosFetchs } from "@/components/utils/axios";
 import { AxiosError } from "axios";

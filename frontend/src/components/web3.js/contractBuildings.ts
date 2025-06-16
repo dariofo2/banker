@@ -59,7 +59,9 @@ static async transferTo(to:string,value:number) {
     return this.contractBuildings.methods.transfer(to,value);
 }
 
-
+static async transferToTransaction(to:string,value:number) {
+    
+}
 
 
 // FUNCTIONS TO ACCESS CONTRACT

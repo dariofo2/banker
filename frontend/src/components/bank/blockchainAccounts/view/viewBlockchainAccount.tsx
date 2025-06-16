@@ -16,7 +16,7 @@ import { Modal } from "bootstrap";
 import AcceptBlockchainSendModal from "./acceptBlockchainSendModal";
 import TransferBlockchainAccountModal from "./transferBlockchainAccountView";
 import DepositBlockchainAccountModal from "./depositBlockChainModal";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import Loading from "@/components/loading/loading";
 import SocketIOClient from "@/components/socket.io/socket.io";
 
@@ -99,15 +99,18 @@ export default function ViewBlockChainAccount(props: any) {
     }
 
     async function setSendContractMethod (contract:any,value:number) {
-        setContractMethodSendToSign(contract);
-        setContractMethodValueSendToSign(value);
-        const estimateGas=await contract.estimateGas({from:accountData.address,value:value});
-        setContractMethodEstimateGasSendToSign(parseInt(estimateGas));
-        showAcceptModal();
+        try {
+            setContractMethodSendToSign(contract);
+            setContractMethodValueSendToSign(value);
+            const estimateGas=await contract.estimateGas({from:accountData.address,value:value});
+            setContractMethodEstimateGasSendToSign(parseInt(estimateGas));
+            showAcceptModal();
+        } catch {
+            toast.error("Error en la Transacción",{containerId:"axios"})
+        }
     } 
 
     async function acceptSignAndSendContractTransaction (privateKey:string) {
-        console.log(privateKey);
         const accountToSign=Web3Service.node.eth.accounts.privateKeyToAccount(privateKey);
         const signedTransaction=await buildingsContract.signTransactionBCFromSendMethod(contractMethodSendToSign.encodeABI(),accountToSign,contractMethodValueSendToSign);
         

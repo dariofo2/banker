@@ -134,7 +134,11 @@ export class UsersController {
             return await this.usersService.adminUpdate(updateUserAdminDTO);
         } catch (error) {
             console.error(error);
-            throw new BadRequestException("Invalid Data");
+            if (error instanceof BadRequestException) {
+                throw new BadRequestException(error.message)
+            } else {
+                throw new BadRequestException("Fatal Error");
+            }
         }
     }
 

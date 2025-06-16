@@ -18,6 +18,7 @@ import ConfirmAccountsListAdmin from "./confirmAccountsListAdmin";
 import { Modal } from "bootstrap";
 import { plainToClass } from "class-transformer";
 import { UpdateAccountDTO } from "@/components/classes/dto/accounts/updateAccount.dto";
+import { ToastContainer } from "react-toastify";
 
 DataTable.use(DT);
 export default function AccountsListAdmin () {
@@ -134,6 +135,7 @@ export default function AccountsListAdmin () {
             </thead>
         </DataTable>
 
+        <ToastContainer containerId="axios" />
         <ConfirmAccountsListAdmin onSubmit={onSubmitModal} />
         </div>
     );

@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { compare, hash } from "bcrypt";
 import { instanceToPlain, plainToClass, plainToInstance } from "class-transformer";
@@ -16,11 +16,15 @@ export class AuthService {
     ) { }
     async loginUser(user: Users): Promise<UserLoginResp> {
         //const hashedPassword=hash("sha256",user.password,"hex");
-
-        let loginResp = await this.databaseRepository.login(user);
+        let loginResp:Users;
+        try {
+            loginResp = await this.databaseRepository.login(user);
+        } catch {
+            throw new BadRequestException("The user Doesn't Exist, Try Again!");
+        }
         
         const isValidPasswords = await compare(user.password, loginResp.password);
-        if (!isValidPasswords) throw "Bad Login Email or Password";
+        if (!isValidPasswords) throw new BadRequestException("Invalid Password");
         
         const payload = { id: loginResp.id, name: loginResp.name, email: loginResp.email, photo: loginResp.photo,role: loginResp.role };
         const jwtToken = await this.jwtService.signAsync(payload);

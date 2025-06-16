@@ -28,7 +28,11 @@ export class AuthController {
             return userLoginResp;
 
         } catch (error) {
-            throw new UnauthorizedException;
+            if (error instanceof BadRequestException) {
+                throw new BadRequestException(error.message)
+            } else {
+                throw new BadRequestException("Fatal Error");
+            }
         }
 
     }
@@ -40,7 +44,11 @@ export class AuthController {
             return await this.authService.signInUser(user);
         } catch (error) {
             console.error(error);
-            throw new BadRequestException;
+            if (error instanceof BadRequestException) {
+                throw new BadRequestException(error.message)
+            } else {
+                throw new BadRequestException("Fatal Error");
+            }
         }
     }
 
@@ -50,7 +58,11 @@ export class AuthController {
             res.clearCookie("JWTToken",{httpOnly:true,secure:false,path:"/"});
         } catch (error) {
             console.error(error);
-            throw new BadRequestException;
+            if (error instanceof BadRequestException) {
+                throw new BadRequestException(error.message)
+            } else {
+                throw new BadRequestException("Fatal Error");
+            }
         }
     }
 }

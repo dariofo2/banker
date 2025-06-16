@@ -15,6 +15,7 @@ import { useRef, useState } from "react";
 import { Modal } from "bootstrap";
 import UpdateUsersListAdmin from "./updateUsersListAdmin";
 import UpdateUsersPasswordListAdmin from "./updateUserListPasswordAdmin";
+import { ToastContainer } from "react-toastify";
 
 
 DataTable.use(DT);
@@ -37,12 +38,12 @@ export default function UsersListAdmin () {
     }
 
     async function updateUser (user:Users) {
-        setUserToUpdate(user);
+        setUserToUpdate({...user});
         Modal.getOrCreateInstance("#updateUserAdminModal").show();
     }
 
     async function updateUserPassword (user:Users) {
-        setUserToUpdate(user);
+        setUserToUpdate({...user});
          Modal.getOrCreateInstance("#updateUserPasswordAdminModal").show();
     }
 
@@ -115,6 +116,7 @@ export default function UsersListAdmin () {
             </thead>
         </DataTable>
 
+        <ToastContainer containerId="axios" />
         <UpdateUsersListAdmin user={userToUpdate as Users} onSubmit={reloadTableOnSubmit}/>
         <UpdateUsersPasswordListAdmin user={userToUpdate as Users} onSubmit={reloadTableOnSubmit} />
         </div>

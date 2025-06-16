@@ -19,6 +19,7 @@ import { Modal } from "bootstrap";
 import { plainToClass } from "class-transformer";
 import { DeleteMovementDTO } from "@/components/classes/dto/movements/deleteMovement.dto";
 import ConfirmMovementsDeleteListAdmin from "./confirmAccountsViewAdmin";
+import { ToastContainer } from "react-toastify";
 
 DataTable.use(DT);
 export default function AccountsViewAdmin () {
@@ -124,6 +125,8 @@ export default function AccountsViewAdmin () {
                 </tr>
             </thead>
         </DataTable>
+
+        <ToastContainer containerId="axios" />
         <ConfirmMovementsDeleteListAdmin movement={movementSelected as Movements} onSubmit={onSubmitDelete}/>
         </div>
     );

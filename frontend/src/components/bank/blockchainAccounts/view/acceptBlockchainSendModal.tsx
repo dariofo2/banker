@@ -3,6 +3,7 @@ import { CryptoUtils } from "@/components/utils/crypto";
 import { Web3Service } from "@/components/web3.js/web3";
 import { Modal } from "bootstrap";
 import { ChangeEvent, useRef, useState } from "react";
+import { toast } from "react-toastify";
 
 class Props {
     blockChainAccount?: BlockchainAccounts
@@ -34,10 +35,14 @@ export default function AcceptBlockchainSendModal(props: Props) {
         const form = formElement.current as HTMLFormElement;
         form.classList.add("was-validated");
         if (form.checkValidity()) {
-            form.classList.remove("was-validated");
-            const privateKey = getDecryptPrivateKeyToSign()
-            props.acceptSend(privateKey);
-            hideModal();
+            try {
+                form.classList.remove("was-validated");
+                const privateKey = getDecryptPrivateKeyToSign()
+                props.acceptSend(privateKey);
+                hideModal();
+            } catch {
+                    toast.error("Las Contraseñas no coinciden",{containerId:"axios"})
+            }
         }
 
     }

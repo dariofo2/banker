@@ -2,7 +2,8 @@ import { BlockchainAccounts } from "@/components/classes/entity/blockchainAccoun
 import { CryptoUtils } from "@/components/utils/crypto";
 import { Web3Service } from "@/components/web3.js/web3";
 import { Modal } from "bootstrap";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
+import { toast } from "react-toastify";
 
 class Props {
     blockChainAccount?: BlockchainAccounts
@@ -15,6 +16,7 @@ export default function AcceptBlockchainTransferModal(props:Props) {
     const blockChainAccount=props.blockChainAccount;
     const amounToSend=props.amountToSend;
 
+    const formElem=useRef(null as HTMLFormElement|null);
     const [passwords,setPasswords]=useState({} as {password1:string,password2:string});
 
     function onChangeInputs (e:ChangeEvent) {
@@ -30,9 +32,18 @@ export default function AcceptBlockchainTransferModal(props:Props) {
     }
 
     function submitForm () {
-        const privateKey=getDecryptPrivateKeyToSign()
-        props.acceptSend(privateKey);
-        hideModal();
+        formElem.current?.classList.add("was-validated");
+        if (formElem.current?.checkValidity()) {
+            formElem.current.classList.remove("was-validated");
+        
+            try {
+                const privateKey=getDecryptPrivateKeyToSign()
+                props.acceptSend(privateKey);
+                hideModal();
+            } catch {
+                toast.error("Las Contraseñas no coinciden",{containerId:"axios"})
+            }
+        }
     }
 
     function hideModal () {
@@ -52,7 +63,7 @@ export default function AcceptBlockchainTransferModal(props:Props) {
                         <div className="modal-body">
                             Coste de Gas Estimado:{props.estimateGas}
                             Coste en Eth:{props.amountToSend}
-                            <form id="passwordForm">
+                            <form ref={formElem} id="passwordForm">
                                 <input className="form-control" type="text" onChange={onChangeInputs} name="password1" placeholder="Key 1" />
                                 <input className="form-control" type="text" onChange={onChangeInputs} name="password2"  placeholder="Key 2"/>
                             </form>

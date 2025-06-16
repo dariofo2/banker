@@ -35,7 +35,7 @@ export class UsersService {
         if (compareHash) {
             const hashedPassword=await hash(updateUserPassword.password,parseInt(process.env.BCRYPT_ROUNDS));
             user.password=hashedPassword;
-        } else throw new BadRequestException;
+        } else throw new BadRequestException("Actual Password is Incorrect, try Again");
 
         return this.databaseRepository.updateUser(user);
     }

@@ -8,5 +8,5 @@ export class UpdateAccountDTO {
     id?:number;
 
     @Expose()
-    type?: "corriente"|"credito";
+    type?: "corriente"|"credito"|"blocked";
 }

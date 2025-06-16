@@ -6,6 +6,8 @@ import { writeFile } from "fs";
 import { mkdir } from "fs/promises";
 import { DatabaseRepository } from "src/database/database.repository";
 import { ListRequestDatatablesDTO } from "src/database/dto/dataTables/listRequestDatatables.dto";
+import { UpdateUserDto } from "src/database/dto/users/updateUser.dto";
+import { UpdateUserAdminDTO } from "src/database/dto/users/updateUserAdmin.dto";
 import { UpdateUserPasswordDTO } from "src/database/dto/users/updateUserPassword.dto";
 import { UpdateUserPhotoDTO } from "src/database/dto/users/updateUserPhoto.dto";
 import { Users } from "src/database/entity/users.entity";
@@ -80,5 +82,21 @@ export class UsersService {
     async adminList (ListRequestDatatablesDTO:ListRequestDatatablesDTO) {
         return await this.databaseRepository.listUsers(ListRequestDatatablesDTO);
     }  
+
+    async adminUpdate (UpdateUserAdminDTO:UpdateUserAdminDTO) {
+        const userNew= plainToClass(Users,UpdateUserAdminDTO)
+        userNew.password=undefined;
+
+        this.databaseRepository.updateUser(userNew);
+    }
+    
+    async adminUpdatePassword(updateUserAdminDTO:UpdateUserAdminDTO) {
+        const newPassword=await hash(updateUserAdminDTO.password,10);
+        updateUserAdminDTO.password=newPassword;
+
+        const userToUpdate=plainToClass(Users,updateUserAdminDTO);
+
+        this.databaseRepository.updateUser(userToUpdate);
+    }
 
 }

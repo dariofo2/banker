@@ -11,6 +11,7 @@ import { ListMovementsDTO } from "src/database/dto/movements/listMovementsDTO";
 import { ListRequestDTO } from "src/database/dto/listRequestDTO";
 import { ListResponseDTO } from "src/database/dto/listResponseDTO";
 import { ListRequestDatatablesDTO } from "src/database/dto/dataTables/listRequestDatatables.dto";
+import { AdminAuthGuard } from "src/auth/authRoles/adminAuth.guard";
 
 @UseGuards(MainAuthGuard)
 @UsePipes(new ValidationPipe({ transform: true }))
@@ -60,10 +61,22 @@ export class MovementsController {
 
 
     //      A D M I N      C O N T R O L L E R S
+    @UseGuards(AdminAuthGuard)
     @Post('adminList')
     async adminList(@Body() ListRequestDatatablesDTO: ListRequestDatatablesDTO) {
         try {
             return await this.movementsService.adminList(ListRequestDatatablesDTO);
+        } catch (error) {
+            console.error(error);
+            throw new BadRequestException("Invalid Data");
+        }
+    }
+
+    @UseGuards(AdminAuthGuard)
+    @Post('adminDelete')
+    async adminDelete(@Body() deleteMovementDTO: DeleteMovementDTO) {
+        try {
+            return await this.movementsService.adminDeleteMovement(deleteMovementDTO);
         } catch (error) {
             console.error(error);
             throw new BadRequestException("Invalid Data");

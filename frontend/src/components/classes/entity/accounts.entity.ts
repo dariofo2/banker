@@ -9,8 +9,7 @@ export class Accounts {
     @IsAlphanumeric()
     number?: string;
 
-    @IsEnum(accountType)
-    type?: accountType;
+    type?: string;
 
     balance?: number;
 

@@ -29,6 +29,7 @@ import { DepositToBlockChainDTO } from "../classes/dto/blockchainAccounts/deposi
 import { UpdateUserPhotoDTO } from "../classes/dto/users/updateUserPhoto.dto";
 import { ListRequestDatatablesDTO } from "../classes/dto/dataTables/listRequestDatatables.dto";
 import { ListResponseDatatablesDTO } from "../classes/dto/dataTables/listResponseDatatables.dto";
+import { UpdateUserAdminDTO } from "../classes/dto/users/updateUserAdmin.dto";
 
 export class RequestObject {
     headers: AxiosHeaders = new AxiosHeaders;
@@ -594,6 +595,9 @@ export class axiosFetchs {
 
 
     //      A D M I N       A X I O S
+
+
+    // LIST
     static async adminListUsers (depositToBlockchainDTO:ListRequestDatatablesDTO) : Promise<ListResponseDatatablesDTO<Users>> {
         try {
             let response = await axios.post<ListResponseDatatablesDTO<Users>>(
@@ -619,9 +623,7 @@ export class axiosFetchs {
                     withCredentials: true
                 }
             );
-            toast.success("Deposito Ingresado con Éxito", {
-                containerId: "axios"
-            });
+            
             return response.data;
         } catch (error) {
             this.handleAxiosError(<AxiosError>error);
@@ -638,10 +640,86 @@ export class axiosFetchs {
                     withCredentials: true
                 }
             );
-            toast.success("Deposito Ingresado con Éxito", {
+            
+            return response.data;
+        } catch (error) {
+            this.handleAxiosError(<AxiosError>error);
+            throw error;
+        }
+    }
+
+
+    // U P D A T E
+    static async adminUpdateUser (updateUserAdminDTO:UpdateUserAdminDTO) : Promise<void> {
+        try {
+            let response = await axios.post(
+                `${this.URL}/user/adminUpdate`,
+                updateUserAdminDTO,
+                {
+                    withCredentials: true
+                }
+            );
+            toast.success("Usuario Actualizado con Éxito", {
                 containerId: "axios"
             });
             return response.data;
+        } catch (error) {
+            this.handleAxiosError(<AxiosError>error);
+            throw error;
+        }
+    }
+
+    static async adminUpdateUserPassword (updateUserAdminDTO:UpdateUserAdminDTO) : Promise<ListResponseDatatablesDTO<Users>> {
+        try {
+            let response = await axios.post<ListResponseDatatablesDTO<Users>>(
+                `${this.URL}/user/adminUpdatePassword`,
+                updateUserAdminDTO,
+                {
+                    withCredentials: true
+                }
+            );
+            toast.success("Contraseña de Usuario actualizada con Éxito", {
+                containerId: "axios"
+            });
+            return response.data;
+        } catch (error) {
+            this.handleAxiosError(<AxiosError>error);
+            throw error;
+        }
+    }
+
+    static async adminUpdateAccount (updateAccountDTO: UpdateAccountDTO) : Promise<void> {
+        try {
+            let response = await axios.post<ListResponseDatatablesDTO<Users>>(
+                `${this.URL}/accounts/adminUpdate`,
+                updateAccountDTO,
+                {
+                    withCredentials: true
+                }
+            );
+            toast.success("Cuenta Actualizada con Éxito", {
+                containerId: "axios"
+            });
+        } catch (error) {
+            this.handleAxiosError(<AxiosError>error);
+            throw error;
+        }
+    }
+
+
+    // D E L E T E
+    static async adminDeleteMovement (deleteMovementDTO: DeleteMovementDTO) : Promise<void> {
+        try {
+            let response = await axios.post(
+                `${this.URL}/movements/adminDelete`,
+                deleteMovementDTO,
+                {
+                    withCredentials: true
+                }
+            );
+            toast.success("Transferencia borrada con éxito", {
+                containerId: "axios"
+            });
         } catch (error) {
             this.handleAxiosError(<AxiosError>error);
             throw error;

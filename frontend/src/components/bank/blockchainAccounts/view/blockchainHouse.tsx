@@ -82,12 +82,12 @@ export default function House(props:Props) {
                 <h2>{building.name}</h2>
                 <h4>Level: {building.level?.toString()}</h4>
                 <h6>BDWin: {coinWin.toFixed(2)}</h6>
-                {building.onSale ? <h6>Precio de Venta: {building.value?.toString()}</h6> : <></>}
+                {building.onSale ? <h6>Precio de Venta: {((parseInt((building.value as bigint).toString()))/100).toFixed(2)}</h6> : <></>}
                 <button className="btn btn-success" onClick={payloadBuilding}>PayLoad</button>
                 <button className="btn btn-primary" onClick={upLevelBuilding}>Level UP</button>
                 <button className="btn btn-warning" onClick={putBuildingOnSale}>Poner en Venta</button>
                 <input className="form-control" id="valorVenta" type="number" onChange={(event) => {
-                    setValorVenta(parseInt(event.target.value));
+                    setValorVenta(parseFloat(event.target.value)*100);
                 }}></input>
             </div>
         </div>

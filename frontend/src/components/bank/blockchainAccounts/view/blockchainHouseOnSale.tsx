@@ -34,7 +34,7 @@ export default function HouseOnSale(props:Props) {
             <img className="img-fluid" src="/house1.jpg"></img>
             <h2>{building?.name}</h2>
             <h4>Level: {building?.level?.toString()}</h4>
-            <h6>Precio de Venta: {building?.value?.toString()}</h6>
+            <h6>Precio de Venta: {((parseInt((building?.value as bigint).toString()))/100).toFixed(2)}</h6>
             <button className="btn btn-primary" onClick={transferBuyBuilding}>Comprar Casa</button>
             </div>
         </div>

@@ -1,18 +1,22 @@
 "use client"
 
+import { BlockchainAccounts } from "@/components/classes/entity/blockchainAccounts.entity";
 import { BCBuilding } from "@/components/classes/objects/BCBuilding";
 import { buildingsContract } from "@/components/web3.js/contractBuildings";
+import { Transaction } from "web3";
 
 class Props {
     building?:BCBuilding;
-    onBuyClick= (contractMethod:any,value:number)=>{};
+    blockchainAccount: BlockchainAccounts = {};
+    onBuyClick= (transaction:Transaction)=>{};
 }
 export default function HouseOnSale(props:Props) {
     const building=props.building;
+    const blockchainAccount= props.blockchainAccount;
 
     async function transferBuyBuilding () {
-        const contractMethod=await buildingsContract.transferBuyBuilding(parseInt(building?.tokenId?.toString() as string));
-        props.onBuyClick(contractMethod,0);
+        const transaction=await buildingsContract.transferBuyBuilding(blockchainAccount.address as string,parseInt(building?.tokenId?.toString() as string));
+        props.onBuyClick(transaction);
     }
 
     function onSale () {

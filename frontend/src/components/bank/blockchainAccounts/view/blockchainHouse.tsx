@@ -1,14 +1,16 @@
 "use client"
 
+import { BlockchainAccounts } from "@/components/classes/entity/blockchainAccounts.entity";
 import { BCBuilding } from "@/components/classes/objects/BCBuilding";
 import { buildingsContract } from "@/components/web3.js/contractBuildings";
 import { useEffect, useRef, useState } from "react";
+import { Transaction } from "web3";
 
 class Props {
     building: BCBuilding = {}
     color: string = "green";
-
-    onClickMethod= (contractMethod:any,value:number) => {}
+    blockchainAccount: BlockchainAccounts={};
+    onClickMethod= (transaction:Transaction) => {}
 }
 
 export default function House(props:Props) {
@@ -19,6 +21,7 @@ export default function House(props:Props) {
 
     const fee = 10;
     const building=props.building;
+    const blockchainAccount=props.blockchainAccount;
 
     useEffect(() => {
         updateCoinWin();
@@ -40,26 +43,25 @@ export default function House(props:Props) {
     function updateCoinWin() {
         const dateNow = new Date();
         const secondsNow = dateNow.getTime() / 1000 as number;
-        console.log(building.timeFromSpend);
         const level = parseInt(building.level?.toString() as string);
 
         const time = secondsNow - parseInt(building.timeFromSpend?.toString() as string);
-        setCoinWin(time * fee * level);
+        setCoinWin((time * fee * level)/100);
     }
 
     async function payloadBuilding () {
-        const contractMethod=await buildingsContract.payloadBuilding(parseInt(building.tokenId?.toString() as string));
-        props.onClickMethod(contractMethod,0);
+        const transaction=await buildingsContract.payloadBuilding(blockchainAccount.address as string,parseInt(building.tokenId?.toString() as string));
+        props.onClickMethod(transaction);
     }
 
     async function upLevelBuilding () {
-        const contractMethod=await buildingsContract.upLevelBuilding(parseInt(building.tokenId?.toString() as string));
-        props.onClickMethod(contractMethod,1000000000000000000);
+        const transaction=await buildingsContract.upLevelBuilding(blockchainAccount.address as string,parseInt(building.tokenId?.toString() as string));
+        props.onClickMethod(transaction);
     }
 
     async function putBuildingOnSale () {
-        const contractMethod=await buildingsContract.putBuildingOnSale(parseInt(building.tokenId?.toString() as string),valorVenta);
-        props.onClickMethod(contractMethod,0);
+        const transaction=await buildingsContract.putBuildingOnSale(blockchainAccount.address as string,parseInt(building.tokenId?.toString() as string),valorVenta);
+        props.onClickMethod(transaction);
     }
 
     function onSale() {
@@ -79,8 +81,8 @@ export default function House(props:Props) {
                 <img className="img-fluid" src="/house1.jpg"></img>
                 <h2>{building.name}</h2>
                 <h4>Level: {building.level?.toString()}</h4>
-                <h6>BDWin: {coinWin}</h6>
-                <h6>Precio de Venta: {building.value?.toString()}</h6>
+                <h6>BDWin: {coinWin.toFixed(2)}</h6>
+                {building.onSale ? <h6>Precio de Venta: {building.value?.toString()}</h6> : <></>}
                 <button className="btn btn-success" onClick={payloadBuilding}>PayLoad</button>
                 <button className="btn btn-primary" onClick={upLevelBuilding}>Level UP</button>
                 <button className="btn btn-warning" onClick={putBuildingOnSale}>Poner en Venta</button>

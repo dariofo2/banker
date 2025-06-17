@@ -3,6 +3,7 @@ import { CryptoUtils } from "@/components/utils/crypto";
 import { Web3Service } from "@/components/web3.js/web3";
 import { Modal } from "bootstrap";
 import { ChangeEvent, useRef, useState } from "react";
+import { toast } from "react-toastify";
 
 class Props {
     blockChainAccount?: BlockchainAccounts;
@@ -35,9 +36,13 @@ export default function AcceptDepositModal(props: Props) {
         form.classList.add("was-validated");
         if (form.checkValidity()) {
             form.classList.remove("was-validated");
-            const privateKey = getDecryptPrivateKeyToSign()
-            props.acceptDeposit(privateKey);
-            hideModal();
+            try {
+                const privateKey = getDecryptPrivateKeyToSign()
+                props.acceptDeposit(privateKey);
+                hideModal();
+            } catch {
+                toast.error("Saldo Insuficiente",{containerId:"axios"})
+            }
         }
         
     }

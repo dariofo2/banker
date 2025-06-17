@@ -56,10 +56,14 @@ export default function TransferBlockchainAccountModal(props:Props) {
                 gasPrice:await Web3Service.node.eth.getGasPrice()
             }
             
-            const estimateGas=await Web3Service.node.eth.estimateGas(transaction);
-            setTransactionToSend(transaction);
-            setEstimatedGas(parseInt(estimateGas.toString()));
-            showAcceptModal();
+            try {
+                const estimateGas=await Web3Service.node.eth.estimateGas(transaction);
+                setTransactionToSend(transaction);
+                setEstimatedGas(parseInt(estimateGas.toString()));
+                showAcceptModal();
+            } catch {
+                toast.error("Error en Saldo o Cuenta Destino incorrecta",{containerId:"axios"})
+            }
         }
     }
 
@@ -69,29 +73,32 @@ export default function TransferBlockchainAccountModal(props:Props) {
 
         if (formElem?.checkValidity()) {
             const eurToBC=transfer.amount*100;
-            const data=await buildingsContract.transferTo(transfer.address,eurToBC);
-            const transaction:Transaction={
-                from:blockchainAccount.address,
-                to: buildingsContract.contractBuildingsAddress,
-                data: data.encodeABI(),
-                gasPrice:await Web3Service.node.eth.getGasPrice()
+            try {
+                const transaction=await buildingsContract.transferTo(blockchainAccount.address as string,transfer.address,eurToBC);
+            
+                const estimateGas=await Web3Service.node.eth.estimateGas(transaction);
+                setTransactionToSend(transaction);
+                setEstimatedGas(parseInt(estimateGas.toString()));
+                showAcceptModal();
+            } catch (error){
+                toast.error("Error en Saldo o Cuenta Destino incorrecta",{containerId:"axios"});
             }
-            const estimateGas=await Web3Service.node.eth.estimateGas(transaction);
-            setTransactionToSend(transaction);
-            setEstimatedGas(parseInt(estimateGas.toString()));
-            showAcceptModal();
         }
         
     }
 
 
     async function sendTransfer (privateKey:string) {
-        const signedTransaction=await Web3Service.node.eth.accounts.signTransaction(transactionToSend as Transaction,privateKey);
-        await Web3Service.node.eth.sendSignedTransaction(signedTransaction.rawTransaction);
-        
-        toast.success("Transferencia Enviada con Éxito",{containerId:"axios"})
-        props.onSubmitModal();
-        hideModal()
+        try {
+            const signedTransaction=await Web3Service.node.eth.accounts.signTransaction(transactionToSend as Transaction,privateKey);
+            await Web3Service.node.eth.sendSignedTransaction(signedTransaction.rawTransaction);
+            
+            toast.success("Transferencia Enviada con Éxito",{containerId:"axios"})
+            props.onSubmitModal();
+            hideModal()
+        } catch {
+            toast.error("Error al Enviar la Transacción",{containerId:"axios"})
+        }
     }
     
     async function showAcceptModal () {

@@ -254,7 +254,7 @@ export default function ViewAccount() {
             <DepositModal account={account} onSubmitModal={() => setListRequestMovementsDTO({ ...listRequestMovementsDTO, page: 1 })} />
 
             <SocketIOClient />
-            <ToastContainer containerId="axios" />
+            <ToastContainer containerId="axios" position="top-center" />
         </div>
     )
 }

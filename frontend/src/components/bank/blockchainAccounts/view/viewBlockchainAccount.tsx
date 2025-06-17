@@ -19,6 +19,7 @@ import DepositBlockchainAccountModal from "./depositBlockChainModal";
 import { toast, ToastContainer } from "react-toastify";
 import Loading from "@/components/loading/loading";
 import SocketIOClient from "@/components/socket.io/socket.io";
+import { Transaction } from "web3";
 
 export default function ViewBlockChainAccount(props: any) {
     const [blockChainAccountId,setBlockchainAccountId]=useState(Cookies.get("blockchainAccountId"));
@@ -28,9 +29,9 @@ export default function ViewBlockChainAccount(props: any) {
     const [buildings, setBuildings] = useState([] as BCBuilding[]);
     const [buildingsOnSale, setBuildingsOnSale] = useState([] as BCBuilding[]);
 
-    const [contractMethodSendToSign,setContractMethodSendToSign]=useState({} as any);
-    const [contractMethodValueSendToSign,setContractMethodValueSendToSign]=useState(0 as number);
-    const [contractMethodEstimateGasSendToSign,setContractMethodEstimateGasSendToSign]=useState(0 as number);
+    const [transactionToSign,setTransactionToSign]=useState({} as Transaction);
+    const [transactionEstimateGas,setTransactionEstimateGas]=useState(0 as number);
+    const [transactionEthCost, setTransactionEthCost]=useState("" as string);
 
     useEffect(() => {
         actualizarCuenta();
@@ -98,25 +99,30 @@ export default function ViewBlockChainAccount(props: any) {
         setBuildingsOnSale([...buildingsObjetos]);
     }
 
-    async function setSendContractMethod (contract:any,value:number) {
+    async function setSendContractMethod (transaction:Transaction) {
         try {
-            setContractMethodSendToSign(contract);
-            setContractMethodValueSendToSign(value);
-            const estimateGas=await contract.estimateGas({from:accountData.address,value:value});
-            setContractMethodEstimateGasSendToSign(parseInt(estimateGas));
+            const estimateGas=await Web3Service.node.eth.estimateGas(transaction);
+            setTransactionEstimateGas(parseInt(estimateGas.toString()));
+            setTransactionToSign(transaction);
+            setTransactionEthCost(Web3Service.node.utils.fromWei(transaction.value as number,"ether"));
+
             showAcceptModal();
         } catch {
-            toast.error("Error en la Transacción",{containerId:"axios"})
+            toast.error("Saldo Insuficiente",{containerId:"axios"})
         }
     } 
 
     async function acceptSignAndSendContractTransaction (privateKey:string) {
-        const accountToSign=Web3Service.node.eth.accounts.privateKeyToAccount(privateKey);
-        const signedTransaction=await buildingsContract.signTransactionBCFromSendMethod(contractMethodSendToSign.encodeABI(),accountToSign,contractMethodValueSendToSign);
-        
-        await Web3Service.node.eth.sendSignedTransaction(signedTransaction.rawTransaction);
-
-        actualizarCuenta();
+        try {
+            const accountToSign=Web3Service.node.eth.accounts.privateKeyToAccount(privateKey);
+            const signedTransaction=await Web3Service.node.eth.accounts.signTransaction(transactionToSign,accountToSign.privateKey);
+            
+            await Web3Service.node.eth.sendSignedTransaction(signedTransaction.rawTransaction);
+            toast.success("Transferencia creada con Éxito",{containerId:"axios"});
+            actualizarCuenta();
+        } catch {
+            toast.error("Error en la Transferencia",{containerId:"axios"});
+        } 
     }
 
     async function showAcceptModal () {
@@ -136,17 +142,19 @@ export default function ViewBlockChainAccount(props: any) {
         if (!x.onSale) {
             return <House
                 key={parseInt(x.tokenId?.toString() as string)}
+                blockchainAccount={blockChainAccount}
                 color="green"
                 building={x}
-                onClickMethod={(contractMethod,value)=>{setSendContractMethod(contractMethod,value)}}
+                onClickMethod={(transaction)=>{setSendContractMethod(transaction)}}
             >
             </House>
         } else {
             return <House
                 key={parseInt(x.tokenId?.toString() as string)}
+                blockchainAccount={blockChainAccount}
                 color="red"
                 building={x}
-                onClickMethod={(contractMethod,value)=>{setSendContractMethod(contractMethod,value)}}
+                onClickMethod={(transaction)=>{setSendContractMethod(transaction)}}
             >
             </House>
         }
@@ -155,39 +163,46 @@ export default function ViewBlockChainAccount(props: any) {
     const buildingsOnSaleMap = buildingsOnSale.map(x => {
         return <HouseOnSale
             key={parseInt(x.tokenId?.toString() as string)}
+            blockchainAccount={blockChainAccount}
             building={x}
-            onBuyClick={(contract,value)=>setSendContractMethod(contract,value)}
+            onBuyClick={(contract)=>setSendContractMethod(contract)}
         >
         </HouseOnSale>
 
     })
 
     return (
-        <div className="container-fluid" style={{backgroundColor:"whitesmoke"}}>
-            
+        <div className="overflow-hidden" style={{backgroundColor:"whitesmoke"}}>
+            <div className="container-fluid" style={{height:100, backgroundColor:"black"}}>
+
+            </div>
             <Account
-                onCreateBuilding={(contract,value)=>setSendContractMethod(contract,value)}
+                onCreateBuilding={(transaction)=>setSendContractMethod(transaction)}
                 blockchainAccountData={accountData}
                 onClickTransferModalBtn={showTransferModal}
                 onClickDepositModalBtn={showDepositModal}
             ></Account>
+            <hr />
+            
             <div className="container">
+                <h5>Casas en Propiedad</h5>
                 <div className="row">
                     {buildingsMap}
                 </div>
             </div>
 
             <div className="container">
+                <h5 className="text-center mt-4">Casas En Venta</h5>
                 <div className="row">
                     {buildingsOnSaleMap}
                 </div>
             </div>
-            <AcceptBlockchainSendModal acceptSend={(privateKey)=>{acceptSignAndSendContractTransaction(privateKey)}} amountToSend={contractMethodValueSendToSign} estimateGas={contractMethodEstimateGasSendToSign} blockChainAccount={blockChainAccount as BlockchainAccounts} />
+            <AcceptBlockchainSendModal acceptSend={(privateKey)=>{acceptSignAndSendContractTransaction(privateKey)}} amountToSend={parseFloat(transactionEthCost)} estimateGas={transactionEstimateGas} blockChainAccount={blockChainAccount as BlockchainAccounts} />
             <TransferBlockchainAccountModal blockchainAccount={blockChainAccount as BlockchainAccounts} onSubmitModal={actualizarCuenta} />
             <DepositBlockchainAccountModal blockchainAccount={blockChainAccount as BlockchainAccounts} onSubmitModal={actualizarCuenta} />
 
             <SocketIOClient />
-            <ToastContainer containerId="axios" />
+            <ToastContainer containerId="axios" position="top-center" />
         </div>
     );
 }

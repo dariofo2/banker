@@ -12,6 +12,7 @@ import { buildingsContract } from "@/components/web3.js/contractBuildings";
 import { AutoNumericInput } from "react-autonumeric";
 import { Transaction } from "web3";
 import AutoNumeric from "autonumeric";
+import { toast } from "react-toastify";
 
 class Props {
     account?: Accounts
@@ -90,6 +91,7 @@ export default function DepositModal(props: Props) {
 
         const ethConverted = Web3Service.node.utils.toWei(ethToSend.toString(), "ether");
 
+        try {
         const transaction = {
             from: selectedBlockchainAccount?.address,
             to: Web3Service.bankerAddress,
@@ -97,33 +99,32 @@ export default function DepositModal(props: Props) {
             gasPrice: await Web3Service.node.eth.getGasPrice()
         };
 
-
-
         setMode(0);
         setTransactionToSend(transaction);
         estimateGas(transaction);
         openAcceptModal();
+        } catch {
+            toast.error("Saldo Insuficiente",{containerId:"axios"})
+        }
     }
 
     async function submitSendBC() {
-        const method = await buildingsContract.transferTo(Web3Service.bankerAddress as string, amountToSendNumber * 100);
-        const transaction = {
-            from: selectedBlockchainAccount?.address,
-            to: buildingsContract.contractBuildingsAddress,
-            value: 0,
-            data: method.encodeABI(),
-            gasPrice: await Web3Service.node.eth.getGasPrice()
-        };
-
-        setMode(1);
-        setTransactionToSend(transaction);
-        estimateGas(transaction)
-        openAcceptModal();
+        const transaction = await buildingsContract.transferTo(selectedBlockchainAccount?.address as string, Web3Service.bankerAddress as string, amountToSendNumber * 100);
+        
+        try {
+            setMode(1);
+            setTransactionToSend(transaction);
+            estimateGas(transaction)
+            openAcceptModal();
+        } catch {
+            toast.error("Saldo Insuficiente",{containerId:"axios"})
+        }
     }
 
 
 
     async function sendDepositTransaction(privateKey: string) {
+        try {
         const signedTransaction = await Web3Service.node.eth.accounts.signTransaction(transactionToSend as Transaction, privateKey);
 
         const depositDTO = new DepositFromBlockChainDTO;
@@ -140,8 +141,12 @@ export default function DepositModal(props: Props) {
         }
 
         setSelectedBlockchainAccount(null);
+        toast.success("Transacción Realizada con Éxito");
         props.onSubmitModal();
         hideModal();
+        } catch {
+            toast.error("Error en la Transacción",{containerId:"axios"});
+        }
     }
 
     function openAcceptModal() {

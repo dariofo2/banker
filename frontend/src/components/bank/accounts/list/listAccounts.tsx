@@ -76,7 +76,7 @@ export default function ListAccounts () {
             <FrontStaticComponent 
                 title={`Hola, ${user.name}`} 
                 jsx={<div>
-                        <h4>Tienes <span className="fw-bold">{balanceTotal} €</span></h4>
+                        <h4>Tienes <span className="fw-bold">{balanceTotal.toFixed(2)} €</span></h4>
                         <h6 className="fs-6">Selecciona Tu Cuenta</h6>
                     </div>}
             />
@@ -97,7 +97,7 @@ export default function ListAccounts () {
             <CreateBlockchainAccountModal onSubmit={()=>{getBlockChainAccounts()}} />
 
             <SocketIOClient />
-            <ToastContainer containerId="axios" />
+            <ToastContainer containerId="axios" position="top-center" />
         </div>
     )
 }

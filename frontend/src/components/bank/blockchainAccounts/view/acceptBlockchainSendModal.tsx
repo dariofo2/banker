@@ -41,7 +41,7 @@ export default function AcceptBlockchainSendModal(props: Props) {
                 props.acceptSend(privateKey);
                 hideModal();
             } catch {
-                    toast.error("Las Contraseñas no coinciden",{containerId:"axios"})
+                    toast.error("Claves Incorrectas",{containerId:"axios"})
             }
         }
 

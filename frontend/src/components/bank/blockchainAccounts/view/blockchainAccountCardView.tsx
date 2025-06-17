@@ -5,12 +5,13 @@ import House from "./blockchainHouse";
 import { BCBuilding } from "@/components/classes/objects/BCBuilding";
 import { BlockchainAccountData } from "@/components/classes/objects/BlockchainAccountData";
 import { buildingsContract } from "@/components/web3.js/contractBuildings";
+import { Transaction } from "web3";
 
 class Props {
     blockchainAccountData?: BlockchainAccountData
     buildings?: [];
     buildingsOnSale?: [];
-    onCreateBuilding= (createBuilding:any,value:any)=>{};
+    onCreateBuilding= (transaction:Transaction)=>{};
     onClickTransferModalBtn= ()=>{}
     onClickDepositModalBtn=()=>{}
 }
@@ -57,9 +58,8 @@ export default function blockchainAccountCardView(props: Props) {
             <button className="btn btn-outline-primary" onClick={async () => {
                 const element = document.getElementById('nombreEdificio') as HTMLInputElement;
                 if (element.value != "") {
-                    const createBuilding=await buildingsContract.createBuilding(element.value);
-                    const value=1000000000000000000;
-                    props.onCreateBuilding(createBuilding,value);
+                    const createBuilding=await buildingsContract.createBuilding(blockchainAccountData?.address as string, element.value);
+                    props.onCreateBuilding(createBuilding);
                     //location.reload();
                 }
 

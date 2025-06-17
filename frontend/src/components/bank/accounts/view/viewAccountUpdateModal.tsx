@@ -48,6 +48,7 @@ export default function ViewAccountUpdateModal(props: Props) {
     }
 
     function hideModal() {
+        formElem.current?.classList.remove("was-validated");
         Modal.getOrCreateInstance("#updateAccountModal").hide();
     }
 

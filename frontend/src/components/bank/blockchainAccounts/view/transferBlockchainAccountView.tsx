@@ -48,6 +48,7 @@ export default function TransferBlockchainAccountModal(props:Props) {
         formElem?.classList.add("was-validated");
 
         if (formElem?.checkValidity()) {
+            formElem.classList.remove("was-validated");
             const ethToWeiTransfer=Web3Service.node.utils.toWei(transfer.amount.toFixed(21),"ether");
             const transaction:Transaction={
                 from:blockchainAccount.address,
@@ -72,6 +73,7 @@ export default function TransferBlockchainAccountModal(props:Props) {
         formElem?.classList.add("was-validated");
 
         if (formElem?.checkValidity()) {
+            formElem.classList.remove("was-validated");
             const eurToBC=transfer.amount*100;
             try {
                 const transaction=await buildingsContract.transferTo(blockchainAccount.address as string,transfer.address,eurToBC);
@@ -107,6 +109,7 @@ export default function TransferBlockchainAccountModal(props:Props) {
 
     async function hideModal () {
         form.current?.reset();
+        form.current?.classList?.remove("was-validated");
         Modal.getOrCreateInstance("#transferModal").hide();
     }
     return (
@@ -120,12 +123,24 @@ export default function TransferBlockchainAccountModal(props:Props) {
                         </div>
                         <div className="modal-body">
 
-                            <form className="" ref={form}>
-                                <input className="form-control" name="address" placeholder="address" onChange={onChange} required></input>
-                                {/*<input className="form-control" name="amount" placeholder="amount" onChange={onChange} required></input>*/}
-                                <AutoNumericInput inputProps={{className:"form-control",name:"amount", required:true,onChange:onChange} } autoNumericOptions={{ suffixText:" Eth/BC"}} />
+                            <form ref={form}>
+                                <div className="input-group">
+                                <span className="input-group-text bi bi-cash-stack"></span>
+                                    <div className="form-floating">
+                                        <input className="form-control" name="address" placeholder="Dirección" onChange={onChange} required></input>
+                                        <label>Dirección</label>
+                                    </div>
+                                </div>
+                                <div className="input-group mt-3 mb-3">
+                                <span className="input-group-text bi bi-cash-stack"></span>
+                                    <div className="form-floating">
+                                        <AutoNumericInput inputProps={{className:"form-control", placeholder:"Cantidad", name:"amount", required:true,onChange:onChange} } autoNumericOptions={{ suffixText:" Eth/BC"}} />
+                                    <label>Cantidad</label>
+                                    </div>
+                                </div>
+                                
                             </form>
-                                <button className="btn btn-primary" onClick={submitEthTransfer}>Send Eth</button>
+                                <button className="btn btn-primary me-2" onClick={submitEthTransfer}>Send Eth</button>
                                 <button className="btn btn-primary" onClick={submitBCTransfer}>Send BC</button>
                         </div>
                         <div className="modal-footer">

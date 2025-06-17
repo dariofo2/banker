@@ -47,7 +47,8 @@ export default function AcceptBlockchainTransferModal(props:Props) {
     }
 
     function hideModal () {
-        (document.getElementById("passwordForm") as HTMLFormElement).reset();
+        formElem.current?.reset();
+        formElem.current?.classList.remove("was-validated");
         Modal.getOrCreateInstance("#acceptBlockChainTransferModal").hide();
     }
 
@@ -64,8 +65,22 @@ export default function AcceptBlockchainTransferModal(props:Props) {
                             Coste de Gas Estimado:{props.estimateGas}
                             Coste en Eth:{props.amountToSend}
                             <form ref={formElem} id="passwordForm">
-                                <input className="form-control" type="text" onChange={onChangeInputs} name="password1" placeholder="Key 1" />
-                                <input className="form-control" type="text" onChange={onChangeInputs} name="password2"  placeholder="Key 2"/>
+                                <div className="input-group">
+                                    <span className="input-group-text bi bi-key-fill text-warning"></span>
+                                    <div className="form-floating">
+                                        <input className="form-control" type="text" onChange={onChangeInputs} name="password1" placeholder="Key 1"  required />
+                                        <label>Key 1</label>
+                                    </div>
+                                </div>
+                                <div className="input-group">
+                                    <span className="input-group-text bi bi-key-fill text-warning"></span>
+                                    <div className="form-floating">
+                                    <input className="form-control" type="text" onChange={onChangeInputs} name="password2"  placeholder="Key 2" required />
+                                        <label>Key 2</label>
+                                    </div>
+                                </div>
+                                
+                                
                             </form>
                         </div>
                         <div className="modal-footer">

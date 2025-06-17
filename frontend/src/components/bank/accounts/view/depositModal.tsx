@@ -159,6 +159,7 @@ export default function DepositModal(props: Props) {
         setSelectedBlockchainAccount(null);
         setAmountToSendNumber(0.00);
 
+        formElem.current?.classList.remove("was-validated");
         Modal.getOrCreateInstance("#depositModal").hide();
     }
 
@@ -180,7 +181,7 @@ export default function DepositModal(props: Props) {
                             {balanceBCselectedBlockchainAccount ? <h5>BC: {balanceBCselectedBlockchainAccount}</h5> : <></>}
                             <form ref={formElem}>
                                 <label>Cuenta BlockChain</label>
-                                <Select options={blockChainAccountsSelect} placeholder="Selecciona una Cuenta" onChange={onChangeSelect} value={selectedBlockchainAccount ? blockChainAccountsSelect?.find(x => x.label == selectedBlockchainAccount?.address) : null} />
+                                <Select options={blockChainAccountsSelect} styles={{menu: provided => ({...provided,zIndex:500})}} placeholder="Selecciona una Cuenta" onChange={onChangeSelect} value={selectedBlockchainAccount ? blockChainAccountsSelect?.find(x => x.label == selectedBlockchainAccount?.address) : null} />
                                 <div className="input-group mt-3">
                                     <span className="input-group-text bi bi-currency-euro"></span>
                                     <div className="form-floating">

@@ -104,7 +104,7 @@ export default function DepositBlockchainAccountModal(props:Props) {
     */
     async function hideModal () {
         form.current?.reset();
-        
+        form.current?.classList.remove("was-validated");
         setSelectedAccount({...{}});
         Modal.getOrCreateInstance("#depositBlockchainModal").hide();
     }
@@ -125,11 +125,15 @@ export default function DepositBlockchainAccountModal(props:Props) {
                         <div className="modal-body">
 
                             <form ref={form}>
-                                <Select options={selectAccountsItems} onChange={onChangeSelect} value={selectAccountsItems?.find(x=>x.label==selectedAccount?.number) ?? null} />
+                                <label>Selecciona Cuenta</label>
+                                <Select options={selectAccountsItems} styles={{menu: provided => ({...provided,zIndex:500})}} placeholder="Selecciona una cuenta Normal" onChange={onChangeSelect} value={selectAccountsItems?.find(x=>x.label==selectedAccount?.number) ?? null}  required />
                                 {/*<input className="form-control" name="amounttt" placeholder="amount" onChange={onChange} required></input>*/}
-                                <AutoNumericInput inputProps={{id:"amount", name:"amount", required:true,defaultValue:"0,00", onChange:onChange}} autoNumericOptions={AutoNumeric.getPredefinedOptions().Spanish} />
+                                <div className="input-group mt-3 mb-3">
+                                    <span className="input-group-text bi bi-cash-stack"></span>
+                                    <AutoNumericInput inputProps={{className:"form-control", id:"amount", name:"amount", required:true,defaultValue:"0,00", onChange:onChange}} autoNumericOptions={AutoNumeric.getPredefinedOptions().Spanish} />
+                                </div>
                             </form>
-                                <button className="btn btn-primary" onClick={submitEthTransfer}>Deposit Eth</button>
+                                <button className="btn btn-primary me-2" onClick={submitEthTransfer}>Deposit Eth</button>
                                 <button className="btn btn-primary" onClick={submitBCTransfer}>Deposit BC</button>
                         </div>
                         <div className="modal-footer">

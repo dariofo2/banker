@@ -37,6 +37,7 @@ export default function AcceptDepositBlockchainModal(props:Props) {
 
     function hideModal () {
         (document.getElementById("passwordForm") as HTMLFormElement).reset();
+        (document.getElementById("passwordForm") as HTMLFormElement).classList.remove("was-validated");
         Modal.getOrCreateInstance("#acceptBlockChainTransferModal").hide();
     }
 

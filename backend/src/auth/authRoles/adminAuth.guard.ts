@@ -13,6 +13,6 @@ export class AdminAuthGuard implements CanActivate {
         const user:Users=request.user;
         
         if (user.role==2) return true;
-        else throw UnauthorizedException;
+        else throw new UnauthorizedException("Se necesita Rol de Administrador para realizar esta acción");
     }
 }

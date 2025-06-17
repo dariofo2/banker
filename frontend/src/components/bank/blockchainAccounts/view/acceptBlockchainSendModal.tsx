@@ -49,6 +49,7 @@ export default function AcceptBlockchainSendModal(props: Props) {
 
     function hideModal() {
         (document.getElementById("passwordForm") as HTMLFormElement).reset();
+        formElement.current?.classList.remove("was-validated");
         Modal.getOrCreateInstance("#acceptBlockChainSendModal").hide();
     }
 

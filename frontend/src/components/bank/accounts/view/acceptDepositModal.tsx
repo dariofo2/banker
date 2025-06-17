@@ -49,6 +49,7 @@ export default function AcceptDepositModal(props: Props) {
 
     function hideModal() {
         (document.getElementById("passwordForm") as HTMLFormElement).reset();
+        formElement.current?.classList.remove("was-validated");
         Modal.getOrCreateInstance("#acceptDepositModal").hide();
     }
 

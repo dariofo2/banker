@@ -168,7 +168,7 @@ export class axiosFetchs {
         let reqObject = new RequestObject(Cookies.get("access_token"));
         try {
             const response = await axios.post(
-                "http://localhost:3000/user/delete",
+                `${this.URL}/user/delete`,
                 deleteUserDTO,
                 reqObject
             )
@@ -183,7 +183,7 @@ export class axiosFetchs {
     static async getUser(): Promise<Users> {
         try {
             const response = await axios.post<Users>(
-                "http://localhost:3000/user/get",
+                `${this.URL}/user/get`,
                 {},
                 {
                     withCredentials: true
@@ -233,7 +233,7 @@ export class axiosFetchs {
         let reqObject = new RequestObject(Cookies.get("access_token"));
         try {
             const response = await axios.post(
-                "http://localhost:3000/user/updatePhoto",
+                `${this.URL}/user/updatePhoto`,
                 updateUserPhotoDTO,
                 {
                     withCredentials: true
@@ -253,7 +253,7 @@ export class axiosFetchs {
     static async updateUserPassword(updateUserPasswordDTO: UpdateUserPasswordDTO): Promise<void> {
         try {
             const response = await axios.post(
-                "http://localhost:3000/user/updatePassword",
+                `${this.URL}/user/updatePassword`,
                 updateUserPasswordDTO,
                 {
                     withCredentials: true
@@ -328,7 +328,7 @@ export class axiosFetchs {
     static async updateAccount(updateAccountDTO: UpdateAccountDTO): Promise<void> {
         try {
             const response = await axios.post(
-                "http://localhost:3000/accounts/update",
+                `${this.URL}/accounts/update`,
                 updateAccountDTO,
                 {
                     withCredentials: true

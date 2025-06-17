@@ -9,7 +9,8 @@ export default function SocketIOClient () {
         if (doOnce.current) {
         doOnce.current=false;
         
-        const socket=io(process.env.NEXT_PUBLIC_BACKEND_URL,{
+        const socket=io(process.env.NEXT_PUBLIC_BACKEND_SOCKET_IO_URL,{
+            path:process.env.NEXT_PUBLIC_BACKEND_SOCKET_IO_PATH,
             withCredentials:true,
             transports:["websocket","webtransport"]
         });

@@ -81,14 +81,14 @@ export default function ListAccounts () {
                     </div>}
             />
             <h2 className="mt-5 text-center">Cuentas Normales</h2>
-            {accounts.length>0 ? accountsMap : "No tienes cuentas Normales, crea Una"}
+            {accounts.length>0 ? accountsMap : <p className="text-center mt-4 mb-4">No tienes cuentas Normales, crea Una</p>}
             <div className="text-center mt-3 mb-3">
                 <button className="btn btn-warning" onClick={showCreateAccountModal}>Crear Cuenta Normal</button>
             </div>
 
             <div className="gradientePurpleBlack pt-1">
                 <h2 className="text-white text-center mt-5">Cuentas BlockChain</h2>
-                {blockChainAccounts.length>0 ? blockchainAccountsMap : "No tienes cuentas de Blockchain, añade una"}
+                {blockChainAccounts.length>0 ? blockchainAccountsMap : <p className="text-center mt-4 mb-4">No tienes cuentas de Blockchain, añade una</p>}
                 <div className="text-center mt-3 pb-3">
                     <button className="btn btn-warning" onClick={showCreateBlockChainAccountModal}>Crear Cuenta BlockChain</button>
                 </div>

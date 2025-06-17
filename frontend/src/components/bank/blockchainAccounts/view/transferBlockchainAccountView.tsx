@@ -123,7 +123,7 @@ export default function TransferBlockchainAccountModal(props:Props) {
                             <form className="" ref={form}>
                                 <input className="form-control" name="address" placeholder="address" onChange={onChange} required></input>
                                 {/*<input className="form-control" name="amount" placeholder="amount" onChange={onChange} required></input>*/}
-                                <AutoNumericInput inputProps={{className:"form-control",name:"amount", required:true,onChange:onChange} } autoNumericOptions={{ currencySymbol:" Eth/BC"}} />
+                                <AutoNumericInput inputProps={{className:"form-control",name:"amount", required:true,onChange:onChange} } autoNumericOptions={{ suffixText:" Eth/BC"}} />
                             </form>
                                 <button className="btn btn-primary" onClick={submitEthTransfer}>Send Eth</button>
                                 <button className="btn btn-primary" onClick={submitBCTransfer}>Send BC</button>

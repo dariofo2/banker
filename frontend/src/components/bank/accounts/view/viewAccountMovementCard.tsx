@@ -15,10 +15,9 @@ export default function ViewAccountMovementCard (props:Props) {
     const account=props.account;
     switch (movement.type) {
         case "movement":
-            console.log("hola")
             if (movement.originAccount?.number==account.number) {
                 return (
-                    <div className="m-auto border border-5 border-danger rounded rounded-5 bg-light-subtle px-5 py-2 shadow shadow-5" style={{maxWidth:500, backgroundColor:"whitesmoke"}}>
+                    <div className="m-auto mt-3 border border-5 border-danger rounded rounded-5 bg-light-subtle px-5 py-2 shadow shadow-5" style={{maxWidth:500, backgroundColor:"whitesmoke"}}>
                         <div className="row justify-content-between">
                             <div className="col-6">
                                 <h6 className="text-primary fs-5">Destino</h6>
@@ -29,7 +28,7 @@ export default function ViewAccountMovementCard (props:Props) {
                             <div className="col-5">
                                 <div className="text-end mt-2">
                                     <h5 className="text-danger fw-bolder">-{movement.money} €</h5>
-                                    <h6><del>{props.money.moneyNew}</del></h6>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -42,7 +41,7 @@ export default function ViewAccountMovementCard (props:Props) {
                 );
             } else {
                 return (
-                    <div className="m-auto border border-5 border-success rounded rounded-5 bg-light-subtle px-5 py-2 shadow shadow-5" style={{maxWidth:500, backgroundColor:"whitesmoke"}}>
+                    <div className="m-auto mt-3 border border-5 border-success rounded rounded-5 bg-light-subtle px-5 py-2 shadow shadow-5" style={{maxWidth:500, backgroundColor:"whitesmoke"}}>
                         <div className="row justify-content-between">
                             <div className="col-6">
                                 <h6 className="text-primary fs-5">Origen</h6>
@@ -52,7 +51,7 @@ export default function ViewAccountMovementCard (props:Props) {
                             <div className="col-5">
                                 <div className="text-end mt-2">
                                     <h5 className="text-success fw-bolder">{movement.money} €</h5>
-                                    <h6><del>{props.money.moneyNew}</del></h6>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -68,7 +67,7 @@ export default function ViewAccountMovementCard (props:Props) {
         break;
         case "deposit":
             return (
-                <div className="m-auto border border-5 border-info rounded rounded-5 bg-light-subtle px-5 py-2 shadow shadow-5" style={{maxWidth:500, backgroundColor:"whitesmoke"}}>
+                <div className="m-auto mt-3 border border-5 border-info rounded rounded-5 bg-light-subtle px-5 py-2 shadow shadow-5" style={{maxWidth:500, backgroundColor:"whitesmoke"}}>
                     <div className="row justify-content-between overflow-hidden">
                         <div className="col-6">
                             <h6 className="text-primary fs-5">Ingreso</h6>
@@ -78,7 +77,7 @@ export default function ViewAccountMovementCard (props:Props) {
                         <div className="col-5">
                             <div className="text-end mt-2">
                                 <h5 className="text-success fw-bolder">{movement.money} €</h5>
-                                <h6><del>{props.money.moneyNew}</del></h6>
+                                
                             </div>
                         </div>
                     </div>
@@ -91,7 +90,7 @@ export default function ViewAccountMovementCard (props:Props) {
         break;
         case "depositToBlockchain":
             return (
-                <div className="m-auto border border-5 border-warning rounded rounded-5 bg-light-subtle px-5 py-2 shadow shadow-5" style={{maxWidth:500, backgroundColor:"whitesmoke"}}>
+                <div className="m-auto mt-3 border border-5 border-warning rounded rounded-5 bg-light-subtle px-5 py-2 shadow shadow-5" style={{maxWidth:500, backgroundColor:"whitesmoke"}}>
                     <div className="row justify-content-between overflow-hidden">
                         <div className="col-6">
                             <h6 className="text-primary fs-5">Deposito</h6>
@@ -101,7 +100,7 @@ export default function ViewAccountMovementCard (props:Props) {
                         <div className="col-5">
                             <div className="text-end mt-2">
                                 <h5 className="text-danger fw-bolder">-{movement.money} €</h5>
-                                <h6><del>{props.money.moneyNew}</del></h6>
+                                
                             </div>
                         </div>
                     </div>

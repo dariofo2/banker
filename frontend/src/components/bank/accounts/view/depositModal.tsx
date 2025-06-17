@@ -64,7 +64,6 @@ export default function DepositModal(props: Props) {
 
     async function onChangeAmount(e: ChangeEvent) {
         const inputElem = e.target as HTMLInputElement;
-        console.log(inputElem.value);
 
         const amountValueDecimal = parseFloat(AutoNumeric.unformat(inputElem.value, AutoNumeric.getPredefinedOptions().Spanish).toString());
 
@@ -109,7 +108,7 @@ export default function DepositModal(props: Props) {
     }
 
     async function submitSendBC() {
-        const transaction = await buildingsContract.transferTo(selectedBlockchainAccount?.address as string, Web3Service.bankerAddress as string, amountToSendNumber * 100);
+        const transaction = await buildingsContract.transferTo(selectedBlockchainAccount?.address as string, Web3Service.bankerAddress as string, parseFloat((amountToSendNumber * 100).toFixed(2)));
         
         try {
             setMode(1);

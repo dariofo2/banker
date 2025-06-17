@@ -13,7 +13,7 @@ export default function AccountCardList(props: Props) {
         window.location.href = `/bank/accounts/view`
     }
     return (
-        <div onClick={sendToAccountView} className="m-auto mt-3 border border-2 border-black px-5 py-4 shadow shadow-5" style={{maxWidth: 700, backgroundColor: "whitesmoke" }}>
+        <div onClick={sendToAccountView} className="m-auto mt-3 border border-2 border-black px-5 py-4 shadow shadow-5" style={{maxWidth: 700, backgroundColor: "whitesmoke", cursor: "pointer" }}>
             <div className="d-flex flex-wrap flex-sm-wrap justify-content-between overflow-hidden">
                 <div className="">
                     <h6 className="fs-5" style={{color:"blueviolet"}}>Cuenta {account.type} Banker</h6>

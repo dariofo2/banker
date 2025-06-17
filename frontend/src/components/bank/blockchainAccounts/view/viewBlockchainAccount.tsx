@@ -173,7 +173,7 @@ export default function ViewBlockChainAccount(props: any) {
 
     return (
         <div className="overflow-hidden" style={{backgroundColor:"whitesmoke"}}>
-            <div className="container-fluid" style={{height:100, backgroundColor:"black"}}>
+            <div className="container-fluid" style={{height:80, backgroundColor:"black"}}>
 
             </div>
             <Account

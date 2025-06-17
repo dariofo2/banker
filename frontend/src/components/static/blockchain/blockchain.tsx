@@ -26,7 +26,7 @@ export default function BlockchainStaticComponent () {
                         <div>
                             <h3 className="text-purple-dark mb-0">Quiénes Somos</h3>
                             <h5 className="text-purple-dark-lighter ms-4 mt-0 mb-4">Seguridad y Blockchain</h5>
-                            <p>BC es nuestra criptomoneda. Su minado se realiza en base a nuestro sistema BlockChain Buildings, el cual consiste en comprar edificios que generan BC con el paso del tiempo. Puedes mejorarlos, comprar más y venderlos para hacerte con nuestra Criptomoneda, la cual con el tiempo pasará a valer cada vez más mientras suba nuestro valor de empresa. 
+                            <p>BC es nuestra criptomoneda estable, basada en el valor del Euro. Somos la entidad emisora de esta, y regalamos 1.000.000 de € en forma de minado. Su minado se realiza en base a nuestro sistema BlockChain Buildings, el cual consiste en comprar edificios que generan BC con el paso del tiempo. Puedes mejorarlos, comprar más y venderlos para hacerte con nuestra Criptomoneda.
                             <br /><br />
                             En el futuro se podrán hacer varias cosas con esta moneda, como canjearla por Dinero o realizar algunas acciones especiales en Banker.
                             <br /><br />

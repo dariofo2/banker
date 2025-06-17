@@ -1,3 +1,4 @@
+"use client"
 import Login from "../bank/users/login/login";
 
 export default function HeroComponent () {
@@ -12,7 +13,7 @@ export default function HeroComponent () {
                                 <div className="text-white text-center text-md-start">
                                     <h1 className="mb-4 mt-5 mt-md-0 pt-5 pt-md-0">Tu Banco Online Favorito</h1>
                                     <p className="fw-medium mb-4">Un banco que lo tiene todo, capacidades absolutas para trabajar con distintos clientes y cuentas, todo esto conectado con la red de Ethereum: La BlockChain</p>
-                                    <button className="btn btn-danger px-5 py-3 fs-5 mb-5 mb-md-0">Hazte Cliente</button>
+                                    <button className="btn btn-danger px-5 py-3 fs-5 mb-5 mb-md-0" onClick={()=>window.location.href="/bank/users/register"}>Hazte Cliente</button>
                                 </div>
                             </div>
                             <div className="col-md-6 col-lg-6 col-xl-5">

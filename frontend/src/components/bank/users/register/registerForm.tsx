@@ -28,6 +28,7 @@ export default function CreateUserForm() {
         formElement.classList.add("was-validated");
         
         if (formElement.checkValidity()) {
+            formElement.classList.remove("was-validated");
             const createUserDto = plainToClass(CreateUserDTO, user);
             createUserDto.password=await CryptoUtils.hashPasswordToSha256(createUserDto.password as string);
             
@@ -49,29 +50,29 @@ export default function CreateUserForm() {
                 <div id="toastContainerIDS">
                     <ToastContainer position="top-center" />
                 </div>
-                <form className="mt-5 has-validation" noValidate onSubmit={(e) => submitForm(e)}>
+                <form className="mt-2 has-validation" noValidate onSubmit={(e) => submitForm(e)}>
                     <div className="form-floating">
                         <input id="name" name="name" className="form-control" type="text" placeholder="Nombre" onChange={(e) => updateUser(e)} 
                             pattern="^[A-Za-z]{2,}" required />
                         <label htmlFor="name" className="form-label">Nombre</label>
                         <div className="invalid-feedback">Nombre Invalido</div>
                     </div>
-                    <div className="form-floating">
+                    <div className="form-floating mt-3">
                         <input id="email" name="email" className="form-control" type="email" placeholder="Email" onChange={(e) => updateUser(e)} required />
                         <label htmlFor="name" className="form-label">Email</label>
                         <div className="invalid-feedback">Email Invalido</div>
                     </div>
-                    <div className="form-floating">
+                    <div className="form-floating mt-3">
                         <input id="password" name="password" className="form-control" type="password" placeholder="Contraseña" onChange={(e) => updateUser(e)} required />
                         <label htmlFor="name" className="form-label">Contraseña</label>
                         <div className="invalid-feedback">Contraseña Invalida</div>
                     </div>
-                    <div className="form-check">
+                    <div className="form-check mt-2">
                         <input className="form-check-input" type="checkbox" required></input>
                         <label className="form-check-label">Acepto las condiciones y las políticas de Privacidad y Cookies de Banker S.L</label>
                         <div className="invalid-feedback">Es necesario Marcar la casilla</div>
                     </div>
-                    <button className="btn btn-success">Crear Usuario</button>
+                    <button className="btn btn-success mt-2">Crear Usuario</button>
                 </form>
             </div>
         </div>

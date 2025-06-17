@@ -33,7 +33,7 @@ export default function BlockchainAccountCardList (props:Props) {
         window.location.href=`/bank/blockchainAccounts/view`;
     }
     return (
-        <div onClick={goToBlockChainAccountView} className="m-auto mt-3 bg-black px-5 py-4" style={{maxWidth: 700, backgroundColor: "whitesmoke", border:"2px solid blueviolet", boxShadow:"0 6px 15px 0 blueviolet" }}>
+        <div onClick={goToBlockChainAccountView} className="m-auto mt-3 bg-black px-5 py-4" style={{maxWidth: 700, backgroundColor: "whitesmoke", border:"2px solid blueviolet", boxShadow:"0 6px 15px 0 blueviolet", cursor:"pointer" }}>
             <div className="d-flex flex-wrap flex-sm-nowrap justify-content-between overflow-hidden">
                 <div className="overflow-hidden">
                     <h6 className="fs-5 fw-bold text-pink-dark-lighter">Cuenta BlockChain Banker</h6>

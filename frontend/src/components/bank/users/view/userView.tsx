@@ -47,10 +47,12 @@ export default function UserView () {
     if (!user) return (<Loading />)
         
     return (
-        <div style={{margin:80}} className="text-center">
+        <div className="text-center">
+            <div className="container-fluid" style={{height:80, backgroundColor:"black"}}>
+            </div>
             <h2>Mi Perfil</h2>
             <div className="m-auto" style={{maxWidth:250}}>
-                <img ref={imgRef} className="img-thumbnail" src={process.env.NEXT_PUBLIC_BACKEND_URL + "/" + user.photo}></img>
+                <img ref={imgRef} className="img-thumbnail" src={user.photo ? process.env.NEXT_PUBLIC_BACKEND_URL + "/" + user.photo : ""}></img>
             </div>
             <h4>
                 {user.name}

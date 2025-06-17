@@ -11,7 +11,6 @@ export default function SocketIOClient () {
         
         const socket=io(process.env.NEXT_PUBLIC_BACKEND_URL,{
             withCredentials:true,
-            path:`${process.env.NEXT_PUBLIC_BACKEND_SOCKET_IO_PATH}`,
             transports:["websocket","webtransport"]
         });
         socket.on("connect",()=>{

@@ -212,7 +212,7 @@ export class axiosFetchs {
         let reqObject = new RequestObject(Cookies.get("access_token"));
         try {
             const response = await axios.post(
-                "http://localhost:3000/user/update",
+                `${this.URL}/user/update`,
                 updateUserDTO,
                 {
                     withCredentials: true

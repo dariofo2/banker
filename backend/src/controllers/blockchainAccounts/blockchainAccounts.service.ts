@@ -20,7 +20,7 @@ export class BlockchainAccountsService {
 
 
   async create(createBlockchainAccountDTO:CreateBlockchainAccountDTO, user:Users) {
-    this.web3Service.node.eth.sendSignedTransaction(createBlockchainAccountDTO.signedTransaction.rawTransaction);  
+    await this.web3Service.node.eth.sendSignedTransaction(createBlockchainAccountDTO.signedTransaction.rawTransaction);  
 
     const blockChainAccount: BlockchainAccounts = plainToInstance(BlockchainAccounts, createBlockchainAccountDTO);
     blockChainAccount.user=user;

@@ -114,14 +114,14 @@ export default function CreateBlockchainAccountModal(props: Props) {
                             <div className="input-group mt-3">
                                 <span className="input-group-text bi bi-key-fill"></span>
                                 <div className="form-floating">
-                                    <input className="form-control" name="password1" placeholder="Contraseña 1" onChange={onChangeInputs} required></input>
+                                    <input className="form-control" name="password1" type="password" placeholder="Contraseña 1" onChange={onChangeInputs} required></input>
                                     <label className="form-label">Contraseña 1</label>
                                 </div>
                             </div>
                             <div className="input-group mt-3">
                                 <span className="input-group-text bi bi-key-fill"></span>
                                 <div className="form-floating">
-                                    <input className="form-control" name="password2" placeholder="Contraseña 2" onChange={onChangeInputs} required></input>
+                                    <input className="form-control" name="password2" type="password" placeholder="Contraseña 2" onChange={onChangeInputs} required></input>
                                     <label className="form-label">Contraseña 2</label>
                                 </div>
                             </div>

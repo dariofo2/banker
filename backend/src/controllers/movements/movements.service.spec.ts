@@ -8,6 +8,8 @@ import { Movements } from 'src/database/entity/movements.entity';
 import { Accounts } from 'src/database/entity/accounts.entity';
 import { accountType } from 'src/database/dto/enumAccountType';
 import { Users } from 'src/database/entity/users.entity';
+import { ListRequestDTO } from 'src/database/dto/listRequestDTO';
+import { ListMovementsDTO } from 'src/database/dto/movements/listMovementsDTO';
 
 describe('Movements Service', () => {
   let movementsService:MovementsService;
@@ -34,6 +36,8 @@ describe('Movements Service', () => {
       name:"hola",
       password:"password",
       email:"hola@hola.es",
+      role:1,
+      photo: " ",
       accounts:[]
   }
   const account : Accounts = {
@@ -47,9 +51,18 @@ describe('Movements Service', () => {
   }
   const movement : Movements = {
     id:1,
+    type: "movement",
+    concept: "Holaa",
+    date: 12456434,
     originAccount:account,
     destinationAccount:account,
     money:500
+  }
+
+  const listRequestDTO : ListRequestDTO<ListMovementsDTO> = {
+    data: {originAccount:{id:1,user:user}, dateStart:123454, dateEnd: 1231231},
+    page: 2,
+    limit: 0
   }
 
   beforeEach(async () => {
@@ -84,7 +97,7 @@ describe('Movements Service', () => {
   describe('Select Movements', () => {
     it("Should list Movements of an Account", async () => {
       jest.spyOn(mockDatabaseRepository,"selectMovementsFromAccountId").mockReturnValue([movement]);
-      const result=await movementsService.listMovements(account);
+      const result=await movementsService.listMovements(listRequestDTO);
       expect(result).toStrictEqual([movement]);
     })
   })

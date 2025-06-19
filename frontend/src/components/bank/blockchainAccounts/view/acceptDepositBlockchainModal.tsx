@@ -54,8 +54,8 @@ export default function AcceptDepositBlockchainModal(props:Props) {
                             Coste de Gas Estimado:{props.estimateGas}
                             Coste en Eth:{props.amountToSend}
                             <form id="passwordForm">
-                                <input className="form-control" type="text" onChange={onChangeInputs} name="password1" placeholder="Key 1" />
-                                <input className="form-control" type="text" onChange={onChangeInputs} name="password2"  placeholder="Key 2"/>
+                                <input className="form-control" type="password" onChange={onChangeInputs} name="password1" placeholder="Key 1" />
+                                <input className="form-control" type="password" onChange={onChangeInputs} name="password2"  placeholder="Key 2"/>
                             </form>
                         </div>
                         <div className="modal-footer">

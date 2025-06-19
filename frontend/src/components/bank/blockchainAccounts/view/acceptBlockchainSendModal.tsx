@@ -69,14 +69,14 @@ export default function AcceptBlockchainSendModal(props: Props) {
                                 <div className="input-group mt-3">
                                     <span className="input-group-text bi bi-key-fill text-warning"></span>
                                     <div className="form-floating">
-                                        <input className="form-control" type="text" onChange={onChangeInputs} name="password1" placeholder="Key 1" required />
+                                        <input className="form-control" type="password" onChange={onChangeInputs} name="password1" placeholder="Key 1" required />
                                         <label>Key 1</label>
                                     </div>
                                 </div>
                                 <div className="input-group mt-3">
                                     <span className="input-group-text bi bi-key-fill text-warning"></span>
                                     <div className="form-floating">
-                                        <input className="form-control" type="text" onChange={onChangeInputs} name="password2" placeholder="Key 2" required />
+                                        <input className="form-control" type="password" onChange={onChangeInputs} name="password2" placeholder="Key 2" required />
                                         <label>Key 2</label>
                                     </div>
                                 </div>

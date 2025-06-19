@@ -49,6 +49,7 @@ export default function ViewAccount() {
 
     async function getAccount() {
         const response = await axiosFetchs.getAccount(getAccountDTO);
+        if (response.type=="blocked") window.location.href="/";
         setAccount({ ...response });
     }
     async function getMovements() {

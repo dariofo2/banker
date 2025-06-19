@@ -29,7 +29,7 @@ export default function SocketIOClient () {
     },[]);
     return (
         <div>
-            <ToastContainer containerId="websockets" position="top-center" />
+            <ToastContainer containerId="websockets" position="top-right" />
         </div>
     )
 }
